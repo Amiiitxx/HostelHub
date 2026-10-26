@@ -1,0 +1,1337 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {% if student %}Edit Student{% else %}Add Student{% endif %}
+{% endblock %}
+
+{% block page_title %}
+    {% if student %}Edit Student{% else %}Add Student{% endif %}
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .student-form-page {
+        max-width: 1250px;
+        margin: 0 auto;
+    }
+
+    .form-hero {
+        background:
+            radial-gradient(circle at 90% 15%, rgba(99,102,241,.12), transparent 30%),
+            linear-gradient(135deg, #ffffff, #f8fafc);
+        border: 1px solid #e5e7eb;
+        border-radius: 24px;
+        padding: 28px;
+        margin-bottom: 22px;
+        box-shadow: 0 10px 30px rgba(15,23,42,.05);
+    }
+
+    .hero-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+    }
+
+    .hero-title {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .hero-icon {
+        width: 54px;
+        height: 54px;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #eef2ff;
+        color: #4f46e5;
+        font-size: 23px;
+    }
+
+    .hero-title h1 {
+        margin: 0 0 5px;
+        font-size: 25px;
+        font-weight: 800;
+        color: #111827;
+    }
+
+    .hero-title p {
+        margin: 0;
+        color: #64748b;
+        font-size: 13px;
+    }
+
+    .form-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 330px;
+        gap: 20px;
+    }
+
+    .form-card {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 20px;
+        box-shadow: 0 7px 25px rgba(15,23,42,.045);
+        overflow: hidden;
+        margin-bottom: 20px;
+    }
+
+    .card-heading {
+        padding: 19px 22px;
+        border-bottom: 1px solid #eef2f7;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .card-heading i {
+        color: #4f46e5;
+        font-size: 17px;
+    }
+
+    .card-heading h2 {
+        margin: 0;
+        font-size: 15px;
+        font-weight: 800;
+        color: #111827;
+    }
+
+    .card-body {
+        padding: 22px;
+    }
+
+    .field-group {
+        margin-bottom: 18px;
+    }
+
+    .field-group:last-child {
+        margin-bottom: 0;
+    }
+
+    .form-label {
+        color: #334155;
+        font-size: 12px;
+        font-weight: 750;
+        margin-bottom: 7px;
+    }
+
+    .required {
+        color: #ef4444;
+    }
+
+    .form-control,
+    .form-select {
+        min-height: 46px;
+        border: 1px solid #dbe1ea;
+        border-radius: 11px;
+        font-size: 13px;
+        color: #1e293b;
+        box-shadow: none;
+        transition: .2s ease;
+    }
+
+    textarea.form-control {
+        min-height: 105px;
+        resize: vertical;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        border-color: #818cf8;
+        box-shadow: 0 0 0 4px rgba(99,102,241,.10);
+    }
+
+    .input-icon {
+        position: relative;
+    }
+
+    .input-icon i {
+        position: absolute;
+        left: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #94a3b8;
+        z-index: 2;
+    }
+
+    .input-icon .form-control {
+        padding-left: 40px;
+    }
+
+    .two-columns {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+    }
+
+    .three-columns {
+        display: grid;
+        grid-template-columns: 1.1fr 1fr .8fr;
+        gap: 16px;
+    }
+
+    .help-text {
+        margin-top: 6px;
+        font-size: 11px;
+        color: #94a3b8;
+    }
+
+    .error-box {
+        padding: 13px 15px;
+        border-radius: 12px;
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        color: #b91c1c;
+        font-size: 12px;
+        margin-bottom: 18px;
+    }
+
+    .error-box ul {
+        margin: 5px 0 0 18px;
+        padding: 0;
+    }
+
+    .field-error {
+        color: #dc2626;
+        font-size: 11px;
+        margin-top: 5px;
+    }
+
+    /* PHOTO */
+    .photo-upload {
+        text-align: center;
+        padding: 10px 0;
+    }
+
+    .photo-preview {
+        width: 110px;
+        height: 110px;
+        margin: 0 auto 15px;
+        border-radius: 24px;
+        overflow: hidden;
+        background: #f1f5f9;
+        border: 2px dashed #cbd5e1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .photo-preview img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .photo-placeholder {
+        color: #94a3b8;
+        font-size: 34px;
+    }
+
+    .file-input {
+        font-size: 12px;
+    }
+
+    /* SIDE INFO */
+    .side-card {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 20px;
+        box-shadow: 0 7px 25px rgba(15,23,42,.045);
+        overflow: hidden;
+        margin-bottom: 20px;
+    }
+
+    .side-header {
+        padding: 18px 20px;
+        border-bottom: 1px solid #eef2f7;
+        font-size: 14px;
+        font-weight: 800;
+        color: #111827;
+    }
+
+    .side-body {
+        padding: 20px;
+    }
+
+    .tip-item {
+        display: flex;
+        gap: 11px;
+        margin-bottom: 16px;
+    }
+
+    .tip-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .tip-icon {
+        flex: 0 0 34px;
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+        background: #eef2ff;
+        color: #4f46e5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .tip-content strong {
+        display: block;
+        color: #334155;
+        font-size: 12px;
+        margin-bottom: 3px;
+    }
+
+    .tip-content span {
+        color: #94a3b8;
+        font-size: 11px;
+        line-height: 1.5;
+    }
+
+    .required-note {
+        padding: 13px;
+        border-radius: 12px;
+        background: #f8fafc;
+        color: #64748b;
+        font-size: 11px;
+        line-height: 1.5;
+    }
+
+    .required-note strong {
+        color: #334155;
+    }
+
+    /* ACTION BAR */
+    .action-bar {
+        position: sticky;
+        bottom: 15px;
+        z-index: 20;
+        background: rgba(255,255,255,.94);
+        backdrop-filter: blur(12px);
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        padding: 12px;
+        box-shadow: 0 12px 30px rgba(15,23,42,.10);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+    }
+
+    .action-note {
+        color: #64748b;
+        font-size: 11px;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 9px;
+    }
+
+    .btn-premium {
+        min-height: 42px;
+        border-radius: 11px;
+        padding: 9px 16px;
+        font-size: 12px;
+        font-weight: 750;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+    }
+
+    @media (max-width: 1000px) {
+        .form-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .side-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            align-items: start;
+        }
+    }
+
+    @media (max-width: 700px) {
+        .hero-inner {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .two-columns,
+        .three-columns,
+        .side-column {
+            grid-template-columns: 1fr;
+        }
+
+        .form-hero {
+            padding: 22px;
+        }
+
+        .card-body {
+            padding: 18px;
+        }
+
+        .action-bar {
+            align-items: stretch;
+            flex-direction: column;
+        }
+
+        .action-buttons {
+            width: 100%;
+        }
+
+        .action-buttons .btn {
+            flex: 1;
+        }
+
+        .action-note {
+            display: none;
+        }
+    }
+</style>
+{% endblock %}
+
+
+{% block content %}
+<div class="student-form-page">
+
+    <!-- HERO -->
+    <div class="form-hero">
+        <div class="hero-inner">
+
+            <div class="hero-title">
+                <div class="hero-icon">
+                    {% if student %}
+                        <i class="bi bi-pencil-square"></i>
+                    {% else %}
+                        <i class="bi bi-person-plus"></i>
+                    {% endif %}
+                </div>
+
+                <div>
+                    <h1>
+                        {% if student %}
+                            Edit Student
+                        {% else %}
+                            Add New Student
+                        {% endif %}
+                    </h1>
+
+                    <p>
+                        {% if student %}
+                            Update the student's profile and hostel information.
+                        {% else %}
+                            Create a complete student profile for hostel management.
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+
+            <a
+                href="{% url 'students:list' %}"
+                class="btn btn-light border btn-premium"
+            >
+                <i class="bi bi-arrow-left"></i>
+                Back to Students
+            </a>
+
+        </div>
+    </div>
+
+
+    <form
+        method="post"
+        enctype="multipart/form-data"
+        id="studentForm"
+    >
+
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+            <div class="error-box">
+                <strong>
+                    <i class="bi bi-exclamation-triangle me-1"></i>
+                    Please fix the following errors
+                </strong>
+
+                {{ form.non_field_errors }}
+            </div>
+        {% endif %}
+
+
+        <div class="form-layout">
+
+            <!-- MAIN FORM -->
+            <div>
+
+                <!-- BASIC INFORMATION -->
+                <div class="form-card">
+
+                    <div class="card-heading">
+                        <i class="bi bi-person-vcard"></i>
+                        <h2>Basic Information</h2>
+                    </div>
+
+                    <div class="card-body">
+
+                        <div class="two-columns">
+
+                            <div class="field-group">
+                                <label
+                                    for="{{ form.first_name.id_for_label }}"
+                                    class="form-label"
+                                >
+                                    First Name <span class="required">*</span>
+                                </label>
+
+                                {{ form.first_name }}
+
+                                {% if form.first_name.errors %}
+                                    <div class="field-error">
+                                        {{ form.first_name.errors|striptags }}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+
+                            <div class="field-group">
+                                <label
+                                    for="{{ form.last_name.id_for_label }}"
+                                    class="form-label"
+                                >
+                                    Last Name <span class="required">*</span>
+                                </label>
+
+                                {{ form.last_name }}
+
+                                {% if form.last_name.errors %}
+                                    <div class="field-error">
+                                        {{ form.last_name.errors|striptags }}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                        </div>
+
+
+                        <div class="two-columns">
+
+                            <div class="field-group">
+
+                                <label
+                                    for="{{ form.student_id.id_for_label }}"
+                                    class="form-label"
+                                >
+                                    Student ID <span class="required">*</span>
+                                </label>
+
+                                <div class="input-icon">
+                                    <i class="bi bi-person-badge"></i>
+                                    {{ form.student_id }}
+                                </div>
+
+                                {% if form.student_id.errors %}
+                                    <div class="field-error">
+                                        {{ form.student_id.errors|striptags }}
+                                    </div>
+                                {% endif %}
+
+                                <div class="help-text">
+                                    Use the official college/student identification number.
+                                </div>
+
+                            </div>
+
+
+                            <div class="field-group">
+
+                                <label
+                                    for="{{ form.gender.id_for_label }}"
+                                    class="form-label"
+                                >
+                                    Gender
+                                </label>
+
+                                {{ form.gender }}
+
+                                {% if form.gender.errors %}
+                                    <div class="field-error">
+                                        {{ form.gender.errors|striptags }}
+                                    </div>
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="two-columns">
+
+                            <div class="field-group">
+
+                                <label
+                                    for="{{ form.email.id_for_label }}"
+                                    class="form-label"
+                                >
+                                    Email <span class="required">*</span>
+                                </label>
+
+                                <div class="input-icon">
+                                    <i class="bi bi-envelope"></i>
+                                    {{ form.email }}
+                                </div>
+
+                                {% if form.email.errors %}
+                                    <div class="field-error">
+                                        {{ form.email.errors|striptags }}
+                                    </div>
+                                {% endif %}
+
+                            </div>
+
+
+                            <div class="field-group">
+
+                                <label
+                                    for="{{ form.phone.id_for_label }}"
+                                    class="form-label"
+                                >
+                                    Phone <span class="required">*</span>
+                                </label>
+
+                                <div class="input-icon">
+                                    <i class="bi bi-telephone"></i>
+                                    {{ form.phone }}
+                                </div>
+
+                                {% if form.phone.errors %}
+                                    <div class="field-error">
+                                        {{ form.phone.errors|striptags }}
+                                    </div>
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="field-group">
+
+                            <label
+                                for="{{ form.date_of_birth.id_for_label }}"
+                                class="form-label"
+                            >
+                                Date of Birth
+                            </label>
+
+                            {{ form.date_of_birth }}
+
+                            {% if form.date_of_birth.errors %}
+                                <div class="field-error">
+                                    {{ form.date_of_birth.errors|striptags }}
+                                </div>
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+                </div>
+
+
+                <!-- ACADEMIC INFORMATION -->
+                <div class="form-card">
+
+                    <div class="card-heading">
+                        <i class="bi bi-mortarboard"></i>
+                        <h2>Academic Information</h2>
+                    </div>
+
+                    <div class="card-body">
+
+                        <div class="two-columns">
+
+                            <div class="field-group">
+
+                                <label
+                                    for="{{ form.course.id_for_label }}"
+                                    class="form-label"
+                                >
+                                    Course <span class="required">*</span>
+                                </label>
+
+                                {{ form.course }}
+
+                                {% if form.course.errors %}
+                                    <div class="field-error">
+                                        {{ form.course.errors|striptags }}
+                                    </div>
+                                {% endif %}
+
+                            </div>
+
+
+                            <div class="field-group">
+
+                                <label
+                                    for="{{ form.year.id_for_label }}"
+                                    class="form-label"
+                                >
+                                    Academic Year <span class="required">*</span>
+                                </label>
+
+                                {{ form.year }}
+
+                                {% if form.year.errors %}
+                                    <div class="field-error">
+                                        {{ form.year.errors|striptags }}
+                                    </div>
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+
+                        {% if form.status %}
+
+                        <div class="field-group">
+
+                            <label
+                                for="{{ form.status.id_for_label }}"
+                                class="form-label"
+                            >
+                                Student Status
+                            </label>
+
+                            {{ form.status }}
+
+                            {% if form.status.errors %}
+                                <div class="field-error">
+                                    {{ form.status.errors|striptags }}
+                                </div>
+                            {% endif %}
+
+                        </div>
+
+                        {% endif %}
+
+                    </div>
+                </div>
+
+
+                <!-- ADDRESS -->
+                <div class="form-card">
+
+                    <div class="card-heading">
+                        <i class="bi bi-geo-alt"></i>
+                        <h2>Address Information</h2>
+                    </div>
+
+                    <div class="card-body">
+
+                        <div class="field-group">
+
+                            <label
+                                for="{{ form.address.id_for_label }}"
+                                class="form-label"
+                            >
+                                Address
+                            </label>
+
+                            {{ form.address }}
+
+                            {% if form.address.errors %}
+                                <div class="field-error">
+                                    {{ form.address.errors|striptags }}
+                                </div>
+                            {% endif %}
+
+                        </div>
+
+
+                        <div class="two-columns">
+
+                            <div class="field-group">
+
+                                <label
+                                    for="{{ form.city.id_for_label }}"
+                                    class="form-label"
+                                >
+                                    City
+                                </label>
+
+                                {{ form.city }}
+
+                                {% if form.city.errors %}
+                                    <div class="field-error">
+                                        {{ form.city.errors|striptags }}
+                                    </div>
+                                {% endif %}
+
+                            </div>
+
+
+                            <div class="field-group">
+
+                                <label
+                                    for="{{ form.state.id_for_label }}"
+                                    class="form-label"
+                                >
+                                    State
+                                </label>
+
+                                {{ form.state }}
+
+                                {% if form.state.errors %}
+                                    <div class="field-error">
+                                        {{ form.state.errors|striptags }}
+                                    </div>
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+
+
+                <!-- GUARDIAN -->
+                <div class="form-card">
+
+                    <div class="card-heading">
+                        <i class="bi bi-people"></i>
+                        <h2>Guardian Information</h2>
+                    </div>
+
+                    <div class="card-body">
+
+                        <div class="two-columns">
+
+                            <div class="field-group">
+
+                                <label
+                                    for="{{ form.guardian_name.id_for_label }}"
+                                    class="form-label"
+                                >
+                                    Guardian Name
+                                </label>
+
+                                {{ form.guardian_name }}
+
+                                {% if form.guardian_name.errors %}
+                                    <div class="field-error">
+                                        {{ form.guardian_name.errors|striptags }}
+                                    </div>
+                                {% endif %}
+
+                            </div>
+
+
+                            <div class="field-group">
+
+                                <label
+                                    for="{{ form.guardian_relation.id_for_label }}"
+                                    class="form-label"
+                                >
+                                    Relationship
+                                </label>
+
+                                {{ form.guardian_relation }}
+
+                                {% if form.guardian_relation.errors %}
+                                    <div class="field-error">
+                                        {{ form.guardian_relation.errors|striptags }}
+                                    </div>
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="field-group">
+
+                            <label
+                                for="{{ form.guardian_phone.id_for_label }}"
+                                class="form-label"
+                            >
+                                Guardian Phone
+                            </label>
+
+                            <div class="input-icon">
+                                <i class="bi bi-telephone"></i>
+                                {{ form.guardian_phone }}
+                            </div>
+
+                            {% if form.guardian_phone.errors %}
+                                <div class="field-error">
+                                    {{ form.guardian_phone.errors|striptags }}
+                                </div>
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+                </div>
+
+
+                <!-- FILES -->
+                {% if form.photo or form.id_document %}
+
+                <div class="form-card">
+
+                    <div class="card-heading">
+                        <i class="bi bi-folder2-open"></i>
+                        <h2>Documents & Photo</h2>
+                    </div>
+
+                    <div class="card-body">
+
+                        <div class="two-columns">
+
+                            {% if form.photo %}
+                            <div class="field-group">
+
+                                <label
+                                    for="{{ form.photo.id_for_label }}"
+                                    class="form-label"
+                                >
+                                    Student Photo
+                                </label>
+
+                                <div class="photo-upload">
+
+                                    <div class="photo-preview" id="photoPreview">
+
+                                        {% if student and student.photo %}
+                                            <img
+                                                src="{{ student.photo.url }}"
+                                                alt="Student Photo"
+                                                id="previewImage"
+                                            >
+                                        {% else %}
+                                            <div
+                                                class="photo-placeholder"
+                                                id="photoPlaceholder"
+                                            >
+                                                <i class="bi bi-person"></i>
+                                            </div>
+
+                                            <img
+                                                id="previewImage"
+                                                src=""
+                                                alt="Preview"
+                                                style="display:none;"
+                                            >
+                                        {% endif %}
+
+                                    </div>
+
+                                    {{ form.photo }}
+
+                                    {% if form.photo.errors %}
+                                        <div class="field-error">
+                                            {{ form.photo.errors|striptags }}
+                                        </div>
+                                    {% endif %}
+
+                                    <div class="help-text">
+                                        JPG, PNG or WebP image recommended.
+                                    </div>
+
+                                </div>
+
+                            </div>
+                            {% endif %}
+
+
+                            {% if form.id_document %}
+                            <div class="field-group">
+
+                                <label
+                                    for="{{ form.id_document.id_for_label }}"
+                                    class="form-label"
+                                >
+                                    ID Document
+                                </label>
+
+                                {{ form.id_document }}
+
+                                {% if student and student.id_document %}
+                                    <div class="help-text">
+                                        <i class="bi bi-check-circle text-success me-1"></i>
+                                        Existing document uploaded.
+                                    </div>
+                                {% else %}
+                                    <div class="help-text">
+                                        Upload the student's identification document.
+                                    </div>
+                                {% endif %}
+
+                                {% if form.id_document.errors %}
+                                    <div class="field-error">
+                                        {{ form.id_document.errors|striptags }}
+                                    </div>
+                                {% endif %}
+
+                            </div>
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+                </div>
+
+                {% endif %}
+
+            </div>
+
+
+            <!-- SIDE COLUMN -->
+            <div class="side-column">
+
+                <!-- PROFILE PREVIEW -->
+                <div class="side-card">
+
+                    <div class="side-header">
+                        <i class="bi bi-eye me-2 text-primary"></i>
+                        Profile Preview
+                    </div>
+
+                    <div class="side-body">
+
+                        <div class="photo-upload">
+
+                            <div
+                                class="photo-preview"
+                                style="width:90px;height:90px;border-radius:20px;"
+                            >
+                                <div
+                                    class="photo-placeholder"
+                                    id="sideAvatar"
+                                >
+                                    <i class="bi bi-person"></i>
+                                </div>
+                            </div>
+
+                            <div
+                                class="fw-bold mt-2"
+                                id="namePreview"
+                                style="font-size:14px;color:#334155;"
+                            >
+                                {% if student %}
+                                    {{ student.first_name }}
+                                    {{ student.last_name }}
+                                {% else %}
+                                    New Student
+                                {% endif %}
+                            </div>
+
+                            <div
+                                class="text-muted"
+                                style="font-size:11px;"
+                                id="idPreview"
+                            >
+                                {% if student %}
+                                    {{ student.student_id }}
+                                {% else %}
+                                    Student ID
+                                {% endif %}
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- TIPS -->
+                <div class="side-card">
+
+                    <div class="side-header">
+                        <i class="bi bi-lightbulb me-2 text-warning"></i>
+                        Quick Tips
+                    </div>
+
+                    <div class="side-body">
+
+                        <div class="tip-item">
+
+                            <div class="tip-icon">
+                                <i class="bi bi-person-check"></i>
+                            </div>
+
+                            <div class="tip-content">
+                                <strong>Use accurate details</strong>
+                                <span>
+                                    Make sure the name, student ID and contact information match official records.
+                                </span>
+                            </div>
+
+                        </div>
+
+
+                        <div class="tip-item">
+
+                            <div class="tip-icon">
+                                <i class="bi bi-telephone"></i>
+                            </div>
+
+                            <div class="tip-content">
+                                <strong>Keep contact details updated</strong>
+                                <span>
+                                    Guardian contact information is useful during emergencies.
+                                </span>
+                            </div>
+
+                        </div>
+
+
+                        <div class="tip-item">
+
+                            <div class="tip-icon">
+                                <i class="bi bi-file-earmark-check"></i>
+                            </div>
+
+                            <div class="tip-content">
+                                <strong>Upload documents</strong>
+                                <span>
+                                    Keep the student's identification document available for verification.
+                                </span>
+                            </div>
+
+                        </div>
+
+
+                        <div class="tip-item">
+
+                            <div class="tip-icon">
+                                <i class="bi bi-shield-check"></i>
+                            </div>
+
+                            <div class="tip-content">
+                                <strong>Review before saving</strong>
+                                <span>
+                                    Verify all information before submitting the student profile.
+                                </span>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- REQUIRED FIELDS -->
+                <div class="side-card">
+
+                    <div class="side-header">
+                        <i class="bi bi-info-circle me-2 text-primary"></i>
+                        Form Guide
+                    </div>
+
+                    <div class="side-body">
+
+                        <div class="required-note">
+                            Fields marked with
+                            <strong class="text-danger">*</strong>
+                            are required.
+                            <br><br>
+                            Student information can be updated later from the student details page.
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ACTION BAR -->
+        <div class="action-bar">
+
+            <div class="action-note">
+                <i class="bi bi-lock me-1"></i>
+                Your information is protected and saved securely.
+            </div>
+
+            <div class="action-buttons">
+
+                <a
+                    href="{% url 'students:list' %}"
+                    class="btn btn-light border btn-premium"
+                >
+                    Cancel
+                </a>
+
+                <button
+                    type="submit"
+                    class="btn btn-primary btn-premium"
+                    id="submitBtn"
+                >
+                    <i class="bi bi-check2-circle"></i>
+
+                    <span id="submitText">
+                        {% if student %}
+                            Update Student
+                        {% else %}
+                            Create Student
+                        {% endif %}
+                    </span>
+                </button>
+
+            </div>
+
+        </div>
+
+    </form>
+
+</div>
+{% endblock %}
+
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    const form = document.getElementById('studentForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const submitText = document.getElementById('submitText');
+
+    const firstName = document.getElementById('{{ form.first_name.id_for_label }}');
+    const lastName = document.getElementById('{{ form.last_name.id_for_label }}');
+    const studentId = document.getElementById('{{ form.student_id.id_for_label }}');
+
+    const namePreview = document.getElementById('namePreview');
+    const idPreview = document.getElementById('idPreview');
+
+    function updatePreview() {
+
+        const first = firstName ? firstName.value.trim() : '';
+        const last = lastName ? lastName.value.trim() : '';
+        const id = studentId ? studentId.value.trim() : '';
+
+        const fullName = `${first} ${last}`.trim();
+
+        namePreview.textContent = fullName || 'New Student';
+        idPreview.textContent = id || 'Student ID';
+    }
+
+    if (firstName) {
+        firstName.addEventListener('input', updatePreview);
+    }
+
+    if (lastName) {
+        lastName.addEventListener('input', updatePreview);
+    }
+
+    if (studentId) {
+        studentId.addEventListener('input', updatePreview);
+    }
+
+
+    /* PHOTO PREVIEW */
+    const photoInput = document.getElementById(
+        '{{ form.photo.id_for_label }}'
+    );
+
+    const previewImage = document.getElementById('previewImage');
+    const photoPlaceholder = document.getElementById('photoPlaceholder');
+
+    if (photoInput) {
+
+        photoInput.addEventListener('change', function () {
+
+            const file = this.files && this.files[0];
+
+            if (!file) {
+                return;
+            }
+
+            if (!file.type.startsWith('image/')) {
+                return;
+            }
+
+            const reader = new FileReader();
+
+            reader.onload = function (event) {
+
+                if (previewImage) {
+                    previewImage.src = event.target.result;
+                    previewImage.style.display = 'block';
+                }
+
+                if (photoPlaceholder) {
+                    photoPlaceholder.style.display = 'none';
+                }
+            };
+
+            reader.readAsDataURL(file);
+        });
+    }
+
+
+    /* SUBMIT STATE */
+    if (form) {
+
+        form.addEventListener('submit', function () {
+
+            if (!form.checkValidity()) {
+                return;
+            }
+
+            submitBtn.disabled = true;
+
+            submitText.textContent =
+                '{% if student %}Updating...{% else %}Creating...{% endif %}';
+
+            const icon = submitBtn.querySelector('i');
+
+            if (icon) {
+                icon.className = 'bi bi-arrow-repeat';
+                icon.style.animation = 'spin .8s linear infinite';
+            }
+        });
+
+    }
+
+
+    /* CTRL/CMD + S */
+    document.addEventListener('keydown', function (event) {
+
+        if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 's') {
+
+            event.preventDefault();
+
+            if (form) {
+                form.requestSubmit();
+            }
+        }
+
+    });
+
+});
+</script>
+
+<style>
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+</style>
+{% endblock %}

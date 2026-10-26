@@ -1,0 +1,1171 @@
+{% extends 'base.html' %}
+
+{% block title %}Record Payment{% endblock %}
+{% block page_title %}Record Payment{% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item">
+    <a href="{% url 'fees:list' %}">Fees</a>
+</li>
+<li class="breadcrumb-item">
+    <a href="{% url 'fees:detail' fee.pk %}">
+        Fee #{{ fee.pk }}
+    </a>
+</li>
+<li class="breadcrumb-item active">Payment</li>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .payment-page {
+        max-width: 980px;
+        margin: 0 auto;
+        padding-bottom: 45px;
+    }
+
+    /* HERO */
+    .payment-hero {
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 20px;
+        padding: 28px 30px;
+        border-radius: 23px;
+        background: linear-gradient(135deg, #111827 0%, #1e293b 58%, #312e81 100%);
+        color: #fff;
+        box-shadow: 0 16px 40px rgba(15,23,42,.14);
+    }
+
+    .payment-hero::before {
+        content: "";
+        position: absolute;
+        width: 260px;
+        height: 260px;
+        right: -90px;
+        top: -150px;
+        border-radius: 50%;
+        background: rgba(255,255,255,.06);
+    }
+
+    .payment-hero::after {
+        content: "";
+        position: absolute;
+        width: 170px;
+        height: 170px;
+        right: 150px;
+        bottom: -125px;
+        border-radius: 50%;
+        background: rgba(99,102,241,.14);
+    }
+
+    .hero-inner {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+    }
+
+    .hero-main {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .hero-icon {
+        width: 58px;
+        height: 58px;
+        flex: 0 0 58px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid rgba(255,255,255,.13);
+        border-radius: 16px;
+        background: rgba(255,255,255,.1);
+        font-size: 24px;
+    }
+
+    .hero-eyebrow {
+        margin-bottom: 5px;
+        color: rgba(255,255,255,.5);
+        font-size: 9px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .hero-title {
+        margin: 0;
+        color: #fff;
+        font-size: 25px;
+        font-weight: 800;
+        letter-spacing: -.5px;
+    }
+
+    .hero-text {
+        margin: 5px 0 0;
+        color: rgba(255,255,255,.63);
+        font-size: 10px;
+    }
+
+    .back-btn {
+        position: relative;
+        z-index: 3;
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        min-height: 40px;
+        padding: 0 14px;
+        border: 1px solid rgba(255,255,255,.14);
+        border-radius: 10px;
+        background: rgba(255,255,255,.08);
+        color: #fff;
+        text-decoration: none;
+        font-size: 10px;
+        font-weight: 800;
+    }
+
+    .back-btn:hover {
+        background: rgba(255,255,255,.15);
+        color: #fff;
+    }
+
+    /* LAYOUT */
+    .payment-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 290px;
+        gap: 18px;
+        align-items: start;
+    }
+
+    .payment-card,
+    .summary-card {
+        overflow: hidden;
+        border: 1px solid #e8ebf0;
+        border-radius: 20px;
+        background: #fff;
+        box-shadow: 0 5px 22px rgba(15,23,42,.045);
+    }
+
+    /* FORM HEADER */
+    .card-header-custom {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        padding: 18px 20px;
+        border-bottom: 1px solid #eef0f4;
+    }
+
+    .card-icon {
+        width: 37px;
+        height: 37px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 11px;
+        background: #ecfdf5;
+        color: #059669;
+        font-size: 16px;
+    }
+
+    .card-title {
+        margin: 0;
+        color: #1e293b;
+        font-size: 13px;
+        font-weight: 800;
+    }
+
+    .card-subtitle {
+        margin-top: 2px;
+        color: #94a3b8;
+        font-size: 9px;
+    }
+
+    .card-body-custom {
+        padding: 21px;
+    }
+
+    /* OUTSTANDING */
+    .balance-banner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+        margin-bottom: 20px;
+        padding: 15px 17px;
+        border: 1px solid #fed7aa;
+        border-radius: 14px;
+        background: #fffaf5;
+    }
+
+    .balance-left {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+    }
+
+    .balance-icon {
+        width: 39px;
+        height: 39px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 11px;
+        background: #ffedd5;
+        color: #ea580c;
+        font-size: 16px;
+    }
+
+    .balance-label {
+        color: #9a3412;
+        font-size: 9px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: .4px;
+    }
+
+    .balance-sub {
+        margin-top: 2px;
+        color: #a8a29e;
+        font-size: 9px;
+    }
+
+    .balance-value {
+        color: #c2410c;
+        font-size: 20px;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    /* FORM */
+    .field {
+        margin-bottom: 18px;
+    }
+
+    .field:last-child {
+        margin-bottom: 0;
+    }
+
+    .form-label-custom {
+        display: block;
+        margin-bottom: 7px;
+        color: #334155;
+        font-size: 10px;
+        font-weight: 800;
+    }
+
+    .required {
+        color: #ef4444;
+    }
+
+    .form-control-custom,
+    .form-select-custom {
+        width: 100%;
+        height: 42px;
+        padding: 0 12px;
+        border: 1px solid #dfe4ea;
+        border-radius: 10px;
+        outline: none;
+        background: #fff;
+        color: #334155;
+        font-size: 11px;
+        transition: .2s ease;
+    }
+
+    .form-control-custom:focus,
+    .form-select-custom:focus {
+        border-color: #a5b4fc;
+        box-shadow: 0 0 0 3px rgba(99,102,241,.08);
+    }
+
+    .form-control-custom::placeholder {
+        color: #c0c7d1;
+    }
+
+    textarea.form-control-custom {
+        height: auto;
+        min-height: 85px;
+        padding-top: 11px;
+        resize: vertical;
+    }
+
+    .field-hint {
+        margin-top: 5px;
+        color: #a1aab8;
+        font-size: 8px;
+        line-height: 1.5;
+    }
+
+    /* AMOUNT */
+    .amount-wrap {
+        position: relative;
+    }
+
+    .currency {
+        position: absolute;
+        left: 1px;
+        top: 1px;
+        bottom: 1px;
+        width: 39px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 9px 0 0 9px;
+        background: #f8fafc;
+        color: #64748b;
+        font-size: 12px;
+        font-weight: 800;
+        pointer-events: none;
+    }
+
+    .amount-input {
+        padding-left: 50px !important;
+        font-size: 14px !important;
+        font-weight: 800;
+    }
+
+    /* METHOD CARDS */
+    .method-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 7px;
+    }
+
+    .method-option {
+        position: relative;
+    }
+
+    .method-option input {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .method-label {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        min-height: 78px;
+        padding: 9px 5px;
+        border: 1px solid #e2e8f0;
+        border-radius: 11px;
+        background: #fff;
+        color: #64748b;
+        text-align: center;
+        cursor: pointer;
+        transition: .18s ease;
+    }
+
+    .method-label i {
+        font-size: 17px;
+    }
+
+    .method-label span {
+        font-size: 8px;
+        font-weight: 800;
+    }
+
+    .method-option input:checked + .method-label {
+        border-color: #a5b4fc;
+        background: #eef2ff;
+        color: #4f46e5;
+        box-shadow: 0 0 0 2px rgba(99,102,241,.07);
+    }
+
+    .method-label:hover {
+        border-color: #c7d2fe;
+        background: #fafbff;
+    }
+
+    /* SIDE SUMMARY */
+    .summary-section {
+        padding: 18px;
+        border-bottom: 1px solid #eef0f4;
+    }
+
+    .summary-section:last-child {
+        border-bottom: 0;
+    }
+
+    .summary-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 13px;
+        color: #334155;
+        font-size: 11px;
+        font-weight: 800;
+    }
+
+    .summary-title i {
+        color: #4f46e5;
+    }
+
+    .student-mini {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px;
+        border-radius: 11px;
+        background: #f8fafc;
+    }
+
+    .student-avatar {
+        width: 38px;
+        height: 38px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        background: #eef2ff;
+        color: #4f46e5;
+        font-size: 10px;
+        font-weight: 800;
+    }
+
+    .student-name {
+        color: #334155;
+        font-size: 10px;
+        font-weight: 800;
+    }
+
+    .student-id {
+        margin-top: 2px;
+        color: #94a3b8;
+        font-size: 8px;
+    }
+
+    .mini-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .mini-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 9px 0;
+        border-bottom: 1px solid #f1f3f6;
+    }
+
+    .mini-row:last-child {
+        border-bottom: 0;
+    }
+
+    .mini-label {
+        color: #94a3b8;
+        font-size: 9px;
+    }
+
+    .mini-value {
+        color: #475569;
+        font-size: 9px;
+        font-weight: 800;
+        text-align: right;
+    }
+
+    .mini-value.danger {
+        color: #dc2626;
+    }
+
+    .security-note {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        padding: 11px;
+        border: 1px solid #e0e7ff;
+        border-radius: 11px;
+        background: #f8faff;
+    }
+
+    .security-note i {
+        color: #4f46e5;
+        font-size: 13px;
+        margin-top: 1px;
+    }
+
+    .security-note p {
+        margin: 0;
+        color: #64748b;
+        font-size: 8px;
+        line-height: 1.65;
+    }
+
+    /* FOOTER */
+    .form-footer {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 9px;
+        padding: 15px 20px;
+        border-top: 1px solid #eef0f4;
+        background: #fafbfc;
+    }
+
+    .footer-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        min-height: 40px;
+        padding: 0 15px;
+        border-radius: 9px;
+        text-decoration: none;
+        font-size: 10px;
+        font-weight: 800;
+        cursor: pointer;
+        transition: .2s ease;
+    }
+
+    .footer-btn.cancel {
+        border: 1px solid #e2e8f0;
+        background: #fff;
+        color: #64748b;
+    }
+
+    .footer-btn.cancel:hover {
+        background: #f8fafc;
+        color: #334155;
+    }
+
+    .footer-btn.submit {
+        border: 1px solid #059669;
+        background: #059669;
+        color: #fff;
+        box-shadow: 0 5px 14px rgba(5,150,105,.17);
+    }
+
+    .footer-btn.submit:hover {
+        border-color: #047857;
+        background: #047857;
+        transform: translateY(-1px);
+    }
+
+    .footer-btn.submit:disabled {
+        opacity: .7;
+        cursor: wait;
+        transform: none;
+    }
+
+    .input-error {
+        border-color: #fca5a5 !important;
+        background: #fffafa !important;
+    }
+
+    .field-error {
+        margin-top: 5px;
+        color: #dc2626;
+        font-size: 8px;
+        font-weight: 600;
+    }
+
+    @media (max-width: 850px) {
+        .payment-layout {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 650px) {
+        .payment-hero {
+            padding: 22px;
+        }
+
+        .hero-inner {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .back-btn {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .hero-title {
+            font-size: 22px;
+        }
+
+        .method-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+
+    @media (max-width: 450px) {
+        .method-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .form-footer {
+            flex-direction: column-reverse;
+        }
+
+        .footer-btn {
+            width: 100%;
+        }
+
+        .balance-banner {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .balance-value {
+            margin-left: 50px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="payment-page">
+
+    <!-- HERO -->
+    <div class="payment-hero">
+
+        <div class="hero-inner">
+
+            <div class="hero-main">
+
+                <div class="hero-icon">
+                    <i class="bi bi-cash-stack"></i>
+                </div>
+
+                <div>
+                    <div class="hero-eyebrow">
+                        Finance · Fee #{{ fee.pk }}
+                    </div>
+
+                    <h1 class="hero-title">
+                        Record Payment
+                    </h1>
+
+                    <p class="hero-text">
+                        {{ fee.student.full_name }}
+                        · {{ fee.get_fee_type_display }}
+                    </p>
+                </div>
+
+            </div>
+
+            <a
+                href="{% url 'fees:detail' fee.pk %}"
+                class="back-btn"
+            >
+                <i class="bi bi-arrow-left"></i>
+                Back to Fee
+            </a>
+
+        </div>
+
+    </div>
+
+    <div class="payment-layout">
+
+        <!-- FORM -->
+        <div class="payment-card">
+
+            <div class="card-header-custom">
+
+                <div class="card-icon">
+                    <i class="bi bi-wallet2"></i>
+                </div>
+
+                <div>
+                    <h2 class="card-title">
+                        Payment Details
+                    </h2>
+
+                    <div class="card-subtitle">
+                        Enter the amount and payment method
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="card-body-custom">
+
+                <!-- BALANCE -->
+                <div class="balance-banner">
+
+                    <div class="balance-left">
+
+                        <div class="balance-icon">
+                            <i class="bi bi-exclamation-circle"></i>
+                        </div>
+
+                        <div>
+                            <div class="balance-label">
+                                Outstanding Balance
+                            </div>
+
+                            <div class="balance-sub">
+                                Due {{ fee.due_date|date:"d M Y" }}
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="balance-value">
+                        ₹{{ balance }}
+                    </div>
+
+                </div>
+
+                <form
+                    method="post"
+                    id="paymentForm"
+                    novalidate
+                >
+
+                    {% csrf_token %}
+
+                    <!-- AMOUNT -->
+                    <div class="field">
+
+                        <label
+                            for="amount"
+                            class="form-label-custom"
+                        >
+                            Payment Amount
+                            <span class="required">*</span>
+                        </label>
+
+                        <div class="amount-wrap">
+
+                            <span class="currency">
+                                ₹
+                            </span>
+
+                            <input
+                                type="number"
+                                name="amount"
+                                id="amount"
+                                class="form-control-custom amount-input"
+                                step="0.01"
+                                min="0.01"
+                                max="{{ balance }}"
+                                value="{{ balance }}"
+                                required
+                            >
+
+                        </div>
+
+                        <div class="field-hint">
+                            Maximum payment allowed: ₹{{ balance }}
+                        </div>
+
+                    </div>
+
+                    <!-- METHOD -->
+                    <div class="field">
+
+                        <label class="form-label-custom">
+                            Payment Method
+                            <span class="required">*</span>
+                        </label>
+
+                        <div class="method-grid">
+
+                            {% for val, label in payment_methods %}
+
+                            <div class="method-option">
+
+                                <input
+                                    type="radio"
+                                    name="payment_method"
+                                    id="method_{{ val }}"
+                                    value="{{ val }}"
+                                    {% if forloop.first %}checked{% endif %}
+                                    required
+                                >
+
+                                <label
+                                    for="method_{{ val }}"
+                                    class="method-label"
+                                >
+
+                                    {% if val == 'cash' %}
+                                        <i class="bi bi-cash"></i>
+                                    {% elif val == 'bank_transfer' %}
+                                        <i class="bi bi-bank"></i>
+                                    {% elif val == 'upi' %}
+                                        <i class="bi bi-phone"></i>
+                                    {% elif val == 'cheque' %}
+                                        <i class="bi bi-file-earmark-text"></i>
+                                    {% else %}
+                                        <i class="bi bi-credit-card"></i>
+                                    {% endif %}
+
+                                    <span>
+                                        {{ label }}
+                                    </span>
+
+                                </label>
+
+                            </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                    </div>
+
+                    <!-- REFERENCE -->
+                    <div class="field">
+
+                        <label
+                            for="transaction_reference"
+                            class="form-label-custom"
+                        >
+                            Transaction Reference
+                        </label>
+
+                        <input
+                            type="text"
+                            name="transaction_reference"
+                            id="transaction_reference"
+                            class="form-control-custom"
+                            maxlength="100"
+                            placeholder="UPI ID, cheque number, bank reference..."
+                        >
+
+                        <div class="field-hint">
+                            Recommended for UPI, bank transfer and cheque payments.
+                        </div>
+
+                    </div>
+
+                    <!-- NOTES -->
+                    <div class="field">
+
+                        <label
+                            for="notes"
+                            class="form-label-custom"
+                        >
+                            Notes
+                        </label>
+
+                        <textarea
+                            name="notes"
+                            id="notes"
+                            class="form-control-custom"
+                            rows="3"
+                            placeholder="Add any additional payment notes..."
+                        ></textarea>
+
+                    </div>
+
+                    <!-- FOOTER -->
+                    <div class="form-footer">
+
+                        <a
+                            href="{% url 'fees:detail' fee.pk %}"
+                            class="footer-btn cancel"
+                        >
+                            Cancel
+                        </a>
+
+                        <button
+                            type="submit"
+                            class="footer-btn submit"
+                            id="submitBtn"
+                        >
+                            <i class="bi bi-check2-circle"></i>
+                            Save Payment
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+        <!-- SIDE SUMMARY -->
+        <aside class="summary-card">
+
+            <!-- STUDENT -->
+            <div class="summary-section">
+
+                <div class="summary-title">
+                    <i class="bi bi-person"></i>
+                    Student
+                </div>
+
+                <div class="student-mini">
+
+                    <div class="student-avatar">
+                        {{ fee.student.initials }}
+                    </div>
+
+                    <div>
+                        <div class="student-name">
+                            {{ fee.student.full_name }}
+                        </div>
+
+                        <div class="student-id">
+                            {{ fee.student.student_id }}
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- FEE SUMMARY -->
+            <div class="summary-section">
+
+                <div class="summary-title">
+                    <i class="bi bi-receipt"></i>
+                    Fee Summary
+                </div>
+
+                <div class="mini-list">
+
+                    <div class="mini-row">
+
+                        <span class="mini-label">
+                            Fee Type
+                        </span>
+
+                        <span class="mini-value">
+                            {{ fee.get_fee_type_display }}
+                        </span>
+
+                    </div>
+
+                    <div class="mini-row">
+
+                        <span class="mini-label">
+                            Total Fee
+                        </span>
+
+                        <span class="mini-value">
+                            ₹{{ fee.amount }}
+                        </span>
+
+                    </div>
+
+                    <div class="mini-row">
+
+                        <span class="mini-label">
+                            Already Paid
+                        </span>
+
+                        <span class="mini-value">
+                            ₹{{ fee.total_paid }}
+                        </span>
+
+                    </div>
+
+                    <div class="mini-row">
+
+                        <span class="mini-label">
+                            Balance
+                        </span>
+
+                        <span class="mini-value danger">
+                            ₹{{ balance }}
+                        </span>
+
+                    </div>
+
+                    <div class="mini-row">
+
+                        <span class="mini-label">
+                            Due Date
+                        </span>
+
+                        <span class="mini-value">
+                            {{ fee.due_date|date:"d M Y" }}
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- INFO -->
+            <div class="summary-section">
+
+                <div class="summary-title">
+                    <i class="bi bi-shield-check"></i>
+                    Payment Note
+                </div>
+
+                <div class="security-note">
+
+                    <i class="bi bi-info-circle"></i>
+
+                    <p>
+                        Once the payment is saved, the system will
+                        generate a unique receipt number and update
+                        the fee status automatically.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </aside>
+
+    </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    const form = document.getElementById('paymentForm');
+    const amountInput = document.getElementById('amount');
+    const submitBtn = document.getElementById('submitBtn');
+
+    const balance = parseFloat('{{ balance|default:0 }}') || 0;
+
+    function clearErrors() {
+
+        document
+            .querySelectorAll('.input-error')
+            .forEach(function (element) {
+                element.classList.remove('input-error');
+            });
+
+        document
+            .querySelectorAll('.field-error')
+            .forEach(function (element) {
+                element.remove();
+            });
+    }
+
+    function addError(input, message) {
+
+        input.classList.add('input-error');
+
+        const error = document.createElement('div');
+
+        error.className = 'field-error';
+        error.textContent = message;
+
+        input.parentElement.appendChild(error);
+    }
+
+    form.addEventListener('submit', function (event) {
+
+        clearErrors();
+
+        let valid = true;
+
+        const amount = parseFloat(amountInput.value);
+
+        if (!amountInput.value || isNaN(amount)) {
+
+            addError(
+                amountInput,
+                'Please enter a payment amount.'
+            );
+
+            valid = false;
+
+        } else if (amount <= 0) {
+
+            addError(
+                amountInput,
+                'Payment amount must be greater than 0.'
+            );
+
+            valid = false;
+
+        } else if (amount > balance) {
+
+            addError(
+                amountInput,
+                'Payment cannot exceed the outstanding balance of ₹' +
+                balance.toFixed(2) +
+                '.'
+            );
+
+            valid = false;
+        }
+
+        const method =
+            document.querySelector(
+                'input[name="payment_method"]:checked'
+            );
+
+        if (!method) {
+
+            const methodGrid =
+                document.querySelector('.method-grid');
+
+            const error = document.createElement('div');
+
+            error.className = 'field-error';
+            error.textContent =
+                'Please select a payment method.';
+
+            methodGrid.parentElement.appendChild(error);
+
+            valid = false;
+        }
+
+        if (!valid) {
+
+            event.preventDefault();
+
+            const firstError =
+                document.querySelector('.input-error');
+
+            if (firstError) {
+                firstError.focus();
+            }
+
+            return;
+        }
+
+        submitBtn.disabled = true;
+
+        submitBtn.innerHTML =
+            '<span class="spinner-border spinner-border-sm me-1" role="status"></span>' +
+            'Saving Payment...';
+
+    });
+
+
+    amountInput.addEventListener('input', function () {
+
+        const value = parseFloat(this.value);
+
+        if (value > balance) {
+            this.value = balance;
+        }
+
+        if (value < 0) {
+            this.value = '';
+        }
+
+    });
+
+
+    document.addEventListener('keydown', function (event) {
+
+        if (
+            (event.ctrlKey || event.metaKey) &&
+            event.key.toLowerCase() === 's'
+        ) {
+            event.preventDefault();
+
+            if (!submitBtn.disabled) {
+                form.requestSubmit();
+            }
+        }
+
+    });
+
+});
+</script>
+{% endblock %}

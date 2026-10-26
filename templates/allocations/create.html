@@ -1,0 +1,1689 @@
+{% extends 'base.html' %}
+
+{% block title %}New Allocation{% endblock %}
+{% block page_title %}New Allocation{% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item">
+    <a href="{% url 'allocations:list' %}">Allocations</a>
+</li>
+<li class="breadcrumb-item active">New Allocation</li>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .allocation-create {
+        max-width: 1250px;
+        margin: 0 auto;
+    }
+
+    /* HERO */
+    .create-hero {
+        position: relative;
+        overflow: hidden;
+        border-radius: 22px;
+        padding: 28px 30px;
+        margin-bottom: 20px;
+        color: #fff;
+        background: linear-gradient(135deg, #111827 0%, #1e293b 58%, #3730a3 100%);
+        box-shadow: 0 16px 40px rgba(15,23,42,.16);
+    }
+
+    .create-hero::before {
+        content: "";
+        position: absolute;
+        width: 240px;
+        height: 240px;
+        border-radius: 50%;
+        right: -80px;
+        top: -120px;
+        background: rgba(99,102,241,.18);
+    }
+
+    .create-hero-content {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .hero-heading {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .hero-icon {
+        width: 56px;
+        height: 56px;
+        border-radius: 16px;
+        background: rgba(255,255,255,.12);
+        border: 1px solid rgba(255,255,255,.14);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        flex-shrink: 0;
+    }
+
+    .hero-heading h1 {
+        margin: 0 0 5px;
+        font-size: 25px;
+        font-weight: 800;
+    }
+
+    .hero-heading p {
+        margin: 0;
+        color: rgba(255,255,255,.68);
+        font-size: 12px;
+    }
+
+    .back-btn {
+        color: #fff;
+        border: 1px solid rgba(255,255,255,.18);
+        background: rgba(255,255,255,.07);
+        padding: 9px 13px;
+        border-radius: 10px;
+        text-decoration: none;
+        font-size: 11px;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+    }
+
+    .back-btn:hover {
+        color: #fff;
+        background: rgba(255,255,255,.13);
+    }
+
+    /* STEPS */
+    .steps-card {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 18px;
+        padding: 18px 22px;
+        margin-bottom: 18px;
+        box-shadow: 0 5px 18px rgba(15,23,42,.035);
+    }
+
+    .steps {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+    }
+
+    .step {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .step-number {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #eef2ff;
+        color: #4f46e5;
+        font-size: 11px;
+        font-weight: 800;
+        flex-shrink: 0;
+    }
+
+    .step-text strong {
+        display: block;
+        color: #1e293b;
+        font-size: 11px;
+        font-weight: 800;
+    }
+
+    .step-text span {
+        color: #94a3b8;
+        font-size: 10px;
+    }
+
+    /* GRID */
+    .form-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 330px;
+        gap: 18px;
+        align-items: start;
+    }
+
+    .form-card,
+    .summary-card {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 19px;
+        box-shadow: 0 6px 20px rgba(15,23,42,.035);
+    }
+
+    .form-card {
+        padding: 25px;
+    }
+
+    .card-heading {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        padding-bottom: 17px;
+        margin-bottom: 20px;
+        border-bottom: 1px solid #eef2f7;
+    }
+
+    .heading-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 11px;
+        background: #eef2ff;
+        color: #4f46e5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .card-heading h3 {
+        margin: 0 0 3px;
+        font-size: 14px;
+        font-weight: 800;
+        color: #111827;
+    }
+
+    .card-heading p {
+        margin: 0;
+        color: #94a3b8;
+        font-size: 10px;
+    }
+
+    /* FORM */
+    .field {
+        margin-bottom: 18px;
+    }
+
+    .field:last-child {
+        margin-bottom: 0;
+    }
+
+    .field-label {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 7px;
+    }
+
+    .field-label label {
+        margin: 0;
+        color: #334155;
+        font-size: 11px;
+        font-weight: 750;
+    }
+
+    .required {
+        color: #ef4444;
+    }
+
+    .field-hint {
+        color: #94a3b8;
+        font-size: 9px;
+    }
+
+    .form-control,
+    .form-select {
+        min-height: 43px;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        font-size: 12px;
+        color: #1e293b;
+        box-shadow: none !important;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        border-color: #818cf8;
+        box-shadow: 0 0 0 3px rgba(99,102,241,.09) !important;
+    }
+
+    textarea.form-control {
+        min-height: 95px;
+        resize: vertical;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+    }
+
+    /* STUDENT PREVIEW */
+    .student-preview {
+        display: none;
+        margin-top: 10px;
+        padding: 13px;
+        border: 1px solid #e0e7ff;
+        border-radius: 12px;
+        background: #f8faff;
+    }
+
+    .student-preview.show {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+    }
+
+    .student-avatar {
+        width: 38px;
+        height: 38px;
+        border-radius: 11px;
+        background: #4f46e5;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        font-weight: 800;
+    }
+
+    .student-preview strong {
+        display: block;
+        color: #1e293b;
+        font-size: 11px;
+    }
+
+    .student-preview span {
+        color: #64748b;
+        font-size: 10px;
+    }
+
+    /* BED SELECT */
+    .bed-status {
+        display: none;
+        margin-top: 10px;
+        padding: 11px 13px;
+        border-radius: 10px;
+        font-size: 10px;
+    }
+
+    .bed-status.show {
+        display: block;
+    }
+
+    .bed-status.success {
+        background: #ecfdf5;
+        color: #047857;
+        border: 1px solid #a7f3d0;
+    }
+
+    .bed-status.info {
+        background: #eff6ff;
+        color: #1d4ed8;
+        border: 1px solid #bfdbfe;
+    }
+
+    .bed-status.warning {
+        background: #fffbeb;
+        color: #b45309;
+        border: 1px solid #fde68a;
+    }
+
+    /* SUMMARY */
+    .summary-card {
+        padding: 21px;
+        position: sticky;
+        top: 20px;
+    }
+
+    .summary-title {
+        margin: 0 0 17px;
+        font-size: 14px;
+        font-weight: 800;
+        color: #111827;
+    }
+
+    .summary-empty {
+        padding: 22px 10px;
+        text-align: center;
+        border-radius: 13px;
+        background: #f8fafc;
+        color: #94a3b8;
+        font-size: 11px;
+        line-height: 1.6;
+    }
+
+    .summary-empty i {
+        display: block;
+        font-size: 25px;
+        margin-bottom: 8px;
+    }
+
+    .selection-box {
+        display: none;
+        border: 1px solid #e0e7ff;
+        border-radius: 14px;
+        overflow: hidden;
+    }
+
+    .selection-box.show {
+        display: block;
+    }
+
+    .selection-header {
+        padding: 13px;
+        background: #eef2ff;
+        color: #4338ca;
+        font-size: 10px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: .5px;
+    }
+
+    .selection-body {
+        padding: 13px;
+    }
+
+    .selection-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 9px 0;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    .selection-row:last-child {
+        border-bottom: 0;
+    }
+
+    .selection-row span {
+        color: #94a3b8;
+        font-size: 10px;
+    }
+
+    .selection-row strong {
+        color: #334155;
+        font-size: 10px;
+        text-align: right;
+    }
+
+    /* INFO */
+    .info-box {
+        margin-top: 16px;
+        padding: 14px;
+        border-radius: 13px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+    }
+
+    .info-box-title {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        color: #334155;
+        font-size: 10px;
+        font-weight: 800;
+        margin-bottom: 7px;
+    }
+
+    .info-box p {
+        margin: 0;
+        color: #64748b;
+        font-size: 10px;
+        line-height: 1.55;
+    }
+
+    /* ACTION BAR */
+    .action-bar {
+        margin-top: 18px;
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 16px;
+        padding: 14px 17px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+    }
+
+    .action-note {
+        color: #94a3b8;
+        font-size: 10px;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 8px;
+    }
+
+    .cancel-btn,
+    .save-btn {
+        min-height: 40px;
+        padding: 0 16px;
+        border-radius: 10px;
+        font-size: 11px;
+        font-weight: 750;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .cancel-btn {
+        background: #f1f5f9;
+        color: #475569;
+        border: 1px solid #e2e8f0;
+    }
+
+    .cancel-btn:hover {
+        color: #1e293b;
+        background: #e2e8f0;
+    }
+
+    .save-btn {
+        border: 0;
+        background: #4f46e5;
+        color: #fff;
+    }
+
+    .save-btn:hover {
+        background: #4338ca;
+    }
+
+    .save-btn:disabled {
+        opacity: .65;
+        cursor: not-allowed;
+    }
+
+    /* ERROR */
+    .field-error {
+        color: #dc2626;
+        font-size: 10px;
+        margin-top: 5px;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 950px) {
+        .form-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .summary-card {
+            position: static;
+        }
+    }
+
+    @media (max-width: 650px) {
+        .create-hero {
+            padding: 22px;
+        }
+
+        .create-hero-content {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .back-btn {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .steps {
+            grid-template-columns: 1fr;
+        }
+
+        .form-card {
+            padding: 19px;
+        }
+
+        .form-row {
+            grid-template-columns: 1fr;
+        }
+
+        .action-bar {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .action-buttons {
+            width: 100%;
+        }
+
+        .cancel-btn,
+        .save-btn {
+            flex: 1;
+        }
+    }
+
+/* ===== STAYNEST PREMIUM ALLOCATION THEME ===== */
+:root{
+ --sn-green:#52C048;--sn-green-dark:#3fa638;--sn-green-soft:#eef9ec;
+ --sn-border:#e4ebe4;--sn-text:#172019;--sn-muted:#718076;
+}
+.allocation-create{max-width:1180px!important;padding:8px 0 45px}
+.create-hero{
+ border-radius:24px!important;padding:30px 34px!important;margin-bottom:20px!important;
+ background:radial-gradient(circle at 90% 15%,rgba(82,192,72,.20),transparent 28%),
+ linear-gradient(135deg,#112016 0%,#17271b 52%,#25512a 100%)!important;
+ box-shadow:0 18px 42px rgba(25,45,29,.12)!important;color:#fff!important;
+}
+.create-hero::before{background:rgba(82,192,72,.10)!important}
+.hero-icon{
+ width:60px!important;height:60px!important;border-radius:17px!important;
+ background:rgba(82,192,72,.15)!important;border:1px solid rgba(82,192,72,.28)!important;
+ color:#72d968!important;
+}
+.hero-heading h1{
+ color:#fff!important;font-size:28px!important;line-height:1.15!important;
+ font-weight:800!important;margin:0 0 7px!important;text-shadow:none!important;
+}
+.hero-heading p{color:rgba(255,255,255,.68)!important;font-size:13px!important}
+.back-btn{
+ min-height:43px;padding:10px 16px!important;border-radius:12px!important;
+ color:#fff!important;background:rgba(255,255,255,.08)!important;
+ border:1px solid rgba(255,255,255,.16)!important;transition:.2s ease;
+}
+.back-btn:hover{color:#fff!important;background:rgba(82,192,72,.18)!important;
+ border-color:rgba(82,192,72,.35)!important;transform:translateY(-1px)}
+.steps-card,.form-card,.summary-card{
+ border-color:var(--sn-border)!important;
+ box-shadow:0 8px 26px rgba(25,45,29,.045)!important;
+}
+.steps-card{border-radius:18px!important}
+.step-number{background:var(--sn-green-soft)!important;color:var(--sn-green-dark)!important;
+ border:1px solid rgba(82,192,72,.18)}
+.step-text strong{color:var(--sn-text)!important}.step-text span{color:#89958d!important}
+.form-card,.summary-card{border-radius:20px!important}
+.heading-icon{background:var(--sn-green-soft)!important;color:var(--sn-green)!important;
+ border:1px solid rgba(82,192,72,.18)}
+.card-heading h3{color:var(--sn-text)!important}.card-heading p{color:var(--sn-muted)!important}
+.field-label label{color:#344238!important}.field-hint{color:#8a968e!important}
+.form-control,.form-select{
+ min-height:47px!important;border:1px solid #dfe7df!important;border-radius:12px!important;
+ background:#fff!important;color:#26342b!important;padding:10px 13px!important;
+ font-size:13px!important;transition:.2s ease;
+}
+.form-control::placeholder{color:#a3aea6!important}
+.form-control:hover,.form-select:hover{border-color:#cbd8cc!important}
+.form-control:focus,.form-select:focus{
+ border-color:var(--sn-green)!important;box-shadow:0 0 0 4px rgba(82,192,72,.10)!important;outline:none!important
+}
+textarea.form-control{min-height:105px!important}
+.student-preview{border-color:rgba(82,192,72,.18)!important;background:var(--sn-green-soft)!important}
+.student-avatar{background:var(--sn-green)!important}
+.bed-status.success{background:var(--sn-green-soft)!important;color:#317a2d!important;
+ border-color:rgba(82,192,72,.25)!important}
+.summary-empty{background:#f8faf8!important;border:1px dashed #dce6dd;color:#8b978f!important}
+.selection-box{border-color:rgba(82,192,72,.18)!important}
+.selection-header{background:var(--sn-green-soft)!important;color:#347a2f!important}
+.selection-row{border-bottom-color:#edf2ed!important}
+.selection-row span{color:#8a968e!important}.selection-row strong{color:#344238!important}
+.info-box{background:#f8faf8!important;border-color:#e3ebe3!important}
+.action-bar{border-color:var(--sn-border)!important;border-radius:17px!important}
+.cancel-btn{
+ background:#fff!important;color:#536057!important;border-color:#dfe7df!important;border-radius:12px!important
+}
+.cancel-btn:hover{color:#26342b!important;background:#f6f9f6!important;border-color:#cfdacf!important}
+.save-btn{
+ background:linear-gradient(135deg,#52C048,#3fa638)!important;color:#fff!important;
+ border:0!important;border-radius:12px!important;box-shadow:0 9px 20px rgba(82,192,72,.22);
+ transition:.2s ease
+}
+.save-btn:hover{background:linear-gradient(135deg,#59c950,#3fa638)!important;color:#fff!important;
+ transform:translateY(-1px);box-shadow:0 12px 24px rgba(82,192,72,.28)}
+@media(max-width:650px){
+ .allocation-create{padding:4px 0 35px}.create-hero{padding:22px!important;border-radius:20px!important}
+ .hero-heading h1{font-size:23px!important}.hero-heading p{font-size:12px!important}
+ .hero-icon{width:50px!important;height:50px!important;flex-basis:50px;border-radius:14px!important}
+ .form-card{padding:18px!important}.steps-card{padding:15px!important}
+}
+
+</style>
+{% endblock %}
+
+
+{% block content %}
+
+<div class="allocation-create">
+
+    <!-- HERO -->
+    <section class="create-hero">
+
+        <div class="create-hero-content">
+
+            <div class="hero-heading">
+
+                <div class="hero-icon">
+                    <i class="bi bi-person-plus-fill"></i>
+                </div>
+
+                <div>
+                    <h1>New Allocation</h1>
+
+                    <p>
+                        Assign a student to an available hostel room and bed.
+                    </p>
+                </div>
+
+            </div>
+
+            <a href="{% url 'allocations:list' %}"
+               class="back-btn">
+                <i class="bi bi-arrow-left"></i>
+                Back to Allocations
+            </a>
+
+        </div>
+
+    </section>
+
+
+    <!-- STEPS -->
+    <div class="steps-card">
+
+        <div class="steps">
+
+            <div class="step">
+
+                <div class="step-number">01</div>
+
+                <div class="step-text">
+                    <strong>Select Student</strong>
+                    <span>Choose resident</span>
+                </div>
+
+            </div>
+
+
+            <div class="step">
+
+                <div class="step-number">02</div>
+
+                <div class="step-text">
+                    <strong>Choose Room</strong>
+                    <span>Building & room</span>
+                </div>
+
+            </div>
+
+
+            <div class="step">
+
+                <div class="step-number">03</div>
+
+                <div class="step-text">
+                    <strong>Confirm Bed</strong>
+                    <span>Save allocation</span>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- FORM -->
+    <form method="post"
+          id="allocationForm">
+
+        {% csrf_token %}
+
+        <div class="form-layout">
+
+            <!-- LEFT -->
+            <div>
+
+                <div class="form-card">
+
+                    <div class="card-heading">
+
+                        <div class="heading-icon">
+                            <i class="bi bi-person-vcard-fill"></i>
+                        </div>
+
+                        <div>
+                            <h3>Student & Room Details</h3>
+                            <p>Select the student and assign their hostel location.</p>
+                        </div>
+
+                    </div>
+
+
+                    <!-- STUDENT -->
+                    <div class="field">
+
+                        <div class="field-label">
+                            <label for="student">
+                                Student <span class="required">*</span>
+                            </label>
+
+                            <span class="field-hint">
+                                Required
+                            </span>
+                        </div>
+
+                        <select
+                            name="student"
+                            id="student"
+                            class="form-select"
+                            required
+                        >
+
+                            <option value="">
+                                Select a student...
+                            </option>
+
+                            {% for student in students %}
+
+                            <option
+                                value="{{ student.pk }}"
+                                data-name="{{ student.full_name }}"
+                                data-id="{{ student.student_id }}"
+                                data-course="{{ student.course }}"
+                                {% if preselect_student == student.pk|stringformat:"s" %}
+                                    selected
+                                {% endif %}
+                            >
+                                {{ student.student_id }} — {{ student.full_name }}
+                            </option>
+
+                            {% endfor %}
+
+                        </select>
+
+
+                        <div class="student-preview"
+                             id="studentPreview">
+
+                            <div class="student-avatar"
+                                 id="studentInitials">
+                            </div>
+
+                            <div>
+
+                                <strong id="studentName">
+                                    Student
+                                </strong>
+
+                                <span id="studentMeta">
+                                    —
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- LOCATION -->
+                    <div class="card-heading"
+                         style="margin-top:25px;">
+
+                        <div class="heading-icon">
+                            <i class="bi bi-building-fill"></i>
+                        </div>
+
+                        <div>
+                            <h3>Hostel Location</h3>
+                            <p>Choose the building, floor, room and available bed.</p>
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-row">
+
+                        <!-- BUILDING -->
+                        <div class="field">
+
+                            <div class="field-label">
+                                <label for="building">
+                                    Building <span class="required">*</span>
+                                </label>
+                            </div>
+
+                            <select
+                                id="building"
+                                name="building"
+                                class="form-select"
+                                required
+                            >
+
+                                <option value="">
+                                    Select building...
+                                </option>
+
+                                {% for building in buildings %}
+
+                                <option value="{{ building.pk }}">
+                                    {{ building.name }}
+                                </option>
+
+                                {% endfor %}
+
+                            </select>
+
+                        </div>
+
+
+                        <!-- FLOOR -->
+                        <div class="field">
+
+                            <div class="field-label">
+                                <label for="floor">
+                                    Floor <span class="required">*</span>
+                                </label>
+                            </div>
+
+                            <select
+                                id="floor"
+                                name="floor"
+                                class="form-select"
+                                required
+                                disabled
+                            >
+
+                                <option value="">
+                                    Select building first...
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-row">
+
+                        <!-- ROOM -->
+                        <div class="field">
+
+                            <div class="field-label">
+                                <label for="room">
+                                    Room <span class="required">*</span>
+                                </label>
+                            </div>
+
+                            <select
+                                id="room"
+                                name="room"
+                                class="form-select"
+                                required
+                                disabled
+                            >
+
+                                <option value="">
+                                    Select floor first...
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <!-- BED -->
+                        <div class="field">
+
+                            <div class="field-label">
+                                <label for="bed">
+                                    Available Bed <span class="required">*</span>
+                                </label>
+                            </div>
+
+                            <select
+                                id="bed"
+                                name="bed"
+                                class="form-select"
+                                required
+                                disabled
+                            >
+
+                                <option value="">
+                                    Select room first...
+                                </option>
+
+                            </select>
+
+
+                            <div id="bedStatus"
+                                 class="bed-status">
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- DATE -->
+                    <div class="card-heading"
+                         style="margin-top:15px;">
+
+                        <div class="heading-icon">
+                            <i class="bi bi-calendar-check-fill"></i>
+                        </div>
+
+                        <div>
+                            <h3>Allocation Details</h3>
+                            <p>Set the allocation start date and add optional notes.</p>
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-row">
+
+                        <div class="field">
+
+                            <div class="field-label">
+                                <label for="allocated_date">
+                                    Allocation Date
+                                    <span class="required">*</span>
+                                </label>
+                            </div>
+
+                            <input
+                                type="date"
+                                id="allocated_date"
+                                name="allocated_date"
+                                class="form-control"
+                                value="{{ today }}"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div class="field">
+
+                            <div class="field-label">
+                                <label>
+                                    Allocation Type
+                                </label>
+
+                                <span class="field-hint">
+                                    Automatic
+                                </span>
+                            </div>
+
+                            <div style="
+                                min-height:43px;
+                                padding:11px 12px;
+                                border:1px solid #e2e8f0;
+                                border-radius:10px;
+                                background:#f8fafc;
+                                color:#475569;
+                                font-size:11px;
+                                display:flex;
+                                align-items:center;
+                                gap:8px;
+                            ">
+                                <i class="bi bi-shield-check"
+                                   style="color:#4f46e5;"></i>
+                                Standard hostel allocation
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- NOTES -->
+                    <div class="field">
+
+                        <div class="field-label">
+                            <label for="notes">
+                                Notes
+                            </label>
+
+                            <span class="field-hint">
+                                Optional
+                            </span>
+                        </div>
+
+                        <textarea
+                            id="notes"
+                            name="notes"
+                            class="form-control"
+                            placeholder="Add any useful allocation notes..."
+                        ></textarea>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ACTION BAR -->
+                <div class="action-bar">
+
+                    <div class="action-note">
+
+                        <i class="bi bi-info-circle"></i>
+
+                        Fields marked with
+                        <span style="color:#ef4444;">*</span>
+                        are required.
+
+                    </div>
+
+                    <div class="action-buttons">
+
+                        <a href="{% url 'allocations:list' %}"
+                           class="cancel-btn">
+                            Cancel
+                        </a>
+
+                        <button
+                            type="submit"
+                            class="save-btn"
+                            id="saveButton"
+                        >
+                            <i class="bi bi-check2-circle"></i>
+                            Create Allocation
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- RIGHT SUMMARY -->
+            <aside>
+
+                <div class="summary-card">
+
+                    <h3 class="summary-title">
+                        Allocation Summary
+                    </h3>
+
+
+                    <div class="summary-empty"
+                         id="summaryEmpty">
+
+                        <i class="bi bi-clipboard2-check"></i>
+
+                        Select a student and available bed
+                        to see the allocation summary.
+
+                    </div>
+
+
+                    <div class="selection-box"
+                         id="selectionBox">
+
+                        <div class="selection-header">
+                            Selected Allocation
+                        </div>
+
+                        <div class="selection-body">
+
+                            <div class="selection-row">
+                                <span>Student</span>
+                                <strong id="summaryStudent">—</strong>
+                            </div>
+
+                            <div class="selection-row">
+                                <span>Student ID</span>
+                                <strong id="summaryStudentId">—</strong>
+                            </div>
+
+                            <div class="selection-row">
+                                <span>Building</span>
+                                <strong id="summaryBuilding">—</strong>
+                            </div>
+
+                            <div class="selection-row">
+                                <span>Floor</span>
+                                <strong id="summaryFloor">—</strong>
+                            </div>
+
+                            <div class="selection-row">
+                                <span>Room</span>
+                                <strong id="summaryRoom">—</strong>
+                            </div>
+
+                            <div class="selection-row">
+                                <span>Bed</span>
+                                <strong id="summaryBed">—</strong>
+                            </div>
+
+                            <div class="selection-row">
+                                <span>Date</span>
+                                <strong id="summaryDate">—</strong>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="info-box">
+
+                        <div class="info-box-title">
+                            <i class="bi bi-lightbulb-fill"
+                               style="color:#f59e0b;"></i>
+                            Before you save
+                        </div>
+
+                        <p>
+                            Verify the student, room and bed carefully.
+                            Once saved, the selected bed will be associated
+                            with the student.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </aside>
+
+        </div>
+
+    </form>
+
+</div>
+
+{% endblock %}
+
+
+{% block extra_js %}
+
+<script>
+
+(function () {
+
+    const studentSelect = document.getElementById('student');
+    const buildingSelect = document.getElementById('building');
+    const floorSelect = document.getElementById('floor');
+    const roomSelect = document.getElementById('room');
+    const bedSelect = document.getElementById('bed');
+
+    const studentPreview = document.getElementById('studentPreview');
+    const studentInitials = document.getElementById('studentInitials');
+    const studentName = document.getElementById('studentName');
+    const studentMeta = document.getElementById('studentMeta');
+
+    const bedStatus = document.getElementById('bedStatus');
+
+    const summaryEmpty = document.getElementById('summaryEmpty');
+    const selectionBox = document.getElementById('selectionBox');
+
+    const form = document.getElementById('allocationForm');
+    const saveButton = document.getElementById('saveButton');
+
+    const todayInput = document.getElementById('allocated_date');
+
+
+    function resetSelect(select, text) {
+
+        select.innerHTML =
+            `<option value="">${text}</option>`;
+
+        select.disabled = true;
+
+    }
+
+
+    function getInitials(name) {
+
+        if (!name) return '?';
+
+        const parts = name.trim().split(/\s+/);
+
+        if (parts.length === 1) {
+            return parts[0].substring(0, 2).toUpperCase();
+        }
+
+        return (
+            parts[0][0] +
+            parts[parts.length - 1][0]
+        ).toUpperCase();
+
+    }
+
+
+    function updateSummary() {
+
+        const studentOption =
+            studentSelect.options[studentSelect.selectedIndex];
+
+        const buildingOption =
+            buildingSelect.options[buildingSelect.selectedIndex];
+
+        const floorOption =
+            floorSelect.options[floorSelect.selectedIndex];
+
+        const roomOption =
+            roomSelect.options[roomSelect.selectedIndex];
+
+        const bedOption =
+            bedSelect.options[bedSelect.selectedIndex];
+
+
+        const hasStudent =
+            studentSelect.value !== '';
+
+        const hasBed =
+            bedSelect.value !== '';
+
+
+        if (!hasStudent && !hasBed) {
+
+            summaryEmpty.style.display = 'block';
+            selectionBox.classList.remove('show');
+
+            return;
+        }
+
+
+        summaryEmpty.style.display = 'none';
+        selectionBox.classList.add('show');
+
+
+        document.getElementById('summaryStudent').textContent =
+            studentOption?.dataset.name || '—';
+
+        document.getElementById('summaryStudentId').textContent =
+            studentOption?.dataset.id || '—';
+
+        document.getElementById('summaryBuilding').textContent =
+            buildingOption?.textContent.trim() || '—';
+
+        document.getElementById('summaryFloor').textContent =
+            floorOption?.textContent.trim() || '—';
+
+        document.getElementById('summaryRoom').textContent =
+            roomOption?.textContent.trim() || '—';
+
+        document.getElementById('summaryBed').textContent =
+            bedOption?.textContent.trim() || '—';
+
+        document.getElementById('summaryDate').textContent =
+            todayInput.value || '—';
+
+    }
+
+
+    /* STUDENT */
+    studentSelect.addEventListener('change', function () {
+
+        const option =
+            this.options[this.selectedIndex];
+
+        if (!this.value) {
+
+            studentPreview.classList.remove('show');
+
+            updateSummary();
+
+            return;
+        }
+
+
+        const name = option.dataset.name || option.textContent;
+        const id = option.dataset.id || '';
+        const course = option.dataset.course || '';
+
+        studentInitials.textContent =
+            getInitials(name);
+
+        studentName.textContent =
+            name;
+
+        studentMeta.textContent =
+            `${id}${course ? ' • ' + course : ''}`;
+
+        studentPreview.classList.add('show');
+
+        updateSummary();
+
+    });
+
+
+    /* BUILDING */
+    buildingSelect.addEventListener('change', function () {
+
+        resetSelect(
+            floorSelect,
+            'Loading floors...'
+        );
+
+        resetSelect(
+            roomSelect,
+            'Select floor first...'
+        );
+
+        resetSelect(
+            bedSelect,
+            'Select room first...'
+        );
+
+        bedStatus.className = 'bed-status';
+
+        updateSummary();
+
+
+        if (!this.value) {
+
+            resetSelect(
+                floorSelect,
+                'Select building first...'
+            );
+
+            updateSummary();
+
+            return;
+        }
+
+
+        fetchGet(
+            '/hostel/ajax/floors/',
+            {
+                building_id: this.value
+            }
+        ).then(function (data) {
+
+            floorSelect.innerHTML =
+                '<option value="">Select floor...</option>';
+
+
+            if (!data || data.length === 0) {
+
+                floorSelect.innerHTML =
+                    '<option value="">No floors available</option>';
+
+                return;
+            }
+
+
+            data.forEach(function (floor) {
+
+                const option =
+                    document.createElement('option');
+
+                option.value = floor.id;
+                option.textContent = floor.name;
+
+                floorSelect.appendChild(option);
+
+            });
+
+            floorSelect.disabled = false;
+
+        }).catch(function () {
+
+            resetSelect(
+                floorSelect,
+                'Unable to load floors'
+            );
+
+        });
+
+    });
+
+
+    /* FLOOR */
+    floorSelect.addEventListener('change', function () {
+
+        resetSelect(
+            roomSelect,
+            'Loading rooms...'
+        );
+
+        resetSelect(
+            bedSelect,
+            'Select room first...'
+        );
+
+        bedStatus.className = 'bed-status';
+
+        updateSummary();
+
+
+        if (!this.value) {
+
+            resetSelect(
+                roomSelect,
+                'Select floor first...'
+            );
+
+            updateSummary();
+
+            return;
+        }
+
+
+        fetchGet(
+            '/hostel/ajax/rooms/',
+            {
+                floor_id: this.value
+            }
+        ).then(function (data) {
+
+            roomSelect.innerHTML =
+                '<option value="">Select room...</option>';
+
+
+            if (!data || data.length === 0) {
+
+                roomSelect.innerHTML =
+                    '<option value="">No rooms available</option>';
+
+                return;
+            }
+
+
+            data.forEach(function (room) {
+
+                const option =
+                    document.createElement('option');
+
+                option.value = room.id;
+
+                option.textContent =
+                    `Room ${room.room_number} • ${room.room_type}`;
+
+                roomSelect.appendChild(option);
+
+            });
+
+            roomSelect.disabled = false;
+
+        }).catch(function () {
+
+            resetSelect(
+                roomSelect,
+                'Unable to load rooms'
+            );
+
+        });
+
+    });
+
+
+    /* ROOM */
+    roomSelect.addEventListener('change', function () {
+
+        resetSelect(
+            bedSelect,
+            'Loading available beds...'
+        );
+
+        bedStatus.className = 'bed-status';
+
+        updateSummary();
+
+
+        if (!this.value) {
+
+            resetSelect(
+                bedSelect,
+                'Select room first...'
+            );
+
+            updateSummary();
+
+            return;
+        }
+
+
+        fetchGet(
+            '/hostel/ajax/beds/',
+            {
+                room_id: this.value
+            }
+        ).then(function (data) {
+
+            bedSelect.innerHTML =
+                '<option value="">Select available bed...</option>';
+
+
+            const availableBeds =
+                Array.isArray(data)
+                    ? data
+                    : (data.beds || []);
+
+
+            if (!availableBeds.length) {
+
+                bedSelect.innerHTML =
+                    '<option value="">No available beds</option>';
+
+                bedStatus.textContent =
+                    'No available beds in this room. Please select another room.';
+
+                bedStatus.className =
+                    'bed-status show warning';
+
+                return;
+            }
+
+
+            availableBeds.forEach(function (bed) {
+
+                const option =
+                    document.createElement('option');
+
+                option.value =
+                    bed.id;
+
+                option.textContent =
+                    `Bed ${bed.bed_number}`;
+
+                bedSelect.appendChild(option);
+
+            });
+
+            bedSelect.disabled = false;
+
+            bedStatus.innerHTML =
+                `<i class="bi bi-check-circle-fill"></i>
+                 ${availableBeds.length} available bed${availableBeds.length > 1 ? 's' : ''} found.`;
+
+            bedStatus.className =
+                'bed-status show success';
+
+        }).catch(function () {
+
+            resetSelect(
+                bedSelect,
+                'Unable to load beds'
+            );
+
+            bedStatus.textContent =
+                'Unable to load available beds. Please try again.';
+
+            bedStatus.className =
+                'bed-status show warning';
+
+        });
+
+    });
+
+
+    /* BED */
+    bedSelect.addEventListener('change', function () {
+
+        updateSummary();
+
+    });
+
+
+    /* DATE */
+    todayInput.addEventListener('change', function () {
+
+        updateSummary();
+
+    });
+
+
+    /* SUBMIT */
+    form.addEventListener('submit', function (event) {
+
+        if (!studentSelect.value ||
+            !buildingSelect.value ||
+            !floorSelect.value ||
+            !roomSelect.value ||
+            !bedSelect.value ||
+            !todayInput.value) {
+
+            event.preventDefault();
+
+            alert(
+                'Please complete all required allocation fields.'
+            );
+
+            return;
+        }
+
+
+        saveButton.disabled = true;
+
+        saveButton.innerHTML =
+            '<span class="spinner-border spinner-border-sm"></span> Creating...';
+
+    });
+
+
+    /* INITIAL STUDENT */
+    if (studentSelect.value) {
+
+        studentSelect.dispatchEvent(
+            new Event('change')
+        );
+
+    }
+
+
+    /* Keyboard shortcut */
+    document.addEventListener('keydown', function (event) {
+
+        if (
+            (event.ctrlKey || event.metaKey) &&
+            event.key.toLowerCase() === 's'
+        ) {
+
+            event.preventDefault();
+
+            if (form.checkValidity()) {
+                form.requestSubmit();
+            } else {
+                form.reportValidity();
+            }
+
+        }
+
+    });
+
+})();
+
+</script>
+
+{% endblock %}

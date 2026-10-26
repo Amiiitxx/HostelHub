@@ -1,0 +1,1263 @@
+{% extends "base.html" %}
+
+{% block title %}My Visitor Requests{% endblock %}
+
+{% block content %}
+
+<style>
+    /* =========================================================
+       VISITOR STUDENT PAGE
+       ========================================================= */
+
+    :root {
+        --primary: #52C048;
+        --primary-dark: #3ea638;
+        --primary-soft: #effbea;
+
+        --text-main: #17201a;
+        --text-dark: #1f2937;
+        --text-muted: #6b7280;
+        --text-light: #9ca3af;
+
+        --border: #e7ebe8;
+        --surface: #ffffff;
+        --surface-soft: #f8faf8;
+        --page-bg: #f5f8f5;
+
+        --warning: #d89b00;
+        --warning-bg: #fff8df;
+
+        --danger: #dc4444;
+        --danger-bg: #fff0f0;
+
+        --shadow-sm: 0 4px 16px rgba(20, 40, 24, 0.05);
+        --shadow-md: 0 12px 35px rgba(20, 40, 24, 0.08);
+    }
+
+    * {
+        box-sizing: border-box;
+    }
+
+    .visitor-wrapper {
+        width: 100%;
+        min-height: calc(100vh - 80px);
+        padding: 28px 24px 50px;
+        background:
+            radial-gradient(
+                circle at top right,
+                rgba(82, 192, 72, 0.08),
+                transparent 28%
+            ),
+            var(--page-bg);
+    }
+
+    .visitor-container {
+        width: 100%;
+        max-width: 1250px;
+        margin: 0 auto;
+    }
+
+
+    /* =========================================================
+       HERO
+       ========================================================= */
+
+    .visitor-hero {
+        position: relative;
+        overflow: hidden;
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 25px;
+
+        padding: 34px 36px;
+        margin-bottom: 24px;
+
+        background:
+            linear-gradient(
+                135deg,
+                #ffffff 0%,
+                #f8fcf7 55%,
+                #eefbea 100%
+            );
+
+        border: 1px solid var(--border);
+        border-radius: 26px;
+
+        box-shadow: var(--shadow-md);
+    }
+
+    .visitor-hero::before {
+        content: "";
+        position: absolute;
+
+        width: 190px;
+        height: 190px;
+
+        right: -70px;
+        top: -85px;
+
+        border-radius: 50%;
+
+        background: rgba(82, 192, 72, 0.08);
+    }
+
+    .visitor-hero::after {
+        content: "";
+        position: absolute;
+
+        width: 100px;
+        height: 100px;
+
+        right: 90px;
+        bottom: -65px;
+
+        border-radius: 50%;
+
+        background: rgba(82, 192, 72, 0.05);
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 2;
+    }
+
+    .hero-eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+
+        margin-bottom: 10px;
+
+        color: var(--primary-dark);
+        font-size: 12px;
+        font-weight: 800;
+
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+    }
+
+    .hero-eyebrow-dot {
+        width: 7px;
+        height: 7px;
+
+        border-radius: 50%;
+        background: var(--primary);
+    }
+
+    .hero-title {
+        margin: 0;
+
+        color: var(--text-main);
+
+        font-size: clamp(27px, 3vw, 36px);
+        line-height: 1.15;
+
+        font-weight: 850;
+        letter-spacing: -0.8px;
+    }
+
+    .hero-description {
+        max-width: 600px;
+
+        margin: 10px 0 0;
+
+        color: var(--text-muted);
+
+        font-size: 15px;
+        line-height: 1.6;
+    }
+
+
+    /* =========================================================
+       APPLY BUTTON
+       ========================================================= */
+
+    .apply-button {
+        position: relative;
+        z-index: 5;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+
+        min-width: 190px;
+
+        padding: 14px 20px;
+
+        color: #ffffff;
+        background: var(--primary);
+
+        border: 0;
+        border-radius: 13px;
+
+        text-decoration: none;
+
+        font-size: 14px;
+        font-weight: 800;
+
+        box-shadow:
+            0 8px 18px rgba(82, 192, 72, 0.20);
+
+        transition:
+            transform .2s ease,
+            box-shadow .2s ease,
+            background .2s ease;
+    }
+
+    .apply-button:hover {
+        color: #ffffff;
+        background: var(--primary-dark);
+
+        transform: translateY(-2px);
+
+        box-shadow:
+            0 12px 25px rgba(82, 192, 72, 0.28);
+    }
+
+    .apply-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        width: 22px;
+        height: 22px;
+
+        font-size: 19px;
+        line-height: 1;
+    }
+
+
+    /* =========================================================
+       MAIN CARD
+       ========================================================= */
+
+    .requests-card {
+        overflow: hidden;
+
+        background: var(--surface);
+
+        border: 1px solid var(--border);
+        border-radius: 24px;
+
+        box-shadow: var(--shadow-sm);
+    }
+
+    .requests-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        gap: 20px;
+
+        padding: 24px 26px;
+
+        border-bottom: 1px solid var(--border);
+    }
+
+    .requests-heading {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+
+    .requests-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        width: 46px;
+        height: 46px;
+
+        flex-shrink: 0;
+
+        border-radius: 14px;
+
+        background: var(--primary-soft);
+
+        font-size: 21px;
+    }
+
+    .requests-title {
+        margin: 0;
+
+        color: var(--text-main);
+
+        font-size: 19px;
+        font-weight: 800;
+    }
+
+    .requests-subtitle {
+        margin: 4px 0 0;
+
+        color: var(--text-muted);
+
+        font-size: 13px;
+    }
+
+    .request-count {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        min-width: 34px;
+        height: 34px;
+
+        padding: 0 10px;
+
+        border-radius: 10px;
+
+        background: #f2f5f2;
+
+        color: var(--text-dark);
+
+        font-size: 13px;
+        font-weight: 800;
+    }
+
+
+    /* =========================================================
+       SEARCH BAR
+       ========================================================= */
+
+    .search-area {
+        padding: 18px 26px;
+
+        background: #fcfdfc;
+
+        border-bottom: 1px solid var(--border);
+    }
+
+    .search-box {
+        position: relative;
+
+        max-width: 430px;
+    }
+
+    .search-icon {
+        position: absolute;
+
+        left: 14px;
+        top: 50%;
+
+        transform: translateY(-50%);
+
+        color: var(--text-light);
+
+        font-size: 16px;
+
+        pointer-events: none;
+    }
+
+    .search-input {
+        width: 100%;
+
+        padding: 12px 14px 12px 40px;
+
+        background: #ffffff;
+
+        border: 1px solid #dfe5df;
+        border-radius: 11px;
+
+        outline: none;
+
+        color: var(--text-dark);
+
+        font-size: 14px;
+
+        transition: .2s ease;
+    }
+
+    .search-input::placeholder {
+        color: #a3aaa5;
+    }
+
+    .search-input:focus {
+        border-color: var(--primary);
+
+        box-shadow:
+            0 0 0 3px rgba(82, 192, 72, 0.10);
+    }
+
+
+    /* =========================================================
+       TABLE
+       ========================================================= */
+
+    .table-wrapper {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    .visitor-table {
+        width: 100%;
+
+        border-collapse: collapse;
+
+        min-width: 760px;
+    }
+
+    .visitor-table thead th {
+        padding: 15px 22px;
+
+        background: #f8faf8;
+
+        border-bottom: 1px solid var(--border);
+
+        color: #778078;
+
+        text-align: left;
+
+        font-size: 11px;
+        font-weight: 800;
+
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+
+        white-space: nowrap;
+    }
+
+    .visitor-table tbody td {
+        padding: 19px 22px;
+
+        border-bottom: 1px solid #f0f2f0;
+
+        color: var(--text-dark);
+
+        font-size: 14px;
+
+        vertical-align: middle;
+    }
+
+    .visitor-table tbody tr {
+        transition: background .18s ease;
+    }
+
+    .visitor-table tbody tr:hover {
+        background: #fbfdfb;
+    }
+
+    .visitor-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+
+    /* =========================================================
+       VISITOR INFO
+       ========================================================= */
+
+    .visitor-info {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+    }
+
+    .visitor-avatar {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        width: 43px;
+        height: 43px;
+
+        flex-shrink: 0;
+
+        border-radius: 13px;
+
+        background:
+            linear-gradient(
+                135deg,
+                #effbea,
+                #dff7da
+            );
+
+        color: var(--primary-dark);
+
+        font-size: 16px;
+        font-weight: 850;
+    }
+
+    .visitor-details {
+        min-width: 0;
+    }
+
+    .visitor-name {
+        margin: 0;
+
+        color: var(--text-main);
+
+        font-size: 14px;
+        font-weight: 800;
+    }
+
+    .visitor-phone {
+        margin-top: 4px;
+
+        color: var(--text-muted);
+
+        font-size: 12px;
+    }
+
+
+    /* =========================================================
+       DATE / TIME
+       ========================================================= */
+
+    .date-main {
+        color: var(--text-dark);
+
+        font-weight: 750;
+        font-size: 13px;
+    }
+
+    .time-main {
+        margin-top: 4px;
+
+        color: var(--text-muted);
+
+        font-size: 12px;
+    }
+
+    .relation-text {
+        color: #4b5563;
+
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+
+    /* =========================================================
+       STATUS BADGES
+       ========================================================= */
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+
+        padding: 7px 11px;
+
+        border-radius: 999px;
+
+        font-size: 11px;
+        font-weight: 800;
+
+        white-space: nowrap;
+    }
+
+    .status-dot {
+        width: 7px;
+        height: 7px;
+
+        border-radius: 50%;
+
+        background: currentColor;
+    }
+
+    .status-pending {
+        color: var(--warning);
+        background: var(--warning-bg);
+    }
+
+    .status-rejected {
+        color: var(--danger);
+        background: var(--danger-bg);
+    }
+
+    .status-approved {
+        color: #21863a;
+        background: #eaf9ed;
+    }
+
+    .status-completed {
+        color: #64748b;
+        background: #f1f5f9;
+    }
+
+
+    /* =========================================================
+       PURPOSE
+       ========================================================= */
+
+    .purpose-text {
+        max-width: 190px;
+
+        overflow: hidden;
+
+        color: #4b5563;
+
+        font-size: 13px;
+
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+
+    /* =========================================================
+       EMPTY STATE
+       ========================================================= */
+
+    .empty-state {
+        padding: 75px 25px;
+
+        text-align: center;
+    }
+
+    .empty-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        width: 76px;
+        height: 76px;
+
+        margin: 0 auto 20px;
+
+        border-radius: 22px;
+
+        background:
+            linear-gradient(
+                135deg,
+                #effbea,
+                #e3f8df
+            );
+
+        font-size: 31px;
+    }
+
+    .empty-title {
+        margin: 0;
+
+        color: var(--text-main);
+
+        font-size: 20px;
+        font-weight: 800;
+    }
+
+    .empty-description {
+        max-width: 440px;
+
+        margin: 9px auto 22px;
+
+        color: var(--text-muted);
+
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+
+    /* =========================================================
+       PAGINATION
+       ========================================================= */
+
+    .pagination-area {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        gap: 15px;
+
+        padding: 18px 24px;
+
+        border-top: 1px solid var(--border);
+
+        background: #fcfdfc;
+    }
+
+    .pagination-info {
+        color: var(--text-muted);
+
+        font-size: 13px;
+    }
+
+    .pagination-buttons {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+    }
+
+    .page-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        min-width: 35px;
+        height: 35px;
+
+        padding: 0 10px;
+
+        border: 1px solid #dfe5df;
+        border-radius: 9px;
+
+        background: #ffffff;
+
+        color: #4b5563;
+
+        text-decoration: none;
+
+        font-size: 12px;
+        font-weight: 700;
+
+        transition: .18s ease;
+    }
+
+    .page-button:hover {
+        color: var(--primary-dark);
+
+        border-color: var(--primary);
+
+        background: var(--primary-soft);
+    }
+
+    .page-current {
+        color: #ffffff;
+
+        border-color: var(--primary);
+
+        background: var(--primary);
+    }
+
+    .page-current:hover {
+        color: #ffffff;
+
+        background: var(--primary-dark);
+    }
+
+
+    /* =========================================================
+       MOBILE
+       ========================================================= */
+
+    @media (max-width: 850px) {
+
+        .visitor-wrapper {
+            padding: 20px 14px 40px;
+        }
+
+        .visitor-hero {
+            flex-direction: column;
+            align-items: flex-start;
+
+            padding: 26px 22px;
+        }
+
+        .apply-button {
+            width: 100%;
+        }
+
+        .requests-header {
+            padding: 20px;
+        }
+
+        .search-area {
+            padding: 16px 20px;
+        }
+
+        .search-box {
+            max-width: none;
+        }
+
+        .pagination-area {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
+
+    @media (max-width: 500px) {
+
+        .visitor-wrapper {
+            padding: 14px 10px 30px;
+        }
+
+        .visitor-hero {
+            border-radius: 20px;
+            padding: 22px 18px;
+        }
+
+        .hero-title {
+            font-size: 26px;
+        }
+
+        .requests-card {
+            border-radius: 19px;
+        }
+
+        .requests-heading {
+            gap: 10px;
+        }
+
+        .requests-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+        }
+
+        .requests-title {
+            font-size: 17px;
+        }
+    }
+</style>
+
+
+<div class="visitor-wrapper">
+
+    <div class="visitor-container">
+
+
+        <!-- =====================================================
+             HERO
+             ===================================================== -->
+
+        <section class="visitor-hero">
+
+            <div class="hero-content">
+
+                <div class="hero-eyebrow">
+                    <span class="hero-eyebrow-dot"></span>
+                    Visitor Portal
+                </div>
+
+                <h1 class="hero-title">
+                    Visitor Management
+                </h1>
+
+                <p class="hero-description">
+                    Submit visitor requests and keep track of their
+                    approval status from one place.
+                </p>
+
+            </div>
+
+
+            <a
+                href="{% url 'visitors:apply' %}"
+                class="apply-button"
+            >
+                <span class="apply-icon">＋</span>
+                Apply for Visitor
+            </a>
+
+        </section>
+
+
+
+        <!-- =====================================================
+             REQUESTS CARD
+             ===================================================== -->
+
+        <section class="requests-card">
+
+
+            <!-- HEADER -->
+
+            <div class="requests-header">
+
+                <div class="requests-heading">
+
+                    <div class="requests-icon">
+                        👥
+                    </div>
+
+                    <div>
+                        <h2 class="requests-title">
+                            My Visitor Requests
+                        </h2>
+
+                        <p class="requests-subtitle">
+                            View the status of your submitted requests
+                        </p>
+                    </div>
+
+                </div>
+
+
+                {% if visitors %}
+                    <div class="request-count">
+                        {{ visitors.paginator.count }}
+                    </div>
+                {% endif %}
+
+            </div>
+
+
+
+            <!-- =================================================
+                 SEARCH
+                 ================================================= -->
+
+            {% if visitors %}
+
+            <div class="search-area">
+
+                <form method="get">
+
+                    <div class="search-box">
+
+                        <span class="search-icon">
+                            🔍
+                        </span>
+
+                        <input
+                            type="text"
+                            name="q"
+                            value="{{ q }}"
+                            class="search-input"
+                            placeholder="Search visitor name, phone..."
+                            autocomplete="off"
+                        >
+
+                    </div>
+
+                </form>
+
+            </div>
+
+
+            <!-- =================================================
+                 TABLE
+                 ================================================= -->
+
+            <div class="table-wrapper">
+
+                <table class="visitor-table">
+
+                    <thead>
+
+                        <tr>
+                            <th>Visitor</th>
+                            <th>Visit Date</th>
+                            <th>Expected Time</th>
+                            <th>Relationship</th>
+                            <th>Purpose</th>
+                            <th>Status</th>
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for visitor in visitors %}
+
+                        <tr>
+
+
+                            <!-- VISITOR -->
+
+                            <td>
+
+                                <div class="visitor-info">
+
+                                    <div class="visitor-avatar">
+                                        {{ visitor.visitor_name|first|upper }}
+                                    </div>
+
+                                    <div class="visitor-details">
+
+                                        <p class="visitor-name">
+                                            {{ visitor.visitor_name }}
+                                        </p>
+
+                                        {% if visitor.phone %}
+                                        <div class="visitor-phone">
+                                            {{ visitor.phone }}
+                                        </div>
+                                        {% endif %}
+
+                                    </div>
+
+                                </div>
+
+                            </td>
+
+
+
+                            <!-- DATE -->
+
+                            <td>
+
+                                <div class="date-main">
+                                    {{ visitor.visit_date|date:"d M Y" }}
+                                </div>
+
+                            </td>
+
+
+
+                            <!-- TIME -->
+
+                            <td>
+
+                                <div class="time-main">
+
+                                    {% if visitor.expected_arrival %}
+                                        {{ visitor.expected_arrival|time:"h:i A" }}
+                                    {% else %}
+                                        —
+                                    {% endif %}
+
+                                    {% if visitor.expected_departure %}
+                                        –
+                                        {{ visitor.expected_departure|time:"h:i A" }}
+                                    {% endif %}
+
+                                </div>
+
+                            </td>
+
+
+
+                            <!-- RELATION -->
+
+                            <td>
+
+                                <span class="relation-text">
+
+                                    {% if visitor.relation %}
+                                        {{ visitor.relation }}
+                                    {% else %}
+                                        —
+                                    {% endif %}
+
+                                </span>
+
+                            </td>
+
+
+
+                            <!-- PURPOSE -->
+
+                            <td>
+
+                                <div
+                                    class="purpose-text"
+                                    title="{{ visitor.purpose }}"
+                                >
+
+                                    {% if visitor.purpose %}
+                                        {{ visitor.purpose }}
+                                    {% else %}
+                                        —
+                                    {% endif %}
+
+                                </div>
+
+                            </td>
+
+
+
+                            <!-- STATUS -->
+
+                            <td>
+
+                                {% if visitor.status == "pending" %}
+
+                                    <span class="status-badge status-pending">
+                                        <span class="status-dot"></span>
+                                        Pending
+                                    </span>
+
+
+                                {% elif visitor.status == "rejected" %}
+
+                                    <span class="status-badge status-rejected">
+                                        <span class="status-dot"></span>
+                                        Rejected
+                                    </span>
+
+
+                                {% elif visitor.status == "approved" %}
+
+                                    <span class="status-badge status-approved">
+                                        <span class="status-dot"></span>
+                                        Approved
+                                    </span>
+
+
+                                {% elif visitor.status == "completed" %}
+
+                                    <span class="status-badge status-completed">
+                                        <span class="status-dot"></span>
+                                        Completed
+                                    </span>
+
+
+                                {% else %}
+
+                                    <span class="status-badge">
+                                        <span class="status-dot"></span>
+                                        {{ visitor.get_status_display }}
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                        </tr>
+
+                        {% empty %}
+
+                        <tr>
+                            <td colspan="6">
+
+                                <div class="empty-state">
+
+                                    <div class="empty-icon">
+                                        👤
+                                    </div>
+
+                                    <h3 class="empty-title">
+                                        No visitor requests found
+                                    </h3>
+
+                                    <p class="empty-description">
+                                        You haven't submitted any visitor
+                                        requests yet. Apply for a visitor
+                                        when you need one.
+                                    </p>
+
+                                    <a
+                                        href="{% url 'visitors:apply' %}"
+                                        class="apply-button"
+                                    >
+                                        <span class="apply-icon">＋</span>
+                                        Apply for Visitor
+                                    </a>
+
+                                </div>
+
+                            </td>
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 PAGINATION
+                 ================================================= -->
+
+            {% if visitors.has_other_pages %}
+
+            <div class="pagination-area">
+
+                <div class="pagination-info">
+
+                    Page
+                    <strong>{{ visitors.number }}</strong>
+                    of
+                    <strong>{{ visitors.paginator.num_pages }}</strong>
+
+                </div>
+
+
+                <div class="pagination-buttons">
+
+
+                    {% if visitors.has_previous %}
+
+                        <a
+                            href="?page={{ visitors.previous_page_number }}{% if q %}&q={{ q|urlencode }}{% endif %}"
+                            class="page-button"
+                        >
+                            ←
+                        </a>
+
+                    {% endif %}
+
+
+
+                    {% for num in visitors.paginator.page_range %}
+
+                        {% if num == visitors.number %}
+
+                            <span class="page-button page-current">
+                                {{ num }}
+                            </span>
+
+                        {% elif num >= visitors.number|add:"-2" and num <= visitors.number|add:"2" %}
+
+                            <a
+                                href="?page={{ num }}{% if q %}&q={{ q|urlencode }}{% endif %}"
+                                class="page-button"
+                            >
+                                {{ num }}
+                            </a>
+
+                        {% endif %}
+
+                    {% endfor %}
+
+
+
+                    {% if visitors.has_next %}
+
+                        <a
+                            href="?page={{ visitors.next_page_number }}{% if q %}&q={{ q|urlencode }}{% endif %}"
+                            class="page-button"
+                        >
+                            →
+                        </a>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+            {% endif %}
+
+
+
+            {% else %}
+
+
+            <!-- =================================================
+                 EMPTY STATE
+                 ================================================= -->
+
+            <div class="empty-state">
+
+                <div class="empty-icon">
+                    👥
+                </div>
+
+                <h3 class="empty-title">
+                    No visitor requests yet
+                </h3>
+
+                <p class="empty-description">
+                    You haven't submitted any visitor requests.
+                    Click the button below to create your first request.
+                </p>
+
+                <a
+                    href="{% url 'visitors:apply' %}"
+                    class="apply-button"
+                >
+                    <span class="apply-icon">＋</span>
+                    Apply for Visitor
+                </a>
+
+            </div>
+
+
+            {% endif %}
+
+
+        </section>
+
+    </div>
+
+</div>
+
+{% endblock %}

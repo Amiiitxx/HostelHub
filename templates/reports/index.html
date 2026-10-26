@@ -1,0 +1,715 @@
+{% extends 'base.html' %}
+
+{% block title %}Reports{% endblock %}
+{% block page_title %}Reports{% endblock %}
+
+{% block extra_css %}
+<style>
+    .reports-page {
+        max-width: 1500px;
+        margin: 0 auto;
+    }
+
+    .reports-hero {
+        position: relative;
+        overflow: hidden;
+        border: 1px solid #e8eaf0;
+        border-radius: 24px;
+        padding: 30px;
+        background:
+            radial-gradient(circle at 90% 15%, rgba(99,102,241,.16), transparent 30%),
+            radial-gradient(circle at 70% 100%, rgba(59,130,246,.08), transparent 35%),
+            #fff;
+        box-shadow: 0 10px 35px rgba(15,23,42,.06);
+    }
+
+    .hero-icon {
+        width: 58px;
+        height: 58px;
+        border-radius: 17px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #eef2ff;
+        color: #4f46e5;
+        font-size: 26px;
+        flex-shrink: 0;
+    }
+
+    .reports-hero h2 {
+        font-size: 27px;
+        font-weight: 850;
+        color: #111827;
+        letter-spacing: -.6px;
+    }
+
+    .reports-hero p {
+        margin: 0;
+        color: #6b7280;
+        font-size: 13px;
+    }
+
+    .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 10px;
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: #f8fafc;
+        border: 1px solid #e5e7eb;
+        color: #64748b;
+        font-size: 10px;
+        font-weight: 750;
+    }
+
+    .report-card {
+        height: 100%;
+        background: #fff;
+        border: 1px solid #e8eaf0;
+        border-radius: 20px;
+        padding: 22px;
+        box-shadow: 0 8px 28px rgba(15,23,42,.045);
+        transition: all .2s ease;
+        text-decoration: none;
+        display: block;
+        color: inherit;
+    }
+
+    .report-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 16px 38px rgba(15,23,42,.09);
+        border-color: #dfe3ea;
+        color: inherit;
+    }
+
+    .report-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 21px;
+        margin-bottom: 18px;
+    }
+
+    .report-icon.indigo {
+        background: #eef2ff;
+        color: #4f46e5;
+    }
+
+    .report-icon.blue {
+        background: #eff6ff;
+        color: #2563eb;
+    }
+
+    .report-icon.green {
+        background: #ecfdf3;
+        color: #16a34a;
+    }
+
+    .report-icon.orange {
+        background: #fff7ed;
+        color: #ea580c;
+    }
+
+    .report-icon.red {
+        background: #fef2f2;
+        color: #dc2626;
+    }
+
+    .report-icon.cyan {
+        background: #ecfeff;
+        color: #0891b2;
+    }
+
+    .report-icon.purple {
+        background: #faf5ff;
+        color: #9333ea;
+    }
+
+    .report-title {
+        color: #111827;
+        font-size: 15px;
+        font-weight: 800;
+        margin-bottom: 6px;
+    }
+
+    .report-description {
+        color: #64748b;
+        font-size: 12px;
+        line-height: 1.65;
+        min-height: 40px;
+        margin-bottom: 17px;
+    }
+
+    .report-footer {
+        padding-top: 14px;
+        border-top: 1px solid #f0f2f5;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .report-action {
+        color: #4f46e5;
+        font-size: 11px;
+        font-weight: 750;
+    }
+
+    .report-arrow {
+        width: 28px;
+        height: 28px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f8fafc;
+        color: #64748b;
+        transition: all .2s ease;
+    }
+
+    .report-card:hover .report-arrow {
+        background: #eef2ff;
+        color: #4f46e5;
+        transform: translateX(2px);
+    }
+
+    .section-heading {
+        margin: 30px 0 15px;
+    }
+
+    .section-heading h5 {
+        color: #111827;
+        font-size: 16px;
+        font-weight: 800;
+        margin-bottom: 3px;
+    }
+
+    .section-heading p {
+        color: #94a3b8;
+        font-size: 11px;
+        margin: 0;
+    }
+
+    .export-panel {
+        margin-top: 30px;
+        border-radius: 20px;
+        padding: 22px;
+        background: #f8fafc;
+        border: 1px solid #e8edf3;
+    }
+
+    .export-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 13px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #fff;
+        color: #16a34a;
+        border: 1px solid #e5e7eb;
+        font-size: 19px;
+    }
+
+    .export-panel h6 {
+        color: #1e293b;
+        font-size: 13px;
+        font-weight: 800;
+        margin-bottom: 4px;
+    }
+
+    .export-panel p {
+        color: #64748b;
+        font-size: 11px;
+        margin: 0;
+        line-height: 1.5;
+    }
+
+    .workflow {
+        margin-top: 30px;
+        background: #fff;
+        border: 1px solid #e8eaf0;
+        border-radius: 20px;
+        padding: 22px;
+        box-shadow: 0 8px 28px rgba(15,23,42,.04);
+    }
+
+    .workflow-item {
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+    }
+
+    .workflow-number {
+        width: 30px;
+        height: 30px;
+        border-radius: 9px;
+        background: #eef2ff;
+        color: #4f46e5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        font-weight: 800;
+        flex-shrink: 0;
+    }
+
+    .workflow-item strong {
+        display: block;
+        color: #334155;
+        font-size: 12px;
+        margin-bottom: 3px;
+    }
+
+    .workflow-item span {
+        color: #94a3b8;
+        font-size: 10px;
+        line-height: 1.5;
+    }
+
+    @media (max-width: 767.98px) {
+        .reports-hero {
+            padding: 21px;
+            border-radius: 18px;
+        }
+
+        .reports-hero h2 {
+            font-size: 22px;
+        }
+
+        .report-card {
+            border-radius: 17px;
+        }
+
+        .export-panel,
+        .workflow {
+            border-radius: 17px;
+        }
+    }
+</style>
+{% endblock %}
+
+
+{% block content %}
+
+<div class="container-fluid py-4 reports-page">
+
+    <!-- Hero -->
+    <div class="reports-hero">
+
+        <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-4">
+
+            <div class="d-flex align-items-center gap-3">
+
+                <div class="hero-icon">
+                    <i class="bi bi-bar-chart-line-fill"></i>
+                </div>
+
+                <div>
+                    <h2 class="mb-1">Reports & Analytics</h2>
+
+                    <p>
+                        Generate detailed reports and export hostel data
+                        for better operational decisions.
+                    </p>
+
+                    <div class="hero-badge">
+                        <i class="bi bi-file-earmark-bar-graph"></i>
+                        7 report categories available
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="text-md-end">
+                <div class="text-muted small">
+                    <i class="bi bi-shield-check me-1"></i>
+                    Staff access only
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Operational Reports -->
+    <div class="section-heading">
+        <h5>Operational Reports</h5>
+        <p>Monitor students, rooms, allocations and daily hostel activity.</p>
+    </div>
+
+
+    <div class="row g-3">
+
+        <!-- Occupancy -->
+        <div class="col-xl-4 col-md-6">
+
+            <a href="{% url 'reports:occupancy_report' %}"
+               class="report-card">
+
+                <div class="report-icon indigo">
+                    <i class="bi bi-grid-3x3-gap-fill"></i>
+                </div>
+
+                <div class="report-title">
+                    Occupancy Report
+                </div>
+
+                <div class="report-description">
+                    View building, floor, room and bed occupancy with
+                    available and maintenance capacity.
+                </div>
+
+                <div class="report-footer">
+                    <span class="report-action">
+                        View occupancy
+                    </span>
+
+                    <span class="report-arrow">
+                        <i class="bi bi-arrow-right"></i>
+                    </span>
+                </div>
+
+            </a>
+
+        </div>
+
+
+        <!-- Students -->
+        <div class="col-xl-4 col-md-6">
+
+            <a href="{% url 'reports:student_report' %}"
+               class="report-card">
+
+                <div class="report-icon blue">
+                    <i class="bi bi-mortarboard-fill"></i>
+                </div>
+
+                <div class="report-title">
+                    Student Report
+                </div>
+
+                <div class="report-description">
+                    Filter student records by status and course and
+                    export the complete student dataset.
+                </div>
+
+                <div class="report-footer">
+                    <span class="report-action">
+                        View students
+                    </span>
+
+                    <span class="report-arrow">
+                        <i class="bi bi-arrow-right"></i>
+                    </span>
+                </div>
+
+            </a>
+
+        </div>
+
+
+        <!-- Allocations -->
+        <div class="col-xl-4 col-md-6">
+
+            <a href="{% url 'reports:allocation_report' %}"
+               class="report-card">
+
+                <div class="report-icon purple">
+                    <i class="bi bi-door-open-fill"></i>
+                </div>
+
+                <div class="report-title">
+                    Allocation Report
+                </div>
+
+                <div class="report-description">
+                    Review room and bed allocations, allocation dates,
+                    vacated beds and current allocation status.
+                </div>
+
+                <div class="report-footer">
+                    <span class="report-action">
+                        View allocations
+                    </span>
+
+                    <span class="report-arrow">
+                        <i class="bi bi-arrow-right"></i>
+                    </span>
+                </div>
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- Finance & Activity -->
+    <div class="section-heading">
+        <h5>Finance & Activity</h5>
+        <p>Track fees, complaints, visitors and attendance over selected periods.</p>
+    </div>
+
+
+    <div class="row g-3">
+
+        <!-- Fees -->
+        <div class="col-xl-3 col-lg-6 col-md-6">
+
+            <a href="{% url 'reports:fee_report' %}"
+               class="report-card">
+
+                <div class="report-icon green">
+                    <i class="bi bi-cash-stack"></i>
+                </div>
+
+                <div class="report-title">
+                    Fee Report
+                </div>
+
+                <div class="report-description">
+                    Analyze paid, pending and overdue fees with
+                    date-based reporting.
+                </div>
+
+                <div class="report-footer">
+                    <span class="report-action">
+                        View fees
+                    </span>
+
+                    <span class="report-arrow">
+                        <i class="bi bi-arrow-right"></i>
+                    </span>
+                </div>
+
+            </a>
+
+        </div>
+
+
+        <!-- Complaints -->
+        <div class="col-xl-3 col-lg-6 col-md-6">
+
+            <a href="{% url 'reports:complaint_report' %}"
+               class="report-card">
+
+                <div class="report-icon red">
+                    <i class="bi bi-exclamation-octagon-fill"></i>
+                </div>
+
+                <div class="report-title">
+                    Complaint Report
+                </div>
+
+                <div class="report-description">
+                    Review complaints by status, priority and reporting
+                    period.
+                </div>
+
+                <div class="report-footer">
+                    <span class="report-action">
+                        View complaints
+                    </span>
+
+                    <span class="report-arrow">
+                        <i class="bi bi-arrow-right"></i>
+                    </span>
+                </div>
+
+            </a>
+
+        </div>
+
+
+        <!-- Visitors -->
+        <div class="col-xl-3 col-lg-6 col-md-6">
+
+            <a href="{% url 'reports:visitor_report' %}"
+               class="report-card">
+
+                <div class="report-icon orange">
+                    <i class="bi bi-person-walking"></i>
+                </div>
+
+                <div class="report-title">
+                    Visitor Report
+                </div>
+
+                <div class="report-description">
+                    Review visitor check-ins and check-outs for any
+                    selected date range.
+                </div>
+
+                <div class="report-footer">
+                    <span class="report-action">
+                        View visitors
+                    </span>
+
+                    <span class="report-arrow">
+                        <i class="bi bi-arrow-right"></i>
+                    </span>
+                </div>
+
+            </a>
+
+        </div>
+
+
+        <!-- Attendance -->
+        <div class="col-xl-3 col-lg-6 col-md-6">
+
+            <a href="{% url 'reports:attendance_report' %}"
+               class="report-card">
+
+                <div class="report-icon cyan">
+                    <i class="bi bi-calendar2-check-fill"></i>
+                </div>
+
+                <div class="report-title">
+                    Attendance Report
+                </div>
+
+                <div class="report-description">
+                    Analyze attendance records with present and absent
+                    summaries for selected periods.
+                </div>
+
+                <div class="report-footer">
+                    <span class="report-action">
+                        View attendance
+                    </span>
+
+                    <span class="report-arrow">
+                        <i class="bi bi-arrow-right"></i>
+                    </span>
+                </div>
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- Export Information -->
+    <div class="export-panel">
+
+        <div class="d-flex flex-column flex-md-row align-items-md-center gap-3">
+
+            <div class="export-icon">
+                <i class="bi bi-filetype-csv"></i>
+            </div>
+
+            <div class="flex-grow-1">
+
+                <h6>
+                    CSV Export Available
+                </h6>
+
+                <p>
+                    Each report includes an export option so you can
+                    download filtered data as a CSV file for further
+                    analysis or record keeping.
+                </p>
+
+            </div>
+
+            <div class="text-md-end">
+                <span class="badge rounded-pill text-bg-light border">
+                    <i class="bi bi-download me-1"></i>
+                    Export from report
+                </span>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Workflow -->
+    <div class="workflow">
+
+        <div class="mb-4">
+            <div class="fw-bold text-dark">
+                <i class="bi bi-lightning-charge-fill text-primary me-1"></i>
+                Recommended Workflow
+            </div>
+
+            <div class="text-muted small mt-1">
+                Use filters first, then export only the data you need.
+            </div>
+        </div>
+
+
+        <div class="row g-4">
+
+            <div class="col-lg-4">
+
+                <div class="workflow-item">
+
+                    <div class="workflow-number">01</div>
+
+                    <div>
+                        <strong>Choose a report</strong>
+
+                        <span>
+                            Select the module you want to analyze.
+                        </span>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-lg-4">
+
+                <div class="workflow-item">
+
+                    <div class="workflow-number">02</div>
+
+                    <div>
+                        <strong>Apply filters</strong>
+
+                        <span>
+                            Narrow results using dates, status,
+                            priority or course.
+                        </span>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-lg-4">
+
+                <div class="workflow-item">
+
+                    <div class="workflow-number">03</div>
+
+                    <div>
+                        <strong>Review & export</strong>
+
+                        <span>
+                            Review the results and export filtered
+                            records as CSV.
+                        </span>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

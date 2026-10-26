@@ -1,0 +1,132 @@
+{% extends 'admin/base_admin.html' %}
+
+{% block title %}System Settings | HostelMS Enterprise{% endblock %}
+
+{% block content %}
+<div class="admin-page-header">
+    <div>
+        <h1>System Settings & Architecture</h1>
+        <p>Enterprise configuration, role hierarchies, and system telemetry</p>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- SYSTEM INFO -->
+    <div class="col-lg-6">
+        <div class="admin-card mb-4">
+            <div class="admin-card-header">
+                <h5 class="admin-card-title"><i class="bi bi-cpu text-primary"></i> Application Environment</h5>
+            </div>
+            <table class="table table-borderless fs-sm mb-0">
+                <tr>
+                    <td class="text-muted fw-bold">Platform</td>
+                    <td>{{ app_name }}</td>
+                </tr>
+                <tr>
+                    <td class="text-muted fw-bold">Version</td>
+                    <td><span class="badge bg-primary-subtle text-primary">{{ version }}</span></td>
+                </tr>
+                <tr>
+                    <td class="text-muted fw-bold">Environment</td>
+                    <td>{% if debug_mode %}<span class="badge bg-warning">Development / Debug</span>{% else %}<span class="badge bg-success">Production</span>{% endif %}</td>
+                </tr>
+                <tr>
+                    <td class="text-muted fw-bold">Server Timestamp</td>
+                    <td>{{ server_time|date:"Y-m-d H:i:s T" }}</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="admin-card">
+            <div class="admin-card-header">
+                <h5 class="admin-card-title"><i class="bi bi-shield-check text-success"></i> Role Security Model</h5>
+            </div>
+            <div class="p-2">
+                <div class="d-flex align-items-start gap-3 mb-3 p-3 bg-light rounded">
+                    <i class="bi bi-shield-lock-fill fs-3 text-primary"></i>
+                    <div>
+                        <div class="fw-bold">1. MASTER ADMIN (System Administrator)</div>
+                        <div class="fs-xs text-muted">Complete global control over hostels, wardens, financial operations, analytics, residents, and announcements.</div>
+                    </div>
+                </div>
+                <div class="d-flex align-items-start gap-3 mb-3 p-3 bg-light rounded">
+                    <i class="bi bi-person-badge-fill fs-3 text-success"></i>
+                    <div>
+                        <div class="fw-bold">2. HOSTEL WARDEN (Supervisor)</div>
+                        <div class="fs-xs text-muted">Scoped strictly to assigned hostel building and block. Manages room occupancy, resident welfare, gate passes, complaints, and leaves.</div>
+                    </div>
+                </div>
+                <div class="d-flex align-items-start gap-3 p-3 bg-light rounded">
+                    <i class="bi bi-person-fill fs-3 text-info"></i>
+                    <div>
+                        <div class="fw-bold">3. RESIDENT (Occupation-Based Dashboards)</div>
+                        <div class="fs-xs text-muted">7 isolated occupation dashboards (Student, Working Professional, Government Employee, Private Employee, Business, Job Seeker, Other). Zero administrative route access.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- QUICK PORTAL SWITCHER & TEST PREVIEW -->
+    <div class="col-lg-6">
+        <div class="admin-card">
+            <div class="admin-card-header">
+                <h5 class="admin-card-title"><i class="bi bi-window-stack text-warning"></i> Resident Dashboard Preview Switcher</h5>
+                <span class="fs-xs text-muted">Admin testing preview</span>
+            </div>
+            <p class="fs-xs text-muted">As a Master Administrator, you have authorization to preview each individual occupation dashboard:</p>
+            <div class="list-group list-group-flush border rounded overflow-hidden">
+                <a href="/student/dashboard/" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center py-3">
+                    <div>
+                        <strong class="d-block text-dark">1. Student Dashboard</strong>
+                        <small class="text-muted">Academic details, attendance %, room allocation</small>
+                    </div>
+                    <i class="bi bi-chevron-right text-muted"></i>
+                </a>
+                <a href="/working-professional/dashboard/" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center py-3">
+                    <div>
+                        <strong class="d-block text-dark">2. Working Professional Dashboard</strong>
+                        <small class="text-muted">Corporate affiliation, shift timings, professional profile</small>
+                    </div>
+                    <i class="bi bi-chevron-right text-muted"></i>
+                </a>
+                <a href="/government-employee/dashboard/" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center py-3">
+                    <div>
+                        <strong class="d-block text-dark">3. Government Employee Dashboard</strong>
+                        <small class="text-muted">Department, government office designation</small>
+                    </div>
+                    <i class="bi bi-chevron-right text-muted"></i>
+                </a>
+                <a href="/private-employee/dashboard/" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center py-3">
+                    <div>
+                        <strong class="d-block text-dark">4. Private Employee Dashboard</strong>
+                        <small class="text-muted">Company details, work location, private employee badge</small>
+                    </div>
+                    <i class="bi bi-chevron-right text-muted"></i>
+                </a>
+                <a href="/business/dashboard/" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center py-3">
+                    <div>
+                        <strong class="d-block text-dark">5. Business / Self Employed Dashboard</strong>
+                        <small class="text-muted">Business establishment, business type and trade</small>
+                    </div>
+                    <i class="bi bi-chevron-right text-muted"></i>
+                </a>
+                <a href="/job-seeker/dashboard/" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center py-3">
+                    <div>
+                        <strong class="d-block text-dark">6. Job Seeker Dashboard</strong>
+                        <small class="text-muted">Qualifications, key skills, career profile</small>
+                    </div>
+                    <i class="bi bi-chevron-right text-muted"></i>
+                </a>
+                <a href="/other/dashboard/" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center py-3">
+                    <div>
+                        <strong class="d-block text-dark">7. Other Resident Dashboard</strong>
+                        <small class="text-muted">General resident housing portal</small>
+                    </div>
+                    <i class="bi bi-chevron-right text-muted"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

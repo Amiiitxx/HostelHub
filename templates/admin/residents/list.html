@@ -1,0 +1,179 @@
+{% extends 'admin/base_admin.html' %}
+
+{% block title %}Resident Directory | HostelMS Enterprise{% endblock %}
+
+{% block content %}
+<div class="admin-page-header">
+    <div>
+        <h1>Residents Directory</h1>
+        <p>Complete directory of all registered hostel residents across all occupation tiers</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="{% url 'allocations:create' %}" class="btn btn-outline-primary" style="border-radius: 9px; font-weight: 600;">
+            <i class="bi bi-key me-1"></i> Allocate Room
+        </a>
+        <a href="{% url 'students:create' %}" class="btn btn-primary" style="border-radius: 9px; font-weight: 600;">
+            <i class="bi bi-person-plus-fill me-1"></i> Register Resident
+        </a>
+    </div>
+</div>
+
+<!-- FILTERS CARD -->
+<div class="admin-card mb-4 p-3">
+    <form method="GET" class="row g-2 align-items-center">
+        <!-- Search -->
+        <div class="col-md-4">
+            <div class="input-group">
+                <span class="input-group-text bg-light border-end-0"><i class="bi bi-search text-muted"></i></span>
+                <input type="text" name="q" value="{{ search_query }}" class="form-control border-start-0" placeholder="Search name, ID, phone, company, dept...">
+            </div>
+        </div>
+
+        <!-- Occupation Filter -->
+        <div class="col-md-3">
+            <select name="occupation" class="form-select">
+                <option value="">All Occupations</option>
+                <option value="Student" {% if selected_occ == 'Student' %}selected{% endif %}>Student</option>
+                <option value="Working Professional" {% if selected_occ == 'Working Professional' %}selected{% endif %}>Working Professional</option>
+                <option value="Government Employee" {% if selected_occ == 'Government Employee' %}selected{% endif %}>Government Employee</option>
+                <option value="Private Employee" {% if selected_occ == 'Private Employee' %}selected{% endif %}>Private Employee</option>
+                <option value="Business / Self Employed" {% if selected_occ == 'Business / Self Employed' %}selected{% endif %}>Business / Self Employed</option>
+                <option value="Job Seeker" {% if selected_occ == 'Job Seeker' %}selected{% endif %}>Job Seeker</option>
+                <option value="Other" {% if selected_occ == 'Other' %}selected{% endif %}>Other</option>
+            </select>
+        </div>
+
+        <!-- Hostel Filter -->
+        <div class="col-md-3">
+            <select name="hostel" class="form-select">
+                <option value="">All Hostels</option>
+                {% for h in hostels %}
+                <option value="{{ h.id }}" {% if selected_hostel == h.id|stringformat:"s" %}selected{% endif %}>{{ h.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Submit & Reset -->
+        <div class="col-md-2 d-flex gap-2">
+            <button type="submit" class="btn btn-primary w-100 fw-bold">Filter</button>
+            <a href="{% url 'dashboard:admin_residents' %}" class="btn btn-light border" title="Reset Filters"><i class="bi bi-arrow-counterclockwise"></i></a>
+        </div>
+    </form>
+</div>
+
+<!-- RESIDENTS TABLE -->
+<div class="admin-card">
+    <div class="admin-card-header">
+        <h5 class="admin-card-title"><i class="bi bi-people text-primary"></i> Residents ({{ total_count }})</h5>
+    </div>
+
+    <div class="table-responsive">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Resident</th>
+                    <th>Resident ID</th>
+                    <th>Occupation</th>
+                    <th>Allocated Room & Bed</th>
+                    <th>Contact Info</th>
+                    <th>Fees Pending</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in residents %}
+                <tr>
+                    <td>
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="admin-avatar" style="width: 36px; height: 36px; font-size: 13px; background: #6366f1;">
+                                {{ r.first_name|first|upper }}
+                            </div>
+                            <div>
+                                <a href="{% url 'students:detail' r.id %}" class="fw-bold text-dark text-decoration-none">
+                                    {{ r.full_name }}
+                                </a>
+                                <div class="fs-xs text-muted">@{{ r.user.username|default:"resident" }}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="badge bg-light text-dark border">{{ r.student_id }}</span>
+                    </td>
+                    <td>
+                        <span class="pill-badge {% if r.occupation == 'Student' %}pill-primary{% elif r.occupation == 'Government Employee' %}pill-success{% elif r.occupation == 'Private Employee' %}pill-info{% elif 'Working' in r.occupation %}pill-warning{% else %}pill-dark{% endif %}">
+                            {{ r.occupation|default:"Student" }}
+                        </span>
+                        {% if r.company_name %}
+                        <div class="fs-xs text-muted mt-1"><i class="bi bi-briefcase"></i> {{ r.company_name }}</div>
+                        {% elif r.department %}
+                        <div class="fs-xs text-muted mt-1"><i class="bi bi-building"></i> {{ r.department }}</div>
+                        {% elif r.business_name %}
+                        <div class="fs-xs text-muted mt-1"><i class="bi bi-shop"></i> {{ r.business_name }}</div>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% with alloc=r.get_current_allocation %}
+                        {% if alloc %}
+                        <div class="fw-bold text-dark"><i class="bi bi-door-closed text-primary"></i> Room {{ alloc.bed.room.room_number }}</div>
+                        <div class="fs-xs text-muted">Bed {{ alloc.bed.bed_number }} &bull; {{ alloc.bed.room.floor.building.name }}</div>
+                        {% else %}
+                        <span class="text-muted fst-italic fs-xs">Not Allocated</span>
+                        {% endif %}
+                        {% endwith %}
+                    </td>
+                    <td>
+                        <div><i class="bi bi-telephone text-muted"></i> {{ r.phone }}</div>
+                        <div class="fs-xs text-muted"><i class="bi bi-envelope"></i> {{ r.email }}</div>
+                    </td>
+                    <td>
+                        {% with pending=r.get_pending_fees_total %}
+                        {% if pending > 0 %}
+                        <span class="text-danger fw-bold">₹{{ pending }}</span>
+                        {% else %}
+                        <span class="text-success fs-xs fw-bold"><i class="bi bi-check2"></i> Cleared</span>
+                        {% endif %}
+                        {% endwith %}
+                    </td>
+                    <td class="text-end">
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-light border" type="button" data-bs-toggle="dropdown">
+                                Action <i class="bi bi-chevron-down ms-1 fs-xs"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0">
+                                <li>
+                                    <a class="dropdown-item py-2 fs-xs" href="{% url 'students:detail' r.id %}">
+                                        <i class="bi bi-eye me-2 text-primary"></i> View Complete Profile
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item py-2 fs-xs" href="{% url 'students:edit' r.id %}">
+                                        <i class="bi bi-pencil me-2 text-secondary"></i> Edit Details
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item py-2 fs-xs" href="{% url 'allocations:create' %}?student={{ r.id }}">
+                                        <i class="bi bi-key me-2 text-warning"></i> Allocate / Transfer Bed
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item py-2 fs-xs" href="{% url 'fees:create' %}?student={{ r.id }}">
+                                        <i class="bi bi-receipt me-2 text-success"></i> Add Fee Invoice
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="text-center py-4 text-muted">
+                        <i class="bi bi-people fs-2"></i>
+                        <p class="mt-2 mb-0">No residents match the selected filters.</p>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

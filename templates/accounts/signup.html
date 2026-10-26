@@ -1,0 +1,1654 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Create Account | HostelMS</title>
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <!-- Toastify -->
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: "Inter", "Segoe UI", Arial, sans-serif;
+            background:
+                radial-gradient(circle at top left, #dbeafe 0%, transparent 35%),
+                radial-gradient(circle at bottom right, #fee2e2 0%, transparent 35%),
+                #f8fafc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 25px;
+            color: #172033;
+        }
+
+        /* =========================
+           MAIN CARD
+        ========================= */
+
+        .signup-container {
+            width: 930px;
+            max-width: 100%;
+            min-height: 580px;
+            background: #ffffff;
+            border-radius: 22px;
+            overflow: hidden;
+
+            display: grid;
+            grid-template-columns: 36% 64%;
+
+            box-shadow:
+                0 25px 70px rgba(15, 23, 42, 0.14);
+
+            animation: cardEnter .55s ease;
+        }
+
+        @keyframes cardEnter {
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(.98);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* =========================
+           LEFT PANEL
+        ========================= */
+
+        .brand-panel {
+            position: relative;
+            overflow: hidden;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    #172554 0%,
+                    #1e3a8a 55%,
+                    #2563eb 100%
+                );
+
+            color: #ffffff;
+
+            padding: 45px 34px;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .brand-panel::before {
+            content: "";
+            position: absolute;
+            width: 220px;
+            height: 220px;
+            border-radius: 50%;
+            background: rgba(255,255,255,.06);
+            top: -90px;
+            right: -80px;
+        }
+
+        .brand-panel::after {
+            content: "";
+            position: absolute;
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: rgba(255,255,255,.05);
+            bottom: -70px;
+            left: -60px;
+        }
+
+        .brand-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .logo-icon {
+            width: 54px;
+            height: 54px;
+            border-radius: 15px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: rgba(255,255,255,.14);
+            border: 1px solid rgba(255,255,255,.2);
+
+            font-size: 25px;
+            margin-bottom: 22px;
+        }
+
+        .brand-name {
+            font-size: 31px;
+            font-weight: 800;
+            letter-spacing: -.7px;
+            margin-bottom: 10px;
+        }
+
+        .brand-title {
+            font-size: 21px;
+            font-weight: 600;
+            line-height: 1.3;
+            margin-bottom: 14px;
+        }
+
+        .brand-description {
+            font-size: 13px;
+            line-height: 1.7;
+            color: rgba(255,255,255,.76);
+            max-width: 250px;
+        }
+
+        .brand-line {
+            width: 45px;
+            height: 3px;
+            border-radius: 10px;
+            background: #ffffff;
+            margin: 21px 0;
+            opacity: .85;
+        }
+
+        .brand-note {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+
+            font-size: 12px;
+            color: rgba(255,255,255,.72);
+        }
+
+        /* =========================
+           RIGHT SIDE
+        ========================= */
+
+        .form-panel {
+            padding: 32px 38px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .form-header {
+            margin-bottom: 20px;
+        }
+
+        .form-header h1 {
+            font-size: 25px;
+            font-weight: 750;
+            color: #111827;
+            margin-bottom: 5px;
+        }
+
+        .form-header p {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        /* =========================
+           FORM GRID
+        ========================= */
+
+        .signup-form {
+            width: 100%;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            column-gap: 16px;
+            row-gap: 12px;
+        }
+
+        .form-group {
+            min-width: 0;
+        }
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+
+            font-size: 11px;
+            font-weight: 650;
+            color: #334155;
+        }
+
+        .required {
+            color: #ef4444;
+        }
+
+        /* =========================
+           INPUT
+        ========================= */
+
+        .input-wrap {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+
+            color: #94a3b8;
+            font-size: 14px;
+
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .form-control,
+        .form-select,
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        input[type="tel"],
+        select {
+            width: 100%;
+            height: 38px;
+
+            border: 1px solid #dbe2ea;
+            border-radius: 9px;
+
+            background: #ffffff;
+            color: #172033;
+
+            padding: 0 12px 0 36px;
+
+            font-size: 12px;
+            outline: none;
+
+            transition:
+                border-color .2s ease,
+                box-shadow .2s ease,
+                background .2s ease;
+        }
+
+        select {
+            appearance: none;
+            -webkit-appearance: none;
+            cursor: pointer;
+        }
+
+        .select-wrap::after {
+            content: "\f282";
+            font-family: "bootstrap-icons";
+            position: absolute;
+
+            right: 13px;
+            top: 50%;
+            transform: translateY(-50%);
+
+            color: #94a3b8;
+            font-size: 12px;
+
+            pointer-events: none;
+        }
+
+        .form-control:focus,
+        .form-select:focus,
+        input:focus,
+        select:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37,99,235,.09);
+            background: #fff;
+        }
+
+        input::placeholder {
+            color: #a8b2c1;
+        }
+
+        /* =========================
+           PASSWORD
+        ========================= */
+
+        .password-wrap {
+            position: relative;
+        }
+
+        .password-wrap input {
+            padding-right: 42px;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 11px;
+            top: 50%;
+            transform: translateY(-50%);
+
+            border: none;
+            background: transparent;
+
+            color: #94a3b8;
+            cursor: pointer;
+
+            font-size: 15px;
+            padding: 3px;
+        }
+
+        .password-toggle:hover {
+            color: #2563eb;
+        }
+
+        /* =========================
+           PASSWORD STRENGTH
+        ========================= */
+
+        .password-strength {
+            margin-top: 5px;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .strength-bar {
+            flex: 1;
+            height: 3px;
+
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .strength-fill {
+            height: 100%;
+            width: 0%;
+            border-radius: 10px;
+            transition: width .25s ease;
+        }
+
+        .strength-text {
+            min-width: 48px;
+            font-size: 9px;
+            color: #94a3b8;
+        }
+
+        /* =========================
+           OTHER OCCUPATION
+        ========================= */
+
+        #otherOccupationGroup {
+            display: none;
+            animation: otherField .25s ease;
+        }
+
+        @keyframes otherField {
+            from {
+                opacity: 0;
+                transform: translateY(-5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* =========================
+           PROFESSIONAL DETAILS
+        ========================= */
+
+        #professionalDetails {
+            display: none;
+            grid-column: 1 / -1;
+            padding: 14px;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            background: #f8fafc;
+            animation: otherField .25s ease;
+        }
+
+        .professional-title {
+            font-size: 11px;
+            font-weight: 700;
+            color: #1e3a8a;
+            margin-bottom: 10px;
+        }
+
+        .professional-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px 16px;
+        }
+
+        @media (max-width: 520px) {
+            .professional-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* =========================
+           ERRORS
+        ========================= */
+
+        .field-error {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+
+            margin-top: 4px;
+
+            color: #dc2626;
+            font-size: 9px;
+        }
+
+        .field-error ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .field-error li {
+            margin: 0;
+        }
+
+        /* =========================
+           TERMS
+        ========================= */
+
+        .terms-row {
+            margin-top: 13px;
+
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .terms-row input[type="checkbox"] {
+            width: 14px;
+            height: 14px;
+            accent-color: #2563eb;
+            cursor: pointer;
+        }
+
+        .terms-row label {
+            font-size: 10px;
+            color: #64748b;
+            cursor: pointer;
+        }
+
+        .terms-row a {
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .terms-row a:hover {
+            text-decoration: underline;
+        }
+
+        /* =========================
+           BUTTON
+        ========================= */
+
+        .create-btn {
+            width: 100%;
+            height: 40px;
+
+            margin-top: 14px;
+
+            border: none;
+            border-radius: 9px;
+
+            background: #2563eb;
+            color: #ffffff;
+
+            font-size: 12px;
+            font-weight: 700;
+
+            cursor: pointer;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+
+            box-shadow: 0 7px 18px rgba(37,99,235,.18);
+
+            transition:
+                transform .2s ease,
+                background .2s ease,
+                box-shadow .2s ease;
+        }
+
+        .create-btn:hover {
+            background: #1d4ed8;
+            transform: translateY(-1px);
+            box-shadow: 0 10px 23px rgba(37,99,235,.23);
+        }
+
+        .create-btn:active {
+            transform: translateY(0);
+        }
+
+        /* =========================
+           LOGIN LINK
+        ========================= */
+
+        .login-link {
+            text-align: center;
+            margin-top: 13px;
+
+            font-size: 10px;
+            color: #64748b;
+        }
+
+        .login-link a {
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+
+        /* =========================
+           MOBILE
+        ========================= */
+
+        @media (max-width: 800px) {
+
+            body {
+                padding: 15px;
+            }
+
+            .signup-container {
+                grid-template-columns: 1fr;
+                width: 600px;
+            }
+
+            .brand-panel {
+                min-height: 190px;
+                padding: 28px;
+            }
+
+            .brand-name {
+                font-size: 26px;
+            }
+
+            .brand-title {
+                font-size: 17px;
+            }
+
+            .brand-description,
+            .brand-line,
+            .brand-note {
+                display: none;
+            }
+
+            .logo-icon {
+                margin-bottom: 12px;
+            }
+
+            .form-panel {
+                padding: 28px;
+            }
+        }
+
+        @media (max-width: 520px) {
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group.full {
+                grid-column: auto;
+            }
+
+            .form-panel {
+                padding: 24px 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="signup-container">
+
+    <!-- =====================================================
+         LEFT BRAND PANEL
+    ====================================================== -->
+
+    <div class="brand-panel">
+
+        <div class="brand-content">
+
+            <div class="logo-icon">
+                <i class="bi bi-buildings"></i>
+            </div>
+
+            <div class="brand-name">
+                HostelMS
+            </div>
+
+            <div class="brand-title">
+                Resident Registration
+            </div>
+
+            <div class="brand-line"></div>
+
+            <div class="brand-description">
+                Create your hostel account and manage your
+                accommodation, attendance, fees and complaints
+                from one place.
+            </div>
+
+            <div class="brand-note">
+                <i class="bi bi-shield-check"></i>
+                Secure hostel management
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         RIGHT FORM PANEL
+    ====================================================== -->
+
+    <div class="form-panel">
+
+        <div class="form-header">
+            <h1>Create Account</h1>
+            <p>Enter your details to create your student account.</p>
+        </div>
+
+
+        <form method="POST"
+              id="signupForm"
+              class="signup-form"
+              novalidate>
+
+            {% csrf_token %}
+
+            <div class="form-grid">
+
+
+                <!-- =========================
+                     FULL NAME
+                ========================== -->
+
+                <div class="form-group">
+
+                    <label class="form-label">
+                        Full Name <span class="required">*</span>
+                    </label>
+
+                    <div class="input-wrap">
+
+                        <i class="bi bi-person input-icon"></i>
+
+                        {{ form.first_name }}
+
+                    </div>
+
+                    {% if form.first_name.errors %}
+                        <div class="field-error">
+                            <i class="bi bi-exclamation-circle"></i>
+                            {{ form.first_name.errors.0 }}
+                        </div>
+                    {% endif %}
+
+                </div>
+
+
+                <!-- =========================
+                     STUDENT ID
+                ========================== -->
+
+                <div class="form-group">
+
+                    <label class="form-label">
+                        Student ID <span class="required">*</span>
+                    </label>
+
+                    <div class="input-wrap">
+
+                        <i class="bi bi-card-text input-icon"></i>
+
+                        {{ form.student_id }}
+
+                    </div>
+
+                    {% if form.student_id.errors %}
+                        <div class="field-error">
+                            <i class="bi bi-exclamation-circle"></i>
+                            {{ form.student_id.errors.0 }}
+                        </div>
+                    {% endif %}
+
+                </div>
+
+
+                <!-- =========================
+                     PHONE
+                ========================== -->
+
+                <div class="form-group">
+
+                    <label class="form-label">
+                        Phone Number <span class="required">*</span>
+                    </label>
+
+                    <div class="input-wrap">
+
+                        <i class="bi bi-telephone input-icon"></i>
+
+                        {{ form.phone }}
+
+                    </div>
+
+                    {% if form.phone.errors %}
+                        <div class="field-error">
+                            <i class="bi bi-exclamation-circle"></i>
+                            {{ form.phone.errors.0 }}
+                        </div>
+                    {% endif %}
+
+                </div>
+
+
+                <!-- =========================
+                     EMAIL
+                ========================== -->
+
+                <div class="form-group">
+
+                    <label class="form-label">
+                        Email <span class="required">*</span>
+                    </label>
+
+                    <div class="input-wrap">
+
+                        <i class="bi bi-envelope input-icon"></i>
+
+                        {{ form.email }}
+
+                    </div>
+
+                    {% if form.email.errors %}
+                        <div class="field-error">
+                            <i class="bi bi-exclamation-circle"></i>
+                            {{ form.email.errors.0 }}
+                        </div>
+                    {% endif %}
+
+                </div>
+
+
+                <!-- =========================
+                     OCCUPATION
+                ========================== -->
+
+                <div class="form-group full">
+
+                    <label class="form-label">
+                        Occupation <span class="required">*</span>
+                    </label>
+
+                    <div class="input-wrap select-wrap">
+
+                        <i class="bi bi-briefcase input-icon"></i>
+
+                        {{ form.occupation }}
+
+                    </div>
+
+                    {% if form.occupation.errors %}
+                        <div class="field-error">
+                            <i class="bi bi-exclamation-circle"></i>
+                            {{ form.occupation.errors.0 }}
+                        </div>
+                    {% endif %}
+
+                </div>
+
+
+                <!-- =================================================
+                     OTHER OCCUPATION
+                     Only appears when Other is selected
+                ================================================== -->
+
+                <div class="form-group full"
+                     id="otherOccupationGroup">
+
+                    <label class="form-label">
+                        Specify Occupation
+                        <span class="required">*</span>
+                    </label>
+
+                    <div class="input-wrap">
+
+                        <i class="bi bi-pencil input-icon"></i>
+
+                        {{ form.other_occupation }}
+
+                    </div>
+
+                    {% if form.other_occupation.errors %}
+                        <div class="field-error">
+                            <i class="bi bi-exclamation-circle"></i>
+                            {{ form.other_occupation.errors.0 }}
+                        </div>
+                    {% endif %}
+
+                </div>
+
+
+                <!-- =================================================
+                     PROFESSIONAL DETAILS
+                ================================================== -->
+
+                <div id="professionalDetails">
+
+                    <div class="professional-title">
+                        <i class="bi bi-briefcase"></i>
+                        Professional Information
+                    </div>
+
+                    <div class="professional-grid">
+
+                        <div class="form-group">
+                            <label class="form-label">
+                                Company Name <span class="required">*</span>
+                            </label>
+                            <div class="input-wrap">
+                                <i class="bi bi-building input-icon"></i>
+                                {{ form.company_name }}
+                            </div>
+                            {% if form.company_name.errors %}
+                                <div class="field-error">
+                                    <i class="bi bi-exclamation-circle"></i>
+                                    {{ form.company_name.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">
+                                Designation <span class="required">*</span>
+                            </label>
+                            <div class="input-wrap">
+                                <i class="bi bi-person-badge input-icon"></i>
+                                {{ form.designation }}
+                            </div>
+                            {% if form.designation.errors %}
+                                <div class="field-error">
+                                    <i class="bi bi-exclamation-circle"></i>
+                                    {{ form.designation.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">
+                                Work Location <span class="required">*</span>
+                            </label>
+                            <div class="input-wrap">
+                                <i class="bi bi-geo-alt input-icon"></i>
+                                {{ form.work_location }}
+                            </div>
+                            {% if form.work_location.errors %}
+                                <div class="field-error">
+                                    <i class="bi bi-exclamation-circle"></i>
+                                    {{ form.work_location.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">
+                                Work Shift <span class="required">*</span>
+                            </label>
+                            <div class="input-wrap">
+                                <i class="bi bi-clock input-icon"></i>
+                                {{ form.work_shift }}
+                            </div>
+                            {% if form.work_shift.errors %}
+                                <div class="field-error">
+                                    <i class="bi bi-exclamation-circle"></i>
+                                    {{ form.work_shift.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- =================================================
+                     GOVERNMENT EMPLOYEE DETAILS
+                ================================================== -->
+                <div id="governmentDetails" style="display: none;">
+                    <div class="professional-title">
+                        <i class="bi bi-bank2"></i>
+                        Government Office & Department
+                    </div>
+                    <div class="professional-grid">
+                        <div class="form-group">
+                            <label class="form-label">Department</label>
+                            <div class="input-wrap">
+                                <i class="bi bi-diagram-3 input-icon"></i>
+                                {{ form.department }}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Government Office</label>
+                            <div class="input-wrap">
+                                <i class="bi bi-building input-icon"></i>
+                                {{ form.government_office }}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Office Location</label>
+                            <div class="input-wrap">
+                                <i class="bi bi-geo-alt input-icon"></i>
+                                {{ form.office_location }}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Designation</label>
+                            <div class="input-wrap">
+                                <i class="bi bi-person-badge input-icon"></i>
+                                {{ form.designation }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- =================================================
+                     BUSINESS / SELF EMPLOYED DETAILS
+                ================================================== -->
+                <div id="businessDetails" style="display: none;">
+                    <div class="professional-title">
+                        <i class="bi bi-shop"></i>
+                        Business & Enterprise Details
+                    </div>
+                    <div class="professional-grid">
+                        <div class="form-group">
+                            <label class="form-label">Business / Firm Name</label>
+                            <div class="input-wrap">
+                                <i class="bi bi-briefcase input-icon"></i>
+                                {{ form.business_name }}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Business Type / Industry</label>
+                            <div class="input-wrap">
+                                <i class="bi bi-tag input-icon"></i>
+                                {{ form.business_type }}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Business Location</label>
+                            <div class="input-wrap">
+                                <i class="bi bi-geo-alt input-icon"></i>
+                                {{ form.business_location }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- =================================================
+                     JOB SEEKER DETAILS
+                ================================================== -->
+                <div id="jobSeekerDetails" style="display: none;">
+                    <div class="professional-title">
+                        <i class="bi bi-mortarboard"></i>
+                        Career & Qualification Profile
+                    </div>
+                    <div class="professional-grid">
+                        <div class="form-group">
+                            <label class="form-label">Highest Qualification</label>
+                            <div class="input-wrap">
+                                <i class="bi bi-award input-icon"></i>
+                                {{ form.qualification }}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Skills</label>
+                            <div class="input-wrap">
+                                <i class="bi bi-code-slash input-icon"></i>
+                                {{ form.skills }}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Experience</label>
+                            <div class="input-wrap">
+                                <i class="bi bi-clock-history input-icon"></i>
+                                {{ form.experience }}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Preferred Job Profile</label>
+                            <div class="input-wrap">
+                                <i class="bi bi-search input-icon"></i>
+                                {{ form.preferred_job }}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Preferred Location</label>
+                            <div class="input-wrap">
+                                <i class="bi bi-geo input-icon"></i>
+                                {{ form.preferred_location }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- =========================
+                     USERNAME
+                ========================== -->
+
+                <div class="form-group">
+
+                    <label class="form-label">
+                        Username <span class="required">*</span>
+                    </label>
+
+                    <div class="input-wrap">
+
+                        <i class="bi bi-at input-icon"></i>
+
+                        {{ form.username }}
+
+                    </div>
+
+                    {% if form.username.errors %}
+                        <div class="field-error">
+                            <i class="bi bi-exclamation-circle"></i>
+                            {{ form.username.errors.0 }}
+                        </div>
+                    {% endif %}
+
+                </div>
+
+
+                <!-- =========================
+                     PASSWORD
+                ========================== -->
+
+                <div class="form-group">
+
+                    <label class="form-label">
+                        Password <span class="required">*</span>
+                    </label>
+
+                    <div class="input-wrap password-wrap">
+
+                        <i class="bi bi-lock input-icon"></i>
+
+                        {{ form.password1 }}
+
+                        <button type="button"
+                                class="password-toggle"
+                                data-target="id_password1"
+                                aria-label="Show password">
+
+                            <i class="bi bi-eye"></i>
+
+                        </button>
+
+                    </div>
+
+                    <div class="password-strength">
+
+                        <div class="strength-bar">
+                            <div class="strength-fill"
+                                 id="strengthFill"></div>
+                        </div>
+
+                        <span class="strength-text"
+                              id="strengthText">
+                            Weak
+                        </span>
+
+                    </div>
+
+                    {% if form.password1.errors %}
+                        <div class="field-error">
+                            <i class="bi bi-exclamation-circle"></i>
+                            {{ form.password1.errors.0 }}
+                        </div>
+                    {% endif %}
+
+                </div>
+
+
+                <!-- =========================
+                     CONFIRM PASSWORD
+                ========================== -->
+
+                <div class="form-group">
+
+                    <label class="form-label">
+                        Confirm Password <span class="required">*</span>
+                    </label>
+
+                    <div class="input-wrap password-wrap">
+
+                        <i class="bi bi-lock-fill input-icon"></i>
+
+                        {{ form.password2 }}
+
+                        <button type="button"
+                                class="password-toggle"
+                                data-target="id_password2"
+                                aria-label="Show password">
+
+                            <i class="bi bi-eye"></i>
+
+                        </button>
+
+                    </div>
+
+                    {% if form.password2.errors %}
+                        <div class="field-error">
+                            <i class="bi bi-exclamation-circle"></i>
+                            {{ form.password2.errors.0 }}
+                        </div>
+                    {% endif %}
+
+                </div>
+
+
+            </div>
+
+
+            <!-- =========================
+                 TERMS
+            ========================== -->
+
+            <div class="terms-row">
+
+                <input type="checkbox"
+                       id="termsCheck"
+                       required>
+
+                <label for="termsCheck">
+                    I agree to the
+                    <a href="#" onclick="return false;">
+                        Terms & Conditions
+                    </a>
+                    and hostel rules.
+                </label>
+
+            </div>
+
+
+            <!-- =========================
+                 CREATE ACCOUNT
+            ========================== -->
+
+            <button type="submit"
+                    class="create-btn"
+                    id="createBtn">
+
+                <i class="bi bi-person-plus"></i>
+
+                Create Account
+
+            </button>
+
+
+            <!-- =========================
+                 LOGIN
+            ========================== -->
+
+            <div class="login-link">
+
+                Already have an account?
+
+                <a href="{% url 'accounts:login' %}">
+                    Login
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<!-- Toastify -->
+<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    /* =====================================================
+       INPUT CLASSES
+    ====================================================== */
+
+    const inputIds = [
+        "id_first_name",
+        "id_student_id",
+        "id_phone",
+        "id_email",
+        "id_username",
+        "id_password1",
+        "id_password2",
+        "id_other_occupation",
+        "id_company_name",
+        "id_designation",
+        "id_work_location",
+        "id_work_shift"
+    ];
+
+    inputIds.forEach(function (id) {
+
+        const input = document.getElementById(id);
+
+        if (input) {
+            input.classList.add("form-control");
+        }
+
+    });
+
+
+    /* =====================================================
+       SELECT CLASS
+    ====================================================== */
+
+    const occupation = document.getElementById("id_occupation");
+
+    if (occupation) {
+        occupation.classList.add("form-select");
+    }
+
+
+    /* =====================================================
+       OCCUPATION-BASED FIELDS
+    ====================================================== */
+
+    const otherGroup =
+        document.getElementById("otherOccupationGroup");
+
+    const otherInput =
+        document.getElementById("id_other_occupation");
+
+    const professionalDetails =
+        document.getElementById("professionalDetails");
+
+    const companyInput =
+        document.getElementById("id_company_name");
+
+    const designationInput =
+        document.getElementById("id_designation");
+
+    const workLocationInput =
+        document.getElementById("id_work_location");
+
+    const workShiftInput =
+        document.getElementById("id_work_shift");
+
+
+    function updateOccupationField() {
+
+        if (!occupation) {
+            return;
+        }
+
+        /* OTHER OCCUPATION */
+
+        if (occupation.value === "Other") {
+            if (otherGroup) otherGroup.style.display = "block";
+            if (otherInput) otherInput.required = true;
+        } else {
+            if (otherGroup) otherGroup.style.display = "none";
+            if (otherInput) {
+                otherInput.required = false;
+                otherInput.value = "";
+            }
+        }
+
+        /* OCCUPATION SPECIFIC SECTIONS */
+        const govDetails = document.getElementById("governmentDetails");
+        const bizDetails = document.getElementById("businessDetails");
+        const jobDetails = document.getElementById("jobSeekerDetails");
+
+        if (professionalDetails) professionalDetails.style.display = "none";
+        if (govDetails) govDetails.style.display = "none";
+        if (bizDetails) bizDetails.style.display = "none";
+        if (jobDetails) jobDetails.style.display = "none";
+
+        if (occupation.value === "Working Professional" || occupation.value === "Private Employee") {
+            if (professionalDetails) professionalDetails.style.display = "block";
+        } else if (occupation.value === "Government Employee") {
+            if (govDetails) govDetails.style.display = "block";
+        } else if (occupation.value === "Business / Self Employed") {
+            if (bizDetails) bizDetails.style.display = "block";
+        } else if (occupation.value === "Job Seeker") {
+            if (jobDetails) jobDetails.style.display = "block";
+        }
+    }
+
+
+    if (occupation) {
+
+        occupation.addEventListener(
+            "change",
+            updateOccupationField
+        );
+
+        updateOccupationField();
+
+    }
+
+
+    /* =====================================================
+       PASSWORD SHOW / HIDE
+    ====================================================== */
+
+    document.querySelectorAll(".password-toggle")
+        .forEach(function (button) {
+
+            button.addEventListener("click", function () {
+
+                const targetId =
+                    button.getAttribute("data-target");
+
+                const input =
+                    document.getElementById(targetId);
+
+                if (!input) {
+                    return;
+                }
+
+
+                const icon =
+                    button.querySelector("i");
+
+
+                if (input.type === "password") {
+
+                    input.type = "text";
+
+                    icon.classList.remove("bi-eye");
+                    icon.classList.add("bi-eye-slash");
+
+                    button.setAttribute(
+                        "aria-label",
+                        "Hide password"
+                    );
+
+                } else {
+
+                    input.type = "password";
+
+                    icon.classList.remove("bi-eye-slash");
+                    icon.classList.add("bi-eye");
+
+                    button.setAttribute(
+                        "aria-label",
+                        "Show password"
+                    );
+
+                }
+
+            });
+
+        });
+
+
+    /* =====================================================
+       PASSWORD STRENGTH
+    ====================================================== */
+
+    const passwordInput =
+        document.getElementById("id_password1");
+
+    const strengthFill =
+        document.getElementById("strengthFill");
+
+    const strengthText =
+        document.getElementById("strengthText");
+
+
+    if (passwordInput) {
+
+        passwordInput.addEventListener("input", function () {
+
+            const password = passwordInput.value;
+
+            let strength = 0;
+
+
+            if (password.length >= 8) {
+                strength++;
+            }
+
+            if (/[A-Z]/.test(password)) {
+                strength++;
+            }
+
+            if (/[a-z]/.test(password)) {
+                strength++;
+            }
+
+            if (/[0-9]/.test(password)) {
+                strength++;
+            }
+
+            if (/[^A-Za-z0-9]/.test(password)) {
+                strength++;
+            }
+
+
+            let width = "0%";
+            let text = "Weak";
+
+
+            if (strength <= 1) {
+
+                width = "20%";
+                text = "Weak";
+
+            } else if (strength === 2) {
+
+                width = "40%";
+                text = "Fair";
+
+            } else if (strength === 3) {
+
+                width = "60%";
+                text = "Good";
+
+            } else if (strength === 4) {
+
+                width = "80%";
+                text = "Strong";
+
+            } else {
+
+                width = "100%";
+                text = "Excellent";
+
+            }
+
+
+            if (strengthFill) {
+                strengthFill.style.width = width;
+            }
+
+            if (strengthText) {
+                strengthText.textContent = text;
+            }
+
+        });
+
+    }
+
+
+    /* =====================================================
+       FORM SUBMIT VALIDATION
+    ====================================================== */
+
+    const signupForm =
+        document.getElementById("signupForm");
+
+
+    if (signupForm) {
+
+        signupForm.addEventListener("submit", function (event) {
+
+            const terms =
+                document.getElementById("termsCheck");
+
+            const password =
+                document.getElementById("id_password1");
+
+            const confirmPassword =
+                document.getElementById("id_password2");
+
+
+            /* Terms */
+
+            if (terms && !terms.checked) {
+
+                event.preventDefault();
+
+                Toastify({
+                    text: "Please accept the Terms & Conditions.",
+                    duration: 3000,
+                    gravity: "top",
+                    position: "right",
+                    close: true
+                }).showToast();
+
+                terms.focus();
+
+                return;
+            }
+
+
+            /* Password */
+
+            if (
+                password &&
+                confirmPassword &&
+                password.value !== confirmPassword.value
+            ) {
+
+                event.preventDefault();
+
+                Toastify({
+                    text: "Passwords do not match.",
+                    duration: 3000,
+                    gravity: "top",
+                    position: "right",
+                    close: true
+                }).showToast();
+
+                confirmPassword.focus();
+
+                return;
+            }
+
+
+            /* Other occupation */
+
+            if (
+                occupation &&
+                occupation.value === "Other" &&
+                otherInput &&
+                !otherInput.value.trim()
+            ) {
+
+                event.preventDefault();
+
+                Toastify({
+                    text: "Please specify your occupation.",
+                    duration: 3000,
+                    gravity: "top",
+                    position: "right",
+                    close: true
+                }).showToast();
+
+                otherInput.focus();
+
+                return;
+            }
+
+
+            /* Professional details */
+
+            const professionalOccupations = [
+                "Working Professional",
+                "Government Employee",
+                "Private Employee"
+            ];
+
+            if (
+                occupation &&
+                professionalOccupations.includes(
+                    occupation.value
+                )
+            ) {
+
+                const professionalFields = [
+                    [companyInput, "Please enter your company name."],
+                    [designationInput, "Please enter your designation."],
+                    [workLocationInput, "Please enter your work location."],
+                    [workShiftInput, "Please enter your work shift."]
+                ];
+
+                for (const [input, message] of professionalFields) {
+
+                    if (input && !input.value.trim()) {
+
+                        event.preventDefault();
+
+                        Toastify({
+                            text: message,
+                            duration: 3000,
+                            gravity: "top",
+                            position: "right",
+                            close: true
+                        }).showToast();
+
+                        input.focus();
+
+                        return;
+                    }
+                }
+            }
+
+        });
+
+    }
+
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1527 @@
+{% extends 'base.html' %}
+
+{% block title %}Room {{ room.room_number }}{% endblock %}
+{% block page_title %}Room {{ room.room_number }}{% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item">
+    <a href="{% url 'hostel:index' %}">Hostel</a>
+</li>
+<li class="breadcrumb-item active">
+    Room {{ room.room_number }}
+</li>
+{% endblock %}
+
+
+{% block extra_css %}
+<style>
+    .room-page {
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    /* HERO */
+    .room-hero {
+        position: relative;
+        overflow: hidden;
+        background:
+            radial-gradient(circle at 90% 10%, rgba(99,102,241,.14), transparent 30%),
+            radial-gradient(circle at 5% 95%, rgba(59,130,246,.08), transparent 28%),
+            #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 24px;
+        padding: 28px;
+        margin-bottom: 20px;
+        box-shadow: 0 12px 35px rgba(15,23,42,.06);
+    }
+
+    .room-hero::after {
+        content: "";
+        position: absolute;
+        width: 230px;
+        height: 230px;
+        right: -100px;
+        bottom: -130px;
+        border-radius: 50%;
+        background: rgba(99,102,241,.055);
+    }
+
+    .hero-inner {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 25px;
+    }
+
+    .hero-main {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .hero-icon {
+        width: 58px;
+        height: 58px;
+        flex: 0 0 58px;
+        border-radius: 17px;
+        background: #eef2ff;
+        color: #4f46e5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 25px;
+    }
+
+    .room-title {
+        margin: 0 0 5px;
+        color: #111827;
+        font-size: 27px;
+        font-weight: 850;
+        letter-spacing: -.6px;
+    }
+
+    .room-location {
+        color: #64748b;
+        font-size: 12px;
+        margin-bottom: 10px;
+    }
+
+    .room-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 7px;
+    }
+
+    .room-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: #f8fafc;
+        border: 1px solid #e5e7eb;
+        color: #64748b;
+        font-size: 10px;
+        font-weight: 700;
+    }
+
+    .hero-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 9px;
+    }
+
+    .premium-btn {
+        min-height: 41px;
+        border-radius: 11px;
+        padding: 9px 15px;
+        font-size: 12px;
+        font-weight: 750;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+    }
+
+    /* STATUS */
+    .room-status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 8px 12px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 800;
+    }
+
+    .status-available {
+        color: #047857;
+        background: #ecfdf5;
+    }
+
+    .status-full {
+        color: #b91c1c;
+        background: #fef2f2;
+    }
+
+    .status-maintenance {
+        color: #c2410c;
+        background: #fff7ed;
+    }
+
+    .status-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: currentColor;
+    }
+
+    /* STATS */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+
+    .stat-card {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 18px;
+        padding: 18px;
+        box-shadow: 0 7px 24px rgba(15,23,42,.045);
+        transition: .2s ease;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 30px rgba(15,23,42,.08);
+    }
+
+    .stat-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+    }
+
+    .stat-label {
+        color: #64748b;
+        font-size: 10px;
+        font-weight: 750;
+        text-transform: uppercase;
+        letter-spacing: .45px;
+        margin-bottom: 6px;
+    }
+
+    .stat-value {
+        color: #111827;
+        font-size: 24px;
+        font-weight: 850;
+    }
+
+    .stat-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+    }
+
+    .icon-blue {
+        color: #2563eb;
+        background: #eff6ff;
+    }
+
+    .icon-red {
+        color: #dc2626;
+        background: #fef2f2;
+    }
+
+    .icon-green {
+        color: #059669;
+        background: #ecfdf5;
+    }
+
+    .icon-purple {
+        color: #7c3aed;
+        background: #f5f3ff;
+    }
+
+    /* GRID */
+    .main-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.65fr) minmax(290px, .8fr);
+        gap: 20px;
+    }
+
+    .premium-card {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 7px 25px rgba(15,23,42,.045);
+        margin-bottom: 20px;
+    }
+
+    .card-header-premium {
+        padding: 18px 21px;
+        border-bottom: 1px solid #eef2f7;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+    }
+
+    .section-title {
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        color: #111827;
+        font-size: 15px;
+        font-weight: 800;
+    }
+
+    .section-title i {
+        color: #4f46e5;
+        font-size: 17px;
+    }
+
+    .card-body-premium {
+        padding: 21px;
+    }
+
+    /* BED GRID */
+    .bed-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 13px;
+    }
+
+    .bed-card {
+        position: relative;
+        min-height: 155px;
+        border-radius: 16px;
+        padding: 15px;
+        border: 1px solid #e2e8f0;
+        transition: .2s ease;
+        overflow: hidden;
+    }
+
+    .bed-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 9px 22px rgba(15,23,42,.07);
+    }
+
+    .bed-available {
+        background: #f8fffc;
+        border-color: #bbf7d0;
+    }
+
+    .bed-occupied {
+        background: #fffafa;
+        border-color: #fecaca;
+    }
+
+    .bed-maintenance {
+        background: #fffdf8;
+        border-color: #fed7aa;
+    }
+
+    .bed-top {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 7px;
+    }
+
+    .bed-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 11px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 17px;
+    }
+
+    .bed-available .bed-icon {
+        color: #059669;
+        background: #d1fae5;
+    }
+
+    .bed-occupied .bed-icon {
+        color: #dc2626;
+        background: #fee2e2;
+    }
+
+    .bed-maintenance .bed-icon {
+        color: #d97706;
+        background: #ffedd5;
+    }
+
+    .bed-status {
+        padding: 5px 8px;
+        border-radius: 999px;
+        font-size: 8px;
+        font-weight: 850;
+        text-transform: uppercase;
+        letter-spacing: .3px;
+    }
+
+    .bed-available .bed-status {
+        color: #047857;
+        background: #d1fae5;
+    }
+
+    .bed-occupied .bed-status {
+        color: #b91c1c;
+        background: #fee2e2;
+    }
+
+    .bed-maintenance .bed-status {
+        color: #c2410c;
+        background: #ffedd5;
+    }
+
+    .bed-number {
+        margin-top: 12px;
+        color: #1e293b;
+        font-size: 14px;
+        font-weight: 800;
+    }
+
+    .bed-student {
+        margin-top: 4px;
+        color: #64748b;
+        font-size: 10px;
+        min-height: 16px;
+    }
+
+    .bed-student a {
+        color: inherit;
+        font-weight: 750;
+        text-decoration: none;
+    }
+
+    .bed-student a:hover {
+        color: #4f46e5;
+    }
+
+    .bed-action {
+        margin-top: 10px;
+    }
+
+    .bed-action button {
+        width: 100%;
+        border: 1px solid currentColor;
+        background: transparent;
+        border-radius: 8px;
+        padding: 5px 7px;
+        font-size: 9px;
+        font-weight: 750;
+        cursor: pointer;
+        transition: .2s ease;
+    }
+
+    .bed-available .bed-action button {
+        color: #047857;
+    }
+
+    .bed-available .bed-action button:hover {
+        background: #ecfdf5;
+    }
+
+    .bed-maintenance .bed-action button {
+        color: #c2410c;
+    }
+
+    .bed-maintenance .bed-action button:hover {
+        background: #fff7ed;
+    }
+
+    /* OCCUPANCY */
+    .occupancy-box {
+        padding: 18px;
+        border-radius: 16px;
+        background: #f8fafc;
+        border: 1px solid #e5e7eb;
+    }
+
+    .occupancy-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        margin-bottom: 9px;
+    }
+
+    .occupancy-title {
+        font-size: 12px;
+        font-weight: 750;
+        color: #475569;
+    }
+
+    .occupancy-percent {
+        font-size: 20px;
+        font-weight: 850;
+        color: #111827;
+    }
+
+    .progress-track {
+        height: 10px;
+        border-radius: 999px;
+        overflow: hidden;
+        background: #e2e8f0;
+    }
+
+    .progress-fill {
+        height: 100%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, #4f46e5, #7c3aed);
+    }
+
+    .occupancy-footer {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 9px;
+        font-size: 10px;
+        color: #94a3b8;
+    }
+
+    .occupancy-footer strong {
+        color: #475569;
+    }
+
+    /* INFO */
+    .info-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px 20px;
+    }
+
+    .info-label {
+        display: block;
+        margin-bottom: 4px;
+        color: #94a3b8;
+        font-size: 10px;
+        font-weight: 750;
+        text-transform: uppercase;
+        letter-spacing: .45px;
+    }
+
+    .info-value {
+        color: #334155;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    /* QUICK ACTION */
+    .quick-list {
+        display: flex;
+        flex-direction: column;
+        gap: 9px;
+    }
+
+    .quick-action {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        padding: 12px;
+        border: 1px solid #e5e7eb;
+        border-radius: 13px;
+        text-decoration: none;
+        color: #334155;
+        transition: .2s ease;
+        background: #fff;
+    }
+
+    .quick-action:hover {
+        color: #111827;
+        background: #f8fafc;
+        transform: translateX(2px);
+    }
+
+    .quick-icon {
+        width: 36px;
+        height: 36px;
+        flex: 0 0 36px;
+        border-radius: 10px;
+        background: #eef2ff;
+        color: #4f46e5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .quick-action strong {
+        display: block;
+        font-size: 12px;
+        margin-bottom: 2px;
+    }
+
+    .quick-action span {
+        color: #94a3b8;
+        font-size: 10px;
+    }
+
+    /* EMPTY */
+    .empty-state {
+        text-align: center;
+        padding: 35px 20px;
+        color: #94a3b8;
+    }
+
+    .empty-icon {
+        width: 50px;
+        height: 50px;
+        margin: 0 auto 10px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f1f5f9;
+        font-size: 22px;
+    }
+
+    .empty-state strong {
+        display: block;
+        color: #475569;
+        font-size: 13px;
+        margin-bottom: 4px;
+    }
+
+    .empty-state span {
+        font-size: 11px;
+    }
+
+    /* BOTTOM */
+    .bottom-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-top: 2px;
+    }
+
+    @media (max-width: 1050px) {
+        .main-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 700px) {
+        .hero-inner {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .hero-actions {
+            width: 100%;
+        }
+
+        .hero-actions .btn {
+            flex: 1;
+        }
+
+        .room-hero {
+            padding: 22px;
+        }
+
+        .info-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .bed-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 500px) {
+        .stats-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .stat-card {
+            padding: 14px;
+        }
+
+        .stat-value {
+            font-size: 20px;
+        }
+
+        .bed-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .bottom-bar {
+            align-items: stretch;
+            flex-direction: column;
+        }
+
+        .bottom-bar .btn {
+            width: 100%;
+        }
+    }
+</style>
+{% endblock %}
+
+
+{% block content %}
+<div class="room-page">
+
+    <!-- HERO -->
+    <div class="room-hero">
+
+        <div class="hero-inner">
+
+            <div class="hero-main">
+
+                <div class="hero-icon">
+                    <i class="bi bi-door-open-fill"></i>
+                </div>
+
+                <div>
+
+                    <h1 class="room-title">
+                        Room {{ room.room_number }}
+                    </h1>
+
+                    <div class="room-location">
+                        <i class="bi bi-buildings me-1"></i>
+                        {{ room.floor.building.name }}
+                        <span class="mx-1">/</span>
+                        {{ room.floor.name }}
+                    </div>
+
+                    <div class="room-tags">
+
+                        <span class="room-tag">
+                            <i class="bi bi-house"></i>
+                            {{ room.get_room_type_display }}
+                        </span>
+
+                        <span class="room-tag">
+                            <i class="bi bi-people"></i>
+                            Capacity {{ room.capacity }}
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="hero-actions">
+
+                {% if room.status == 'maintenance' %}
+
+                    <span class="room-status-badge status-maintenance">
+                        <span class="status-dot"></span>
+                        Under Maintenance
+                    </span>
+
+                {% elif room.is_full %}
+
+                    <span class="room-status-badge status-full">
+                        <span class="status-dot"></span>
+                        Fully Occupied
+                    </span>
+
+                {% else %}
+
+                    <span class="room-status-badge status-available">
+                        <span class="status-dot"></span>
+                        Has Availability
+                    </span>
+
+                {% endif %}
+
+                <a
+                    href="{% url 'hostel:index' %}"
+                    class="btn btn-light border premium-btn"
+                >
+                    <i class="bi bi-arrow-left"></i>
+                    Back
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- STATS -->
+    <div class="stats-grid">
+
+        <div class="stat-card">
+            <div class="stat-top">
+
+                <div>
+                    <div class="stat-label">Total Beds</div>
+                    <div class="stat-value">
+                        {{ room.capacity }}
+                    </div>
+                </div>
+
+                <div class="stat-icon icon-blue">
+                    <i class="bi bi-grid-3x3-gap"></i>
+                </div>
+
+            </div>
+        </div>
+
+
+        <div class="stat-card">
+            <div class="stat-top">
+
+                <div>
+                    <div class="stat-label">Occupied</div>
+                    <div class="stat-value">
+                        {{ room.occupied_beds }}
+                    </div>
+                </div>
+
+                <div class="stat-icon icon-red">
+                    <i class="bi bi-person-fill"></i>
+                </div>
+
+            </div>
+        </div>
+
+
+        <div class="stat-card">
+            <div class="stat-top">
+
+                <div>
+                    <div class="stat-label">Available</div>
+                    <div class="stat-value">
+                        {{ room.available_beds }}
+                    </div>
+                </div>
+
+                <div class="stat-icon icon-green">
+                    <i class="bi bi-check-circle-fill"></i>
+                </div>
+
+            </div>
+        </div>
+
+
+        <div class="stat-card">
+            <div class="stat-top">
+
+                <div>
+                    <div class="stat-label">Occupancy</div>
+                    <div class="stat-value">
+                        {{ room.occupancy_percent }}%
+                    </div>
+                </div>
+
+                <div class="stat-icon icon-purple">
+                    <i class="bi bi-pie-chart-fill"></i>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+
+    <div class="main-grid">
+
+        <!-- LEFT -->
+        <div>
+
+            <!-- BED STATUS -->
+            <div class="premium-card">
+
+                <div class="card-header-premium">
+
+                    <h2 class="section-title">
+                        <i class="bi bi-grid-3x3-gap-fill"></i>
+                        Bed Status
+                    </h2>
+
+                    <div
+                        style="
+                            display:flex;
+                            align-items:center;
+                            gap:10px;
+                            font-size:9px;
+                            font-weight:750;
+                        "
+                    >
+
+                        <span style="color:#059669;">
+                            ● Available
+                        </span>
+
+                        <span style="color:#dc2626;">
+                            ● Occupied
+                        </span>
+
+                        <span style="color:#d97706;">
+                            ● Maintenance
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="card-body-premium">
+
+                    {% if room.beds.all %}
+
+                    <div class="bed-grid">
+
+                        {% for bed in room.beds.all %}
+
+                        <div
+                            class="bed-card
+                            {% if bed.status == 'available' %}
+                                bed-available
+                            {% elif bed.status == 'occupied' %}
+                                bed-occupied
+                            {% else %}
+                                bed-maintenance
+                            {% endif %}"
+                        >
+
+                            <div class="bed-top">
+
+                                <div class="bed-icon">
+
+                                    {% if bed.status == 'available' %}
+                                        <i class="bi bi-check-lg"></i>
+
+                                    {% elif bed.status == 'occupied' %}
+                                        <i class="bi bi-person-fill"></i>
+
+                                    {% else %}
+                                        <i class="bi bi-tools"></i>
+                                    {% endif %}
+
+                                </div>
+
+
+                                <span class="bed-status">
+
+                                    {% if bed.status == 'available' %}
+                                        Available
+
+                                    {% elif bed.status == 'occupied' %}
+                                        Occupied
+
+                                    {% else %}
+                                        Maintenance
+                                    {% endif %}
+
+                                </span>
+
+                            </div>
+
+
+                            <div class="bed-number">
+                                Bed {{ bed.bed_number }}
+                            </div>
+
+
+                            <div class="bed-student">
+
+                                {% if bed.status == 'occupied' %}
+
+                                    {% with alloc=bed.get_current_allocation %}
+
+                                        {% if alloc %}
+
+                                            <a
+                                                href="{% url 'students:detail' alloc.student.pk %}"
+                                            >
+                                                <i class="bi bi-person me-1"></i>
+                                                {{ alloc.student.full_name|truncatechars:18 }}
+                                            </a>
+
+                                        {% else %}
+
+                                            Occupied
+
+                                        {% endif %}
+
+                                    {% endwith %}
+
+                                {% else %}
+
+                                    {{ bed.get_status_display }}
+
+                                {% endif %}
+
+                            </div>
+
+
+                            {% if request.user.can_manage_hostel and bed.status != 'occupied' %}
+
+                            <div class="bed-action">
+
+                                <form
+                                    method="post"
+                                    action="{% url 'hostel:bed_toggle' bed.pk %}"
+                                >
+
+                                    {% csrf_token %}
+
+                                    <button type="submit">
+
+                                        {% if bed.status == 'maintenance' %}
+
+                                            <i class="bi bi-arrow-counterclockwise me-1"></i>
+                                            Restore Bed
+
+                                        {% else %}
+
+                                            <i class="bi bi-tools me-1"></i>
+                                            Mark Maintenance
+
+                                        {% endif %}
+
+                                    </button>
+
+                                </form>
+
+                            </div>
+
+                            {% endif %}
+
+                        </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                    {% else %}
+
+                    <div class="empty-state">
+
+                        <div class="empty-icon">
+                            <i class="bi bi-grid-3x3-gap"></i>
+                        </div>
+
+                        <strong>No beds found</strong>
+
+                        <span>
+                            No individual beds are configured for this room.
+                        </span>
+
+                    </div>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+
+            <!-- OCCUPANCY -->
+            <div class="premium-card">
+
+                <div class="card-header-premium">
+
+                    <h2 class="section-title">
+                        <i class="bi bi-bar-chart-fill"></i>
+                        Occupancy Overview
+                    </h2>
+
+                    <span class="room-tag">
+                        {{ room.occupancy_percent }}% occupied
+                    </span>
+
+                </div>
+
+
+                <div class="card-body-premium">
+
+                    <div class="occupancy-box">
+
+                        <div class="occupancy-top">
+
+                            <div class="occupancy-title">
+                                Current room occupancy
+                            </div>
+
+                            <div class="occupancy-percent">
+                                {{ room.occupancy_percent }}%
+                            </div>
+
+                        </div>
+
+
+                        <div class="progress-track">
+
+                            <div
+                                class="progress-fill"
+                                style="
+                                    width:
+                                    {% if room.occupancy_percent > 100 %}
+                                        100
+                                    {% else %}
+                                        {{ room.occupancy_percent }}
+                                    {% endif %}%;
+                                "
+                            ></div>
+
+                        </div>
+
+
+                        <div class="occupancy-footer">
+
+                            <span>
+                                <strong>{{ room.occupied_beds }}</strong>
+                                occupied
+                            </span>
+
+                            <span>
+                                <strong>{{ room.available_beds }}</strong>
+                                available
+                            </span>
+
+                            <span>
+                                <strong>{{ room.capacity }}</strong>
+                                total
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ROOM INFORMATION -->
+            <div class="premium-card">
+
+                <div class="card-header-premium">
+
+                    <h2 class="section-title">
+                        <i class="bi bi-info-circle"></i>
+                        Room Information
+                    </h2>
+
+                </div>
+
+
+                <div class="card-body-premium">
+
+                    <div class="info-grid">
+
+                        <div>
+                            <span class="info-label">
+                                Room Number
+                            </span>
+
+                            <div class="info-value">
+                                {{ room.room_number }}
+                            </div>
+                        </div>
+
+
+                        <div>
+                            <span class="info-label">
+                                Room Type
+                            </span>
+
+                            <div class="info-value">
+                                {{ room.get_room_type_display }}
+                            </div>
+                        </div>
+
+
+                        <div>
+                            <span class="info-label">
+                                Building
+                            </span>
+
+                            <div class="info-value">
+                                {{ room.floor.building.name }}
+                            </div>
+                        </div>
+
+
+                        <div>
+                            <span class="info-label">
+                                Floor
+                            </span>
+
+                            <div class="info-value">
+                                {{ room.floor.name }}
+                            </div>
+                        </div>
+
+
+                        <div>
+                            <span class="info-label">
+                                Capacity
+                            </span>
+
+                            <div class="info-value">
+                                {{ room.capacity }} beds
+                            </div>
+                        </div>
+
+
+                        <div>
+                            <span class="info-label">
+                                Room Status
+                            </span>
+
+                            <div class="info-value">
+
+                                {% if room.status == 'maintenance' %}
+                                    Under Maintenance
+
+                                {% elif room.is_full %}
+                                    Fully Occupied
+
+                                {% else %}
+                                    Has Availability
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- RIGHT -->
+        <div>
+
+            <!-- ALLOCATION -->
+            <div class="premium-card">
+
+                <div class="card-header-premium">
+
+                    <h2 class="section-title">
+                        <i class="bi bi-person-plus"></i>
+                        Allocation
+                    </h2>
+
+                </div>
+
+
+                <div class="card-body-premium">
+
+                    {% if room.available_beds > 0 and room.status != 'maintenance' %}
+
+                        <div
+                            style="
+                                padding:18px;
+                                border-radius:15px;
+                                background:#f0fdf4;
+                                border:1px solid #bbf7d0;
+                                margin-bottom:13px;
+                            "
+                        >
+
+                            <div
+                                style="
+                                    width:40px;
+                                    height:40px;
+                                    border-radius:12px;
+                                    display:flex;
+                                    align-items:center;
+                                    justify-content:center;
+                                    background:#dcfce7;
+                                    color:#059669;
+                                    margin-bottom:10px;
+                                "
+                            >
+                                <i class="bi bi-check-lg"></i>
+                            </div>
+
+                            <strong
+                                style="
+                                    display:block;
+                                    color:#166534;
+                                    font-size:13px;
+                                    margin-bottom:4px;
+                                "
+                            >
+                                Beds Available
+                            </strong>
+
+                            <span
+                                style="
+                                    color:#4d7c5d;
+                                    font-size:10px;
+                                "
+                            >
+                                {{ room.available_beds }}
+                                bed{{ room.available_beds|pluralize }}
+                                ready for allocation.
+                            </span>
+
+                        </div>
+
+
+                        {% if request.user.can_manage_hostel %}
+
+                        <a
+                            href="{% url 'allocations:create' %}"
+                            class="btn btn-primary premium-btn w-100"
+                        >
+                            <i class="bi bi-person-plus-fill"></i>
+                            Allocate Student
+                        </a>
+
+                        {% endif %}
+
+                    {% elif room.status == 'maintenance' %}
+
+                        <div class="empty-state">
+
+                            <div
+                                class="empty-icon"
+                                style="
+                                    background:#fff7ed;
+                                    color:#d97706;
+                                "
+                            >
+                                <i class="bi bi-tools"></i>
+                            </div>
+
+                            <strong>
+                                Room Under Maintenance
+                            </strong>
+
+                            <span>
+                                Student allocation is currently unavailable.
+                            </span>
+
+                        </div>
+
+                    {% else %}
+
+                        <div class="empty-state">
+
+                            <div
+                                class="empty-icon"
+                                style="
+                                    background:#fef2f2;
+                                    color:#dc2626;
+                                "
+                            >
+                                <i class="bi bi-person-fill-x"></i>
+                            </div>
+
+                            <strong>
+                                Room Fully Occupied
+                            </strong>
+
+                            <span>
+                                There are no available beds for allocation.
+                            </span>
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+
+            <!-- QUICK ACTIONS -->
+            <div class="premium-card">
+
+                <div class="card-header-premium">
+
+                    <h2 class="section-title">
+                        <i class="bi bi-lightning-charge"></i>
+                        Quick Actions
+                    </h2>
+
+                </div>
+
+
+                <div class="card-body-premium">
+
+                    <div class="quick-list">
+
+                        <a
+                            href="{% url 'hostel:index' %}"
+                            class="quick-action"
+                        >
+                            <div class="quick-icon">
+                                <i class="bi bi-buildings"></i>
+                            </div>
+
+                            <div>
+                                <strong>All Buildings</strong>
+                                <span>View hostel structure</span>
+                            </div>
+
+                            <i
+                                class="bi bi-chevron-right ms-auto"
+                                style="color:#cbd5e1;"
+                            ></i>
+                        </a>
+
+
+                        <a
+                            href="{% url 'hostel:room_list' %}"
+                            class="quick-action"
+                        >
+                            <div class="quick-icon">
+                                <i class="bi bi-grid-3x3-gap"></i>
+                            </div>
+
+                            <div>
+                                <strong>Room List</strong>
+                                <span>Browse all rooms</span>
+                            </div>
+
+                            <i
+                                class="bi bi-chevron-right ms-auto"
+                                style="color:#cbd5e1;"
+                            ></i>
+                        </a>
+
+
+                        <a
+                            href="{% url 'allocations:list' %}"
+                            class="quick-action"
+                        >
+                            <div class="quick-icon">
+                                <i class="bi bi-arrow-left-right"></i>
+                            </div>
+
+                            <div>
+                                <strong>Allocations</strong>
+                                <span>Manage room allocations</span>
+                            </div>
+
+                            <i
+                                class="bi bi-chevron-right ms-auto"
+                                style="color:#cbd5e1;"
+                            ></i>
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- BED SUMMARY -->
+            <div class="premium-card">
+
+                <div class="card-header-premium">
+
+                    <h2 class="section-title">
+                        <i class="bi bi-pie-chart"></i>
+                        Bed Summary
+                    </h2>
+
+                </div>
+
+
+                <div class="card-body-premium">
+
+                    <div class="info-grid">
+
+                        <div>
+
+                            <span class="info-label">
+                                Total
+                            </span>
+
+                            <div class="info-value">
+                                {{ room.capacity }}
+                            </div>
+
+                        </div>
+
+
+                        <div>
+
+                            <span class="info-label">
+                                Occupied
+                            </span>
+
+                            <div
+                                class="info-value"
+                                style="color:#dc2626;"
+                            >
+                                {{ room.occupied_beds }}
+                            </div>
+
+                        </div>
+
+
+                        <div>
+
+                            <span class="info-label">
+                                Available
+                            </span>
+
+                            <div
+                                class="info-value"
+                                style="color:#059669;"
+                            >
+                                {{ room.available_beds }}
+                            </div>
+
+                        </div>
+
+
+                        <div>
+
+                            <span class="info-label">
+                                Occupancy
+                            </span>
+
+                            <div class="info-value">
+                                {{ room.occupancy_percent }}%
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- BOTTOM -->
+    <div class="bottom-bar">
+
+        <a
+            href="{% url 'hostel:index' %}"
+            class="btn btn-light border premium-btn"
+        >
+            <i class="bi bi-arrow-left"></i>
+            Back to Hostel
+        </a>
+
+
+        {% if request.user.can_manage_hostel and room.available_beds > 0 and room.status != 'maintenance' %}
+
+        <a
+            href="{% url 'allocations:create' %}"
+            class="btn btn-primary premium-btn"
+        >
+            <i class="bi bi-person-plus"></i>
+            Allocate Student to this Room
+        </a>
+
+        {% endif %}
+
+    </div>
+
+</div>
+{% endblock %}

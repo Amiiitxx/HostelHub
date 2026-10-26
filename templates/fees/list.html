@@ -1,0 +1,1268 @@
+{% extends 'base.html' %}
+
+{% block title %}Fee Records{% endblock %}
+{% block page_title %}Fee Records{% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item active">Fee Records</li>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .fees-page {
+        max-width: 1500px;
+        margin: 0 auto;
+    }
+
+    .fees-hero {
+        position: relative;
+        overflow: hidden;
+        border-radius: 22px;
+        padding: 26px 28px;
+        margin-bottom: 20px;
+        background:
+            radial-gradient(circle at 90% 0%, rgba(99,102,241,.13), transparent 28%),
+            linear-gradient(135deg, #ffffff, #fbfcff);
+        border: 1px solid rgba(15,23,42,.07);
+        box-shadow: 0 10px 30px rgba(15,23,42,.05);
+    }
+
+    .fees-hero::after {
+        content: "";
+        position: absolute;
+        width: 160px;
+        height: 160px;
+        right: -70px;
+        bottom: -95px;
+        border-radius: 50%;
+        background: rgba(99,102,241,.06);
+    }
+
+    .hero-inner {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+    }
+
+    .hero-left {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .hero-icon {
+        width: 56px;
+        height: 56px;
+        border-radius: 16px;
+        background: linear-gradient(135deg, #4f46e5, #6366f1);
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        box-shadow: 0 10px 24px rgba(79,70,229,.2);
+        flex-shrink: 0;
+    }
+
+    .hero-title {
+        margin: 0;
+        font-size: 23px;
+        font-weight: 800;
+        color: #111827;
+        letter-spacing: -.4px;
+    }
+
+    .hero-subtitle {
+        margin: 5px 0 0;
+        color: #94a3b8;
+        font-size: 12px;
+    }
+
+    .hero-actions {
+        position: relative;
+        z-index: 3;
+        display: flex;
+        gap: 9px;
+    }
+
+    .premium-btn {
+        border: 0;
+        border-radius: 10px;
+        padding: 9px 14px;
+        font-size: 11px;
+        font-weight: 800;
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        text-decoration: none;
+        transition: .2s ease;
+    }
+
+    .premium-btn:hover {
+        transform: translateY(-1px);
+    }
+
+    .btn-primary-premium {
+        color: #fff;
+        background: #4f46e5;
+    }
+
+    .btn-primary-premium:hover {
+        color: #fff;
+        background: #4338ca;
+    }
+
+    .btn-light-premium {
+        color: #475569;
+        background: #f8fafc;
+        border: 1px solid #e5e7eb;
+    }
+
+    .btn-light-premium:hover {
+        color: #111827;
+        background: #f1f5f9;
+    }
+
+
+    /* SUMMARY */
+
+    .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 14px;
+        margin-bottom: 20px;
+    }
+
+    .summary-card {
+        background: #fff;
+        border: 1px solid rgba(15,23,42,.07);
+        border-radius: 17px;
+        padding: 17px;
+        box-shadow: 0 6px 22px rgba(15,23,42,.04);
+    }
+
+    .summary-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 12px;
+    }
+
+    .summary-label {
+        color: #64748b;
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    .summary-icon {
+        width: 35px;
+        height: 35px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 15px;
+    }
+
+    .summary-icon.blue {
+        color: #2563eb;
+        background: #eff6ff;
+    }
+
+    .summary-icon.green {
+        color: #059669;
+        background: #ecfdf5;
+    }
+
+    .summary-icon.orange {
+        color: #d97706;
+        background: #fffbeb;
+    }
+
+    .summary-icon.purple {
+        color: #7c3aed;
+        background: #f5f3ff;
+    }
+
+    .summary-value {
+        color: #111827;
+        font-size: 22px;
+        font-weight: 800;
+        line-height: 1;
+    }
+
+    .summary-meta {
+        color: #94a3b8;
+        font-size: 10px;
+        margin-top: 6px;
+    }
+
+
+    /* TABLE PANEL */
+
+    .table-panel {
+        background: #fff;
+        border: 1px solid rgba(15,23,42,.07);
+        border-radius: 20px;
+        box-shadow: 0 7px 25px rgba(15,23,42,.045);
+        overflow: hidden;
+    }
+
+    .toolbar {
+        padding: 16px 18px;
+        border-bottom: 1px solid #eef0f4;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+    }
+
+    .toolbar-left,
+    .toolbar-right {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .search-wrap {
+        position: relative;
+    }
+
+    .search-wrap i {
+        position: absolute;
+        left: 11px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #94a3b8;
+        font-size: 13px;
+        pointer-events: none;
+    }
+
+    .search-input {
+        width: 240px;
+        height: 36px;
+        padding: 0 12px 0 33px;
+        border: 1px solid #e5e7eb;
+        border-radius: 9px;
+        outline: none;
+        color: #334155;
+        font-size: 11px;
+        background: #fff;
+    }
+
+    .search-input:focus {
+        border-color: #a5b4fc;
+        box-shadow: 0 0 0 3px rgba(99,102,241,.08);
+    }
+
+    .filter-select {
+        height: 36px;
+        padding: 0 30px 0 11px;
+        border: 1px solid #e5e7eb;
+        border-radius: 9px;
+        background: #fff;
+        color: #475569;
+        font-size: 11px;
+        outline: none;
+    }
+
+    .filter-select:focus {
+        border-color: #a5b4fc;
+        box-shadow: 0 0 0 3px rgba(99,102,241,.08);
+    }
+
+    .small-btn {
+        height: 36px;
+        padding: 0 12px;
+        border-radius: 9px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 10px;
+        font-weight: 800;
+        text-decoration: none;
+        border: 1px solid #e5e7eb;
+        background: #fff;
+        color: #475569;
+    }
+
+    .small-btn:hover {
+        color: #111827;
+        background: #f8fafc;
+    }
+
+
+    /* TABLE */
+
+    .table-wrap {
+        overflow-x: auto;
+    }
+
+    .fees-table {
+        width: 100%;
+        min-width: 980px;
+        border-collapse: collapse;
+    }
+
+    .fees-table th {
+        padding: 12px 16px;
+        background: #f8fafc;
+        border-bottom: 1px solid #edf0f4;
+        color: #64748b;
+        font-size: 9px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: .65px;
+        white-space: nowrap;
+    }
+
+    .fees-table td {
+        padding: 14px 16px;
+        border-bottom: 1px solid #f1f3f6;
+        vertical-align: middle;
+    }
+
+    .fees-table tbody tr {
+        transition: .15s ease;
+    }
+
+    .fees-table tbody tr:hover {
+        background: #fafbff;
+    }
+
+    .student-cell {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-width: 190px;
+    }
+
+    .student-avatar {
+        width: 38px;
+        height: 38px;
+        border-radius: 11px;
+        background: linear-gradient(135deg, #eef2ff, #e0e7ff);
+        color: #4f46e5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        font-weight: 800;
+        flex-shrink: 0;
+        object-fit: cover;
+    }
+
+    .student-name {
+        color: #1e293b;
+        font-size: 12px;
+        font-weight: 800;
+    }
+
+    .student-id {
+        color: #94a3b8;
+        font-size: 9px;
+        margin-top: 2px;
+    }
+
+    .fee-name {
+        color: #334155;
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    .fee-description {
+        color: #94a3b8;
+        font-size: 9px;
+        margin-top: 3px;
+    }
+
+    .amount {
+        color: #111827;
+        font-size: 12px;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .paid {
+        color: #059669;
+        font-size: 12px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .balance {
+        color: #dc2626;
+        font-size: 12px;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .due-date {
+        color: #475569;
+        font-size: 10px;
+        white-space: nowrap;
+    }
+
+    .due-overdue {
+        color: #dc2626;
+        font-weight: 800;
+    }
+
+
+    /* BADGES */
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 5px 8px;
+        border-radius: 7px;
+        font-size: 9px;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .status-paid {
+        background: #ecfdf5;
+        color: #047857;
+    }
+
+    .status-pending {
+        background: #fffbeb;
+        color: #b45309;
+    }
+
+    .status-partial {
+        background: #eff6ff;
+        color: #1d4ed8;
+    }
+
+    .status-overdue {
+        background: #fef2f2;
+        color: #b91c1c;
+    }
+
+    .status-default {
+        background: #f1f5f9;
+        color: #64748b;
+    }
+
+
+    /* ACTIONS */
+
+    .actions {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .action-btn {
+        width: 30px;
+        height: 30px;
+        border-radius: 8px;
+        border: 1px solid #e5e7eb;
+        background: #fff;
+        color: #64748b;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        transition: .15s ease;
+    }
+
+    .action-btn:hover {
+        color: #4f46e5;
+        background: #eef2ff;
+        border-color: #c7d2fe;
+    }
+
+    .action-payment:hover {
+        color: #059669;
+        background: #ecfdf5;
+        border-color: #a7f3d0;
+    }
+
+
+    /* FOOTER */
+
+    .table-footer {
+        padding: 14px 18px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+    }
+
+    .showing-text {
+        color: #94a3b8;
+        font-size: 10px;
+    }
+
+    .pagination {
+        margin: 0;
+    }
+
+    .pagination .page-link {
+        min-width: 30px;
+        height: 30px;
+        padding: 0 8px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 7px;
+        border: 1px solid #e5e7eb;
+        color: #64748b;
+        font-size: 10px;
+        margin-left: 4px;
+    }
+
+    .pagination .page-link:hover {
+        background: #eef2ff;
+        color: #4f46e5;
+        border-color: #c7d2fe;
+    }
+
+
+    /* EMPTY */
+
+    .empty-state {
+        padding: 65px 20px;
+        text-align: center;
+    }
+
+    .empty-icon {
+        width: 64px;
+        height: 64px;
+        border-radius: 19px;
+        background: #f1f5f9;
+        color: #94a3b8;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 15px;
+        font-size: 27px;
+    }
+
+    .empty-state h4 {
+        margin: 0 0 5px;
+        color: #334155;
+        font-size: 16px;
+        font-weight: 800;
+    }
+
+    .empty-state p {
+        margin: 0;
+        color: #94a3b8;
+        font-size: 11px;
+    }
+
+
+    @media (max-width: 1100px) {
+        .summary-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .toolbar {
+            align-items: stretch;
+            flex-direction: column;
+        }
+
+        .toolbar-left,
+        .toolbar-right {
+            width: 100%;
+        }
+
+        .search-wrap,
+        .search-input {
+            width: 100%;
+        }
+    }
+
+    @media (max-width: 700px) {
+        .fees-hero {
+            padding: 21px;
+        }
+
+        .hero-inner {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .hero-actions {
+            width: 100%;
+        }
+
+        .hero-actions .premium-btn {
+            flex: 1;
+            justify-content: center;
+        }
+
+        .summary-grid {
+            gap: 10px;
+        }
+
+        .summary-card {
+            padding: 14px;
+        }
+
+        .table-footer {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+    }
+
+    @media (max-width: 450px) {
+        .summary-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .hero-left {
+            align-items: flex-start;
+        }
+
+        .hero-icon {
+            width: 50px;
+            height: 50px;
+            font-size: 21px;
+        }
+
+        .hero-actions {
+            flex-direction: column;
+        }
+    }
+</style>
+{% endblock %}
+
+
+{% block content %}
+<div class="fees-page">
+
+    <!-- HERO -->
+    <section class="fees-hero">
+
+        <div class="hero-inner">
+
+            <div class="hero-left">
+
+                <div class="hero-icon">
+                    <i class="bi bi-receipt"></i>
+                </div>
+
+                <div>
+                    <h1 class="hero-title">
+                        Fee Records
+                    </h1>
+
+                    <p class="hero-subtitle">
+                        Search, filter and manage student fee records and payments.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="hero-actions">
+
+                <a
+                    href="{% url 'reports:fee_report' %}"
+                    class="premium-btn btn-light-premium"
+                >
+                    <i class="bi bi-download"></i>
+                    Export
+                </a>
+
+                {% if request.user.can_manage_hostel %}
+                <a
+                    href="{% url 'fees:create' %}"
+                    class="premium-btn btn-primary-premium"
+                >
+                    <i class="bi bi-plus-lg"></i>
+                    Add Fee
+                </a>
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- SUMMARY -->
+    <div class="summary-grid">
+
+        <div class="summary-card">
+
+            <div class="summary-top">
+                <span class="summary-label">Total Records</span>
+
+                <div class="summary-icon blue">
+                    <i class="bi bi-receipt-cutoff"></i>
+                </div>
+            </div>
+
+            <div class="summary-value">
+                {{ total_count }}
+            </div>
+
+            <div class="summary-meta">
+                Fee records in current view
+            </div>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <div class="summary-top">
+                <span class="summary-label">Total Billed</span>
+
+                <div class="summary-icon purple">
+                    <i class="bi bi-cash-stack"></i>
+                </div>
+            </div>
+
+            <div class="summary-value">
+                ₹{{ totals.total_amount|default:"0"|floatformat:2 }}
+            </div>
+
+            <div class="summary-meta">
+                Total fee amount
+            </div>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <div class="summary-top">
+                <span class="summary-label">Total Paid</span>
+
+                <div class="summary-icon green">
+                    <i class="bi bi-check2-circle"></i>
+                </div>
+            </div>
+
+            <div class="summary-value">
+                ₹{{ totals.total_paid|default:"0"|floatformat:2 }}
+            </div>
+
+            <div class="summary-meta">
+                Payments received
+            </div>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <div class="summary-top">
+                <span class="summary-label">Outstanding</span>
+
+                <div class="summary-icon orange">
+                    <i class="bi bi-hourglass-split"></i>
+                </div>
+            </div>
+
+            <div class="summary-value">
+                ₹{{ totals.total_balance|default:"0"|floatformat:2 }}
+            </div>
+
+            <div class="summary-meta">
+                Remaining balance
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- TABLE -->
+    <section class="table-panel">
+
+        <div class="toolbar">
+
+            <div class="toolbar-left">
+
+                <form
+                    method="get"
+                    style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;width:100%;"
+                    id="feeFilterForm"
+                >
+
+                    <div class="search-wrap">
+                        <i class="bi bi-search"></i>
+
+                        <input
+                            type="text"
+                            name="q"
+                            value="{{ q }}"
+                            class="search-input"
+                            placeholder="Search student or fee..."
+                            id="feeSearch"
+                            autocomplete="off"
+                        >
+                    </div>
+
+
+                    <select
+                        name="status"
+                        class="filter-select"
+                        onchange="this.form.submit()"
+                    >
+                        <option value="">All Statuses</option>
+
+                        <option
+                            value="paid"
+                            {% if status_filter == 'paid' %}selected{% endif %}
+                        >
+                            Paid
+                        </option>
+
+                        <option
+                            value="pending"
+                            {% if status_filter == 'pending' %}selected{% endif %}
+                        >
+                            Pending
+                        </option>
+
+                        <option
+                            value="partial"
+                            {% if status_filter == 'partial' %}selected{% endif %}
+                        >
+                            Partial
+                        </option>
+
+                        <option
+                            value="overdue"
+                            {% if status_filter == 'overdue' %}selected{% endif %}
+                        >
+                            Overdue
+                        </option>
+
+                    </select>
+
+
+                    <select
+                        name="fee_type"
+                        class="filter-select"
+                        onchange="this.form.submit()"
+                    >
+                        <option value="">All Fee Types</option>
+
+                        {% for fee_type in fee_types %}
+                        <option
+                            value="{{ fee_type }}"
+                            {% if fee_type_filter == fee_type %}selected{% endif %}
+                        >
+                            {{ fee_type }}
+                        </option>
+                        {% endfor %}
+
+                    </select>
+
+
+                    {% if q or status_filter or fee_type_filter %}
+                    <a
+                        href="{% url 'fees:list' %}"
+                        class="small-btn"
+                    >
+                        <i class="bi bi-x-lg"></i>
+                        Clear
+                    </a>
+                    {% endif %}
+
+                </form>
+
+            </div>
+
+
+            <div class="toolbar-right">
+
+                <span
+                    style="
+                        color:#94a3b8;
+                        font-size:10px;
+                        white-space:nowrap;
+                    "
+                >
+                    {{ total_count }} record{{ total_count|pluralize }}
+                </span>
+
+            </div>
+
+        </div>
+
+
+        {% if fees %}
+
+        <div class="table-wrap">
+
+            <table class="fees-table">
+
+                <thead>
+                    <tr>
+                        <th>Student</th>
+                        <th>Fee Type</th>
+                        <th>Amount</th>
+                        <th>Paid</th>
+                        <th>Balance</th>
+                        <th>Due Date</th>
+                        <th>Status</th>
+                        <th style="width:80px;">Actions</th>
+                    </tr>
+                </thead>
+
+
+                <tbody>
+
+                {% for fee in fees %}
+
+                    <tr>
+
+                        <!-- STUDENT -->
+                        <td>
+
+                            <div class="student-cell">
+
+                                {% if fee.student.photo %}
+
+                                    <img
+                                        src="{{ fee.student.photo.url }}"
+                                        alt="{{ fee.student.full_name }}"
+                                        class="student-avatar"
+                                    >
+
+                                {% else %}
+
+                                    <div class="student-avatar">
+                                        {{ fee.student.initials }}
+                                    </div>
+
+                                {% endif %}
+
+
+                                <div>
+
+                                    <div class="student-name">
+                                        {{ fee.student.full_name }}
+                                    </div>
+
+                                    <div class="student-id">
+                                        {{ fee.student.student_id }}
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </td>
+
+
+                        <!-- FEE TYPE -->
+                        <td>
+
+                            <div class="fee-name">
+                                {{ fee.get_fee_type_display }}
+                            </div>
+
+                            {% if fee.description %}
+                            <div class="fee-description">
+                                {{ fee.description|truncatechars:35 }}
+                            </div>
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- AMOUNT -->
+                        <td>
+                            <span class="amount">
+                                ₹{{ fee.amount|floatformat:2 }}
+                            </span>
+                        </td>
+
+
+                        <!-- PAID -->
+                        <td>
+                            <span class="paid">
+                                ₹{{ fee.total_paid|default:"0"|floatformat:2 }}
+                            </span>
+                        </td>
+
+
+                        <!-- BALANCE -->
+                        <td>
+                            <span class="balance">
+                                ₹{{ fee.balance|default:"0"|floatformat:2 }}
+                            </span>
+                        </td>
+
+
+                        <!-- DUE DATE -->
+                        <td>
+
+                            <span class="due-date
+                                {% if fee.status == 'overdue' %}
+                                    due-overdue
+                                {% endif %}
+                            ">
+                                {{ fee.due_date|date:"d M Y" }}
+                            </span>
+
+                        </td>
+
+
+                        <!-- STATUS -->
+                        <td>
+
+                            <span class="status-badge
+                                {% if fee.status == 'paid' %}
+                                    status-paid
+                                {% elif fee.status == 'pending' %}
+                                    status-pending
+                                {% elif fee.status == 'partial' %}
+                                    status-partial
+                                {% elif fee.status == 'overdue' %}
+                                    status-overdue
+                                {% else %}
+                                    status-default
+                                {% endif %}
+                            ">
+
+                                {% if fee.status == 'paid' %}
+                                    <i class="bi bi-check-circle-fill"></i>
+                                {% elif fee.status == 'pending' %}
+                                    <i class="bi bi-clock-fill"></i>
+                                {% elif fee.status == 'partial' %}
+                                    <i class="bi bi-pie-chart-fill"></i>
+                                {% elif fee.status == 'overdue' %}
+                                    <i class="bi bi-exclamation-circle-fill"></i>
+                                {% else %}
+                                    <i class="bi bi-dot"></i>
+                                {% endif %}
+
+                                {{ fee.get_status_display }}
+
+                            </span>
+
+                        </td>
+
+
+                        <!-- ACTIONS -->
+                        <td>
+
+                            <div class="actions">
+
+                                <a
+                                    href="{% url 'fees:detail' fee.pk %}"
+                                    class="action-btn"
+                                    title="View Fee"
+                                >
+                                    <i class="bi bi-eye"></i>
+                                </a>
+
+
+                                {% if request.user.can_manage_hostel and fee.balance > 0 %}
+
+                                <a
+                                    href="{% url 'fees:payment' fee.pk %}"
+                                    class="action-btn action-payment"
+                                    title="Record Payment"
+                                >
+                                    <i class="bi bi-credit-card"></i>
+                                </a>
+
+                                {% endif %}
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        <!-- PAGINATION -->
+
+        {% if fees.has_other_pages %}
+
+        <div class="table-footer">
+
+            <div class="showing-text">
+                Showing
+                {{ fees.start_index }}–{{ fees.end_index }}
+                of
+                {{ fees.paginator.count }}
+                records
+            </div>
+
+
+            <nav aria-label="Fee pagination">
+
+                <ul class="pagination">
+
+                    {% if fees.has_previous %}
+
+                    <li class="page-item">
+
+                        <a
+                            class="page-link"
+                            href="?page={{ fees.previous_page_number }}{% if q %}&q={{ q|urlencode }}{% endif %}{% if status_filter %}&status={{ status_filter|urlencode }}{% endif %}{% if fee_type_filter %}&fee_type={{ fee_type_filter|urlencode }}{% endif %}"
+                        >
+                            <i class="bi bi-chevron-left"></i>
+                        </a>
+
+                    </li>
+
+                    {% endif %}
+
+
+                    <li class="page-item">
+
+                        <span
+                            class="page-link"
+                            style="
+                                background:#eef2ff;
+                                color:#4f46e5;
+                                border-color:#c7d2fe;
+                                font-weight:800;
+                            "
+                        >
+                            {{ fees.number }}
+                        </span>
+
+                    </li>
+
+
+                    {% if fees.has_next %}
+
+                    <li class="page-item">
+
+                        <a
+                            class="page-link"
+                            href="?page={{ fees.next_page_number }}{% if q %}&q={{ q|urlencode }}{% endif %}{% if status_filter %}&status={{ status_filter|urlencode }}{% endif %}{% if fee_type_filter %}&fee_type={{ fee_type_filter|urlencode }}{% endif %}"
+                        >
+                            <i class="bi bi-chevron-right"></i>
+                        </a>
+
+                    </li>
+
+                    {% endif %}
+
+                </ul>
+
+            </nav>
+
+        </div>
+
+        {% endif %}
+
+
+        {% else %}
+
+        <!-- EMPTY -->
+
+        <div class="empty-state">
+
+            <div class="empty-icon">
+                <i class="bi bi-receipt"></i>
+            </div>
+
+            <h4>
+                No Fee Records Found
+            </h4>
+
+            <p>
+                {% if q or status_filter or fee_type_filter %}
+                    No fee records match your current filters.
+                {% else %}
+                    There are no fee records available yet.
+                {% endif %}
+            </p>
+
+
+            {% if request.user.can_manage_hostel and not q and not status_filter and not fee_type_filter %}
+
+            <a
+                href="{% url 'fees:create' %}"
+                class="premium-btn btn-primary-premium"
+                style="margin-top:16px;"
+            >
+                <i class="bi bi-plus-lg"></i>
+                Create First Fee
+            </a>
+
+            {% endif %}
+
+        </div>
+
+        {% endif %}
+
+    </section>
+
+</div>
+{% endblock %}
+
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    const searchInput = document.getElementById('feeSearch');
+
+    /*
+     * Press "/" to focus search.
+     */
+    document.addEventListener('keydown', function (event) {
+
+        if (
+            event.key === '/' &&
+            document.activeElement.tagName !== 'INPUT' &&
+            document.activeElement.tagName !== 'TEXTAREA' &&
+            document.activeElement.tagName !== 'SELECT'
+        ) {
+            event.preventDefault();
+
+            if (searchInput) {
+                searchInput.focus();
+            }
+        }
+
+    });
+
+
+    /*
+     * Enter submits the search.
+     */
+    if (searchInput) {
+
+        searchInput.addEventListener('keydown', function (event) {
+
+            if (event.key === 'Enter') {
+                event.preventDefault();
+
+                const form = document.getElementById('feeFilterForm');
+
+                if (form) {
+                    form.submit();
+                }
+            }
+
+        });
+
+    }
+
+});
+</script>
+{% endblock %}

@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}HostelMS Enterprise Control Center{% endblock %}</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <!-- Inter Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Admin SaaS Dedicated Stylesheet -->
+    <style>
+        :root {
+            --admin-bg: #f8fafc;
+            --admin-surface: #ffffff;
+            --admin-sidebar-bg: #0b0f19;
+            --admin-sidebar-surface: #111827;
+            --admin-sidebar-hover: #1f2937;
+            --admin-sidebar-text: #94a3b8;
+            --admin-sidebar-text-active: #ffffff;
+            --admin-primary: #4f46e5;
+            --admin-primary-hover: #4338ca;
+            --admin-primary-light: #eef2ff;
+            --admin-border: #e2e8f0;
+            --admin-border-subtle: #f1f5f9;
+            --admin-text-main: #0f172a;
+            --admin-text-muted: #64748b;
+            --admin-card-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
+            --admin-card-hover-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
+            --sidebar-width: 270px;
+            --header-height: 70px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--admin-bg);
+            color: var(--admin-text-main);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* SIDEBAR */
+        .admin-sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background-color: var(--admin-sidebar-bg);
+            border-right: 1px solid rgba(255, 255, 255, 0.06);
+            display: flex;
+            flex-direction: column;
+            z-index: 1040;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255,255,255,0.1) transparent;
+        }
+
+        .admin-brand {
+            padding: 22px 24px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            text-decoration: none;
+        }
+
+        .admin-brand-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.35);
+        }
+
+        .admin-brand-text h4 {
+            margin: 0;
+            font-size: 17px;
+            font-weight: 800;
+            color: #ffffff;
+            letter-spacing: -0.3px;
+        }
+
+        .admin-brand-text span {
+            font-size: 11px;
+            font-weight: 600;
+            color: #818cf8;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        .sidebar-section-title {
+            padding: 18px 24px 8px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #475569;
+            letter-spacing: 0.9px;
+        }
+
+        .sidebar-nav {
+            list-style: none;
+            padding: 0 14px;
+            margin: 0;
+        }
+
+        .sidebar-item {
+            margin-bottom: 3px;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            color: var(--admin-sidebar-text);
+            text-decoration: none;
+            font-size: 13.5px;
+            font-weight: 500;
+            border-radius: 9px;
+            transition: all 0.18s ease;
+        }
+
+        .sidebar-link i {
+            font-size: 17px;
+            color: #64748b;
+            transition: color 0.18s ease;
+        }
+
+        .sidebar-link:hover {
+            color: var(--admin-sidebar-text-active);
+            background-color: var(--admin-sidebar-hover);
+        }
+
+        .sidebar-link:hover i {
+            color: #818cf8;
+        }
+
+        .sidebar-link.active {
+            color: #ffffff;
+            background: linear-gradient(90deg, rgba(79, 70, 229, 0.9) 0%, rgba(99, 102, 241, 0.75) 100%);
+            font-weight: 600;
+            box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3);
+        }
+
+        .sidebar-link.active i {
+            color: #ffffff;
+        }
+
+        .sidebar-badge {
+            margin-left: auto;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: 12px;
+            background: rgba(239, 68, 68, 0.2);
+            color: #fca5a5;
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding: 18px 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            background-color: rgba(0, 0, 0, 0.2);
+        }
+
+        .admin-user-pill {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .admin-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 15px;
+        }
+
+        /* HEADER */
+        .admin-header {
+            position: fixed;
+            top: 0;
+            left: var(--sidebar-width);
+            right: 0;
+            height: var(--header-height);
+            background-color: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--admin-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 32px;
+            z-index: 1030;
+            transition: left 0.25s ease;
+        }
+
+        .header-search {
+            position: relative;
+            width: 320px;
+        }
+
+        .header-search input {
+            width: 100%;
+            padding: 9px 16px 9px 38px;
+            background-color: #f1f5f9;
+            border: 1px solid transparent;
+            border-radius: 10px;
+            font-size: 13.5px;
+            color: var(--admin-text-main);
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .header-search input:focus {
+            background-color: #ffffff;
+            border-color: var(--admin-primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
+        }
+
+        .header-search i {
+            position: absolute;
+            left: 13px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            font-size: 15px;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .btn-quick-add {
+            background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+            color: #ffffff;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 9px;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 2px 6px rgba(79, 70, 229, 0.25);
+            transition: all 0.2s ease;
+        }
+
+        .btn-quick-add:hover {
+            background: linear-gradient(135deg, #4338ca 0%, #4f46e5 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.35);
+        }
+
+        .header-icon-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            background-color: #f8fafc;
+            border: 1px solid var(--admin-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--admin-text-muted);
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s ease;
+        }
+
+        .header-icon-btn:hover {
+            color: var(--admin-primary);
+            background-color: #ffffff;
+            border-color: #cbd5e1;
+        }
+
+        .badge-dot {
+            position: absolute;
+            top: 7px;
+            right: 7px;
+            width: 8px;
+            height: 8px;
+            background-color: #ef4444;
+            border-radius: 50%;
+            border: 2px solid #ffffff;
+        }
+
+        /* MAIN CONTENT AREA */
+        .admin-main {
+            margin-left: var(--sidebar-width);
+            margin-top: var(--header-height);
+            padding: 32px;
+            min-height: calc(100vh - var(--header-height));
+            transition: margin-left 0.25s ease;
+        }
+
+        /* BREADCRUMB & HEADER TITLES */
+        .admin-page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 26px;
+        }
+
+        .admin-page-header h1 {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--admin-text-main);
+            margin: 0 0 4px 0;
+            letter-spacing: -0.5px;
+        }
+
+        .admin-page-header p {
+            margin: 0;
+            font-size: 13.5px;
+            color: var(--admin-text-muted);
+        }
+
+        /* CARDS */
+        .admin-card {
+            background: var(--admin-surface);
+            border-radius: 14px;
+            border: 1px solid var(--admin-border);
+            box-shadow: var(--admin-card-shadow);
+            padding: 24px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .admin-card:hover {
+            box-shadow: var(--admin-card-hover-shadow);
+        }
+
+        .admin-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 18px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--admin-border-subtle);
+        }
+
+        .admin-card-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--admin-text-main);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* PILLS & BADGES */
+        .pill-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11.5px;
+            font-weight: 600;
+        }
+
+        .pill-success { background: #ecfdf5; color: #059669; }
+        .pill-danger { background: #fef2f2; color: #dc2626; }
+        .pill-warning { background: #fffbeb; color: #d97706; }
+        .pill-primary { background: #eef2ff; color: #4f46e5; }
+        .pill-info { background: #f0f9ff; color: #0284c7; }
+        .pill-dark { background: #f1f5f9; color: #475569; }
+
+        /* DATA TABLES */
+        .admin-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .admin-table th {
+            background: #f8fafc;
+            color: #64748b;
+            font-size: 11.5px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--admin-border);
+        }
+
+        .admin-table td {
+            padding: 14px 16px;
+            font-size: 13.5px;
+            color: #334155;
+            border-bottom: 1px solid var(--admin-border-subtle);
+            vertical-align: middle;
+        }
+
+        .admin-table tr:hover td {
+            background-color: #f8fafc;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 992px) {
+            .admin-sidebar {
+                transform: translateX(-100%);
+            }
+            .admin-sidebar.show {
+                transform: translateX(0);
+            }
+            .admin-header {
+                left: 0;
+            }
+            .admin-main {
+                margin-left: 0;
+                padding: 20px;
+            }
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+    <!-- =====================================================
+         ADMIN SIDEBAR
+    ====================================================== -->
+    <aside class="admin-sidebar" id="adminSidebar">
+        <!-- BRAND -->
+        <a href="{% url 'dashboard:admin_dashboard' %}" class="admin-brand">
+            <div class="admin-brand-icon">
+                <i class="bi bi-shield-lock-fill"></i>
+            </div>
+            <div class="admin-brand-text">
+                <h4>HostelMS</h4>
+                <span>Enterprise Admin</span>
+            </div>
+        </a>
+
+        <!-- NAVIGATION -->
+        <div class="sidebar-section-title">Overview</div>
+        <ul class="sidebar-nav">
+            <li class="sidebar-item">
+                <a href="{% url 'dashboard:admin_dashboard' %}" class="sidebar-link {% if request.path == '/dashboard/' or request.path == '/admin-dashboard/' or request.resolver_match.url_name == 'admin_dashboard' or request.resolver_match.url_name == 'admin' %}active{% endif %}">
+                    <i class="bi bi-grid-1x2-fill"></i>
+                    <span>Control Center</span>
+                </a>
+            </li>
+        </ul>
+
+        <div class="sidebar-section-title">Management</div>
+        <ul class="sidebar-nav">
+            <li class="sidebar-item">
+                <a href="{% url 'dashboard:admin_residents' %}" class="sidebar-link {% if 'residents' in request.path %}active{% endif %}">
+                    <i class="bi bi-people-fill"></i>
+                    <span>Residents Directory</span>
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="{% url 'dashboard:admin_wardens' %}" class="sidebar-link {% if 'wardens' in request.path %}active{% endif %}">
+                    <i class="bi bi-person-badge-fill"></i>
+                    <span>Wardens & Staff</span>
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="{% url 'hostel:index' %}" class="sidebar-link {% if request.resolver_match.app_name == 'hostel' and 'rooms' not in request.path %}active{% endif %}">
+                    <i class="bi bi-buildings-fill"></i>
+                    <span>Hostels & Blocks</span>
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="{% url 'hostel:room_list' %}" class="sidebar-link {% if 'rooms' in request.path %}active{% endif %}">
+                    <i class="bi bi-door-open-fill"></i>
+                    <span>Rooms & Beds</span>
+                </a>
+            </li>
+        </ul>
+
+        <div class="sidebar-section-title">Operations</div>
+        <ul class="sidebar-nav">
+            <li class="sidebar-item">
+                <a href="{% url 'allocations:list' %}" class="sidebar-link {% if request.resolver_match.app_name == 'allocations' %}active{% endif %}">
+                    <i class="bi bi-key-fill"></i>
+                    <span>Room Allocations</span>
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="{% url 'complaints:list' %}" class="sidebar-link {% if request.resolver_match.app_name == 'complaints' %}active{% endif %}">
+                    <i class="bi bi-tools"></i>
+                    <span>Maintenance & Complaints</span>
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="{% url 'visitors:list' %}" class="sidebar-link {% if request.resolver_match.app_name == 'visitors' %}active{% endif %}">
+                    <i class="bi bi-person-check-fill"></i>
+                    <span>Visitors Gate Pass</span>
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="{% url 'dashboard:admin_leaves' %}" class="sidebar-link {% if 'leaves' in request.path %}active{% endif %}">
+                    <i class="bi bi-calendar2-range-fill"></i>
+                    <span>Leave Requests</span>
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="{% url 'attendance:index' %}" class="sidebar-link {% if request.resolver_match.app_name == 'attendance' and 'leaves' not in request.path %}active{% endif %}">
+                    <i class="bi bi-calendar2-check-fill"></i>
+                    <span>Daily Attendance</span>
+                </a>
+            </li>
+        </ul>
+
+        <div class="sidebar-section-title">Finance & Billing</div>
+        <ul class="sidebar-nav">
+            <li class="sidebar-item">
+                <a href="{% url 'fees:list' %}" class="sidebar-link {% if request.resolver_match.app_name == 'fees' %}active{% endif %}">
+                    <i class="bi bi-credit-card-2-front-fill"></i>
+                    <span>Fees & Payments</span>
+                </a>
+            </li>
+        </ul>
+
+        <div class="sidebar-section-title">Communication</div>
+        <ul class="sidebar-nav">
+            <li class="sidebar-item">
+                <a href="{% url 'dashboard:admin_notices' %}" class="sidebar-link {% if 'notices' in request.path %}active{% endif %}">
+                    <i class="bi bi-megaphone-fill"></i>
+                    <span>Notices & Broadcasts</span>
+                </a>
+            </li>
+        </ul>
+
+        <div class="sidebar-section-title">Analytics & System</div>
+        <ul class="sidebar-nav">
+            <li class="sidebar-item">
+                <a href="{% url 'reports:index' %}" class="sidebar-link {% if request.resolver_match.app_name == 'reports' %}active{% endif %}">
+                    <i class="bi bi-graph-up-arrow"></i>
+                    <span>Reports & Statistics</span>
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="{% url 'dashboard:admin_settings' %}" class="sidebar-link {% if 'settings' in request.path %}active{% endif %}">
+                    <i class="bi bi-gear-fill"></i>
+                    <span>System Settings</span>
+                </a>
+            </li>
+        </ul>
+
+        <!-- FOOTER USER BADGE -->
+        <div class="sidebar-footer">
+            <div class="admin-user-pill">
+                <div class="admin-avatar">
+                    {{ request.user.first_name|first|default:request.user.username|first|upper }}
+                </div>
+                <div style="min-width: 0;">
+                    <div style="font-size: 13px; font-weight: 700; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                        {{ request.user.get_full_name|default:request.user.username }}
+                    </div>
+                    <div style="font-size: 11px; color: #10b981; font-weight: 600;">
+                        <i class="bi bi-shield-check"></i> Super Administrator
+                    </div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+    <header class="admin-header">
+        <div class="d-flex align-items-center gap-3">
+            <button class="header-icon-btn d-lg-none" id="sidebarToggle" aria-label="Toggle Navigation">
+                <i class="bi bi-list fs-5"></i>
+            </button>
+            <div class="header-search d-none d-md-block">
+                <i class="bi bi-search"></i>
+                <input type="text" placeholder="Global search residents, rooms, fees (Ctrl + K)..." id="globalSearchInput">
+            </div>
+        </div>
+
+        <div class="header-actions">
+            <!-- QUICK ACTIONS DROPDOWN -->
+            <div class="dropdown">
+                <button class="btn btn-quick-add dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-plus-circle-fill"></i>
+                    <span>Quick Action</span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 py-2" style="border-radius: 12px; min-width: 220px;">
+                    <li><h6 class="dropdown-header text-uppercase fs-xs fw-bold text-muted">Create New</h6></li>
+                    <li><a class="dropdown-item py-2" href="{% url 'students:create' %}"><i class="bi bi-person-plus text-primary me-2"></i> Add Resident</a></li>
+                    <li><a class="dropdown-item py-2" href="{% url 'dashboard:admin_warden_create' %}"><i class="bi bi-person-badge text-success me-2"></i> Add Warden</a></li>
+                    <li><a class="dropdown-item py-2" href="{% url 'hostel:building_create' %}"><i class="bi bi-building text-info me-2"></i> Add Hostel Block</a></li>
+                    <li><a class="dropdown-item py-2" href="{% url 'hostel:room_create' %}"><i class="bi bi-door-open text-warning me-2"></i> Add Room</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item py-2" href="{% url 'allocations:create' %}"><i class="bi bi-key text-purple me-2"></i> Allocate Room</a></li>
+                    <li><a class="dropdown-item py-2" href="{% url 'dashboard:admin_notice_create' %}"><i class="bi bi-megaphone text-danger me-2"></i> Post Notice</a></li>
+                    <li><a class="dropdown-item py-2" href="{% url 'fees:create' %}"><i class="bi bi-cash text-success me-2"></i> Create Fee Invoice</a></li>
+                </ul>
+            </div>
+
+            <!-- NOTIFICATIONS -->
+            <div class="dropdown">
+                <button class="header-icon-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="System Notifications">
+                    <i class="bi bi-bell-fill"></i>
+                    {% if notifications_count and notifications_count > 0 %}
+                    <span class="badge-dot"></span>
+                    {% endif %}
+                </button>
+                <div class="dropdown-menu dropdown-menu-end shadow-lg border-0 p-0" style="width: 320px; border-radius: 14px; overflow: hidden;">
+                    <div class="p-3 bg-light border-bottom d-flex justify-content-between align-items-center">
+                        <strong class="fs-sm">Admin Notifications</strong>
+                        <span class="badge bg-danger rounded-pill">{{ notifications_count|default:"0" }} Pending</span>
+                    </div>
+                    <div class="p-2" style="max-height: 280px; overflow-y: auto;">
+                        <a href="{% url 'dashboard:admin_leaves' %}" class="d-flex align-items-start gap-2 p-2 rounded text-decoration-none text-dark hover-bg-light">
+                            <i class="bi bi-calendar2-range text-warning mt-1 fs-5"></i>
+                            <div>
+                                <div class="fw-semibold fs-xs">Pending Leaves</div>
+                                <div class="text-muted fs-xs">{{ pending_leaves_count|default:0 }} resident leave requests waiting for approval.</div>
+                            </div>
+                        </a>
+                        <a href="{% url 'complaints:list' %}" class="d-flex align-items-start gap-2 p-2 rounded text-decoration-none text-dark hover-bg-light">
+                            <i class="bi bi-tools text-danger mt-1 fs-5"></i>
+                            <div>
+                                <div class="fw-semibold fs-xs">Open Complaints</div>
+                                <div class="text-muted fs-xs">{{ active_complaints|default:0 }} unresolved complaints need maintenance.</div>
+                            </div>
+                        </a>
+                        <a href="{% url 'visitors:list' %}" class="d-flex align-items-start gap-2 p-2 rounded text-decoration-none text-dark hover-bg-light">
+                            <i class="bi bi-person-check text-info mt-1 fs-5"></i>
+                            <div>
+                                <div class="fw-semibold fs-xs">Active Visitors</div>
+                                <div class="text-muted fs-xs">{{ visitors_inside|default:0 }} guests currently checked in.</div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PROFILE MENU -->
+            <div class="dropdown">
+                <button class="d-flex align-items-center gap-2 border-0 bg-transparent p-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <div class="admin-avatar">
+                        {{ request.user.first_name|first|default:request.user.username|first|upper }}
+                    </div>
+                    <div class="d-none d-xl-block text-start">
+                        <div class="fw-bold fs-xs text-dark lh-1">{{ request.user.get_full_name|default:request.user.username }}</div>
+                        <small class="text-muted fs-xxs">Admin Control</small>
+                    </div>
+                    <i class="bi bi-chevron-down fs-xs text-muted"></i>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 py-2" style="border-radius: 12px; min-width: 200px;">
+                    <li class="px-3 py-2 border-bottom">
+                        <div class="fw-bold fs-sm">{{ request.user.get_full_name|default:request.user.username }}</div>
+                        <div class="text-muted fs-xs">{{ request.user.email }}</div>
+                    </li>
+                    <li><a class="dropdown-item py-2" href="{% url 'accounts:profile' %}"><i class="bi bi-person me-2"></i> Admin Profile</a></li>
+                    <li><a class="dropdown-item py-2" href="{% url 'dashboard:admin_settings' %}"><i class="bi bi-gear me-2"></i> Settings</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <form method="POST" action="{% url 'accounts:logout' %}">
+                            {% csrf_token %}
+                            <button type="submit" class="dropdown-item text-danger py-2">
+                                <i class="bi bi-box-arrow-right me-2"></i> Logout
+                            </button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </header>
+
+    <!-- =====================================================
+         MAIN CONTENT
+    ====================================================== -->
+    <main class="admin-main">
+        <!-- FLASH MESSAGES -->
+        {% if messages %}
+        <div class="mb-4">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show border-0 shadow-sm" role="alert" style="border-radius: 12px;">
+                <div class="d-flex align-items-center gap-2">
+                    {% if message.tags == 'success' %}<i class="bi bi-check-circle-fill text-success fs-5"></i>
+                    {% elif message.tags == 'error' or message.tags == 'danger' %}<i class="bi bi-exclamation-triangle-fill text-danger fs-5"></i>
+                    {% elif message.tags == 'warning' %}<i class="bi bi-exclamation-circle-fill text-warning fs-5"></i>
+                    {% else %}<i class="bi bi-info-circle-fill text-info fs-5"></i>{% endif %}
+                    <div>{{ message }}</div>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Sidebar Mobile Toggle
+        const toggleBtn = document.getElementById('sidebarToggle');
+        const sidebar = document.getElementById('adminSidebar');
+        if (toggleBtn && sidebar) {
+            toggleBtn.addEventListener('click', () => {
+                sidebar.classList.toggle('show');
+            });
+        }
+
+        // Shortcut Ctrl + K for quick search focus
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                const search = document.getElementById('globalSearchInput');
+                if (search) search.focus();
+            }
+        });
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

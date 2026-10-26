@@ -1,0 +1,1118 @@
+{% extends 'base.html' %}
+
+{% block title %}Create Fee{% endblock %}
+{% block page_title %}Create Fee{% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item">
+    <a href="{% url 'fees:list' %}">Fees</a>
+</li>
+<li class="breadcrumb-item active">Create</li>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .fee-form-page {
+        max-width: 980px;
+        margin: 0 auto;
+        padding-bottom: 45px;
+    }
+
+    /* HEADER */
+    .form-hero {
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 20px;
+        padding: 27px 30px;
+        border-radius: 22px;
+        background: linear-gradient(135deg, #111827 0%, #1e293b 58%, #312e81 100%);
+        color: #fff;
+        box-shadow: 0 16px 40px rgba(15, 23, 42, .14);
+    }
+
+    .form-hero::before {
+        content: "";
+        position: absolute;
+        width: 250px;
+        height: 250px;
+        right: -85px;
+        top: -145px;
+        border-radius: 50%;
+        background: rgba(255,255,255,.06);
+    }
+
+    .form-hero::after {
+        content: "";
+        position: absolute;
+        width: 150px;
+        height: 150px;
+        right: 150px;
+        bottom: -115px;
+        border-radius: 50%;
+        background: rgba(99,102,241,.13);
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+    }
+
+    .hero-main {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .hero-icon {
+        width: 56px;
+        height: 56px;
+        flex: 0 0 56px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid rgba(255,255,255,.13);
+        border-radius: 16px;
+        background: rgba(255,255,255,.1);
+        font-size: 23px;
+    }
+
+    .hero-eyebrow {
+        margin-bottom: 4px;
+        color: rgba(255,255,255,.5);
+        font-size: 9px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .hero-title {
+        margin: 0;
+        color: #fff;
+        font-size: 25px;
+        font-weight: 800;
+        letter-spacing: -.5px;
+    }
+
+    .hero-text {
+        margin: 5px 0 0;
+        color: rgba(255,255,255,.63);
+        font-size: 10px;
+    }
+
+    .back-btn {
+        position: relative;
+        z-index: 3;
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        min-height: 39px;
+        padding: 0 13px;
+        border: 1px solid rgba(255,255,255,.14);
+        border-radius: 10px;
+        background: rgba(255,255,255,.08);
+        color: #fff;
+        text-decoration: none;
+        font-size: 10px;
+        font-weight: 800;
+    }
+
+    .back-btn:hover {
+        background: rgba(255,255,255,.15);
+        color: #fff;
+    }
+
+    /* LAYOUT */
+    .form-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 280px;
+        gap: 18px;
+        align-items: start;
+    }
+
+    .form-card {
+        overflow: hidden;
+        border: 1px solid #e8ebf0;
+        border-radius: 20px;
+        background: #fff;
+        box-shadow: 0 5px 22px rgba(15,23,42,.045);
+    }
+
+    .card-header-custom {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        padding: 18px 20px;
+        border-bottom: 1px solid #eef0f4;
+    }
+
+    .card-header-icon {
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        background: #eef2ff;
+        color: #4f46e5;
+        font-size: 15px;
+    }
+
+    .card-title {
+        margin: 0;
+        color: #1e293b;
+        font-size: 13px;
+        font-weight: 800;
+    }
+
+    .card-subtitle {
+        margin-top: 2px;
+        color: #94a3b8;
+        font-size: 9px;
+    }
+
+    .card-body-custom {
+        padding: 21px;
+    }
+
+    /* FORM */
+    .field {
+        margin-bottom: 18px;
+    }
+
+    .field:last-child {
+        margin-bottom: 0;
+    }
+
+    .form-label-custom {
+        display: block;
+        margin-bottom: 7px;
+        color: #334155;
+        font-size: 10px;
+        font-weight: 800;
+    }
+
+    .required {
+        color: #ef4444;
+    }
+
+    .form-control-custom,
+    .form-select-custom {
+        width: 100%;
+        height: 42px;
+        padding: 0 12px;
+        border: 1px solid #dfe4ea;
+        border-radius: 10px;
+        outline: none;
+        background: #fff;
+        color: #334155;
+        font-size: 11px;
+        transition: .2s ease;
+    }
+
+    .form-control-custom:focus,
+    .form-select-custom:focus {
+        border-color: #a5b4fc;
+        box-shadow: 0 0 0 3px rgba(99,102,241,.08);
+    }
+
+    .form-control-custom::placeholder {
+        color: #c0c7d1;
+    }
+
+    .form-select-custom {
+        cursor: pointer;
+    }
+
+    textarea.form-control-custom {
+        min-height: 90px;
+        height: auto;
+        padding-top: 11px;
+        resize: vertical;
+    }
+
+    .field-hint {
+        margin-top: 5px;
+        color: #a1aab8;
+        font-size: 8px;
+        line-height: 1.5;
+    }
+
+    .student-select-wrap {
+        position: relative;
+    }
+
+    .student-select-wrap::after {
+        content: "\F282";
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #94a3b8;
+        font-family: "bootstrap-icons";
+        font-size: 10px;
+        pointer-events: none;
+    }
+
+    /* INPUT WITH PREFIX */
+    .amount-wrap {
+        position: relative;
+    }
+
+    .currency-prefix {
+        position: absolute;
+        left: 1px;
+        top: 1px;
+        bottom: 1px;
+        width: 37px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 9px 0 0 9px;
+        background: #f8fafc;
+        color: #64748b;
+        font-size: 11px;
+        font-weight: 800;
+        pointer-events: none;
+    }
+
+    .amount-input {
+        padding-left: 48px !important;
+    }
+
+    /* STUDENT PREVIEW */
+    .student-preview {
+        display: none;
+        align-items: center;
+        gap: 10px;
+        margin-top: 9px;
+        padding: 10px 11px;
+        border: 1px solid #e0e7ff;
+        border-radius: 11px;
+        background: #f8faff;
+    }
+
+    .student-preview.show {
+        display: flex;
+    }
+
+    .preview-avatar {
+        width: 35px;
+        height: 35px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 9px;
+        background: #e0e7ff;
+        color: #4f46e5;
+        font-size: 10px;
+        font-weight: 800;
+    }
+
+    .preview-name {
+        color: #334155;
+        font-size: 10px;
+        font-weight: 800;
+    }
+
+    .preview-id {
+        margin-top: 2px;
+        color: #94a3b8;
+        font-size: 8px;
+    }
+
+    /* SIDE PANEL */
+    .side-panel {
+        overflow: hidden;
+        border: 1px solid #e8ebf0;
+        border-radius: 19px;
+        background: #fff;
+        box-shadow: 0 5px 22px rgba(15,23,42,.045);
+    }
+
+    .side-section {
+        padding: 18px;
+        border-bottom: 1px solid #eef0f4;
+    }
+
+    .side-section:last-child {
+        border-bottom: 0;
+    }
+
+    .side-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 12px;
+        color: #334155;
+        font-size: 11px;
+        font-weight: 800;
+    }
+
+    .side-title i {
+        color: #4f46e5;
+    }
+
+    .type-list {
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+    }
+
+    .type-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 9px;
+        border-radius: 9px;
+        background: #f8fafc;
+    }
+
+    .type-dot {
+        width: 6px;
+        height: 6px;
+        flex: 0 0 6px;
+        border-radius: 50%;
+        background: #6366f1;
+    }
+
+    .type-item:nth-child(2) .type-dot {
+        background: #10b981;
+    }
+
+    .type-item:nth-child(3) .type-dot {
+        background: #f59e0b;
+    }
+
+    .type-item:nth-child(4) .type-dot {
+        background: #0ea5e9;
+    }
+
+    .type-item:nth-child(5) .type-dot {
+        background: #8b5cf6;
+    }
+
+    .type-item:nth-child(6) .type-dot {
+        background: #ef4444;
+    }
+
+    .type-item:nth-child(7) .type-dot {
+        background: #64748b;
+    }
+
+    .type-name {
+        color: #64748b;
+        font-size: 9px;
+        font-weight: 700;
+    }
+
+    .tip {
+        display: flex;
+        align-items: flex-start;
+        gap: 9px;
+        padding: 11px;
+        border-radius: 11px;
+        background: #f8faff;
+        border: 1px solid #e0e7ff;
+    }
+
+    .tip-icon {
+        color: #4f46e5;
+        font-size: 14px;
+        margin-top: 1px;
+    }
+
+    .tip-text {
+        margin: 0;
+        color: #64748b;
+        font-size: 9px;
+        line-height: 1.65;
+    }
+
+    /* FORM FOOTER */
+    .form-footer {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 9px;
+        padding: 15px 20px;
+        border-top: 1px solid #eef0f4;
+        background: #fafbfc;
+    }
+
+    .footer-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        min-height: 39px;
+        padding: 0 14px;
+        border-radius: 9px;
+        text-decoration: none;
+        font-size: 10px;
+        font-weight: 800;
+        cursor: pointer;
+        transition: .2s ease;
+    }
+
+    .footer-btn.cancel {
+        border: 1px solid #e2e8f0;
+        background: #fff;
+        color: #64748b;
+    }
+
+    .footer-btn.cancel:hover {
+        background: #f8fafc;
+        color: #334155;
+    }
+
+    .footer-btn.submit {
+        border: 1px solid #4f46e5;
+        background: #4f46e5;
+        color: #fff;
+        box-shadow: 0 5px 13px rgba(79,70,229,.18);
+    }
+
+    .footer-btn.submit:hover {
+        background: #4338ca;
+        border-color: #4338ca;
+        transform: translateY(-1px);
+    }
+
+    .footer-btn.submit:disabled {
+        opacity: .7;
+        cursor: wait;
+        transform: none;
+    }
+
+    /* VALIDATION */
+    .field-error {
+        margin-top: 5px;
+        color: #dc2626;
+        font-size: 8px;
+        font-weight: 600;
+    }
+
+    .input-error {
+        border-color: #fca5a5 !important;
+        background: #fffafa;
+    }
+
+    @media (max-width: 820px) {
+        .form-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .side-panel {
+            order: 2;
+        }
+    }
+
+    @media (max-width: 650px) {
+        .form-hero {
+            padding: 22px;
+        }
+
+        .hero-content {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .back-btn {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .hero-title {
+            font-size: 22px;
+        }
+
+        .card-body-custom {
+            padding: 17px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .hero-main {
+            gap: 11px;
+        }
+
+        .hero-icon {
+            width: 48px;
+            height: 48px;
+            flex-basis: 48px;
+        }
+
+        .form-footer {
+            flex-direction: column-reverse;
+        }
+
+        .footer-btn {
+            width: 100%;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="fee-form-page">
+
+    <!-- HERO -->
+    <div class="form-hero">
+
+        <div class="hero-content">
+
+            <div class="hero-main">
+
+                <div class="hero-icon">
+                    <i class="bi bi-receipt"></i>
+                </div>
+
+                <div>
+                    <div class="hero-eyebrow">
+                        Finance · New Record
+                    </div>
+
+                    <h1 class="hero-title">
+                        Create Fee
+                    </h1>
+
+                    <p class="hero-text">
+                        Assign a new fee to an active student.
+                    </p>
+                </div>
+
+            </div>
+
+            <a
+                href="{% url 'fees:list' %}"
+                class="back-btn"
+            >
+                <i class="bi bi-arrow-left"></i>
+                Back to Fees
+            </a>
+
+        </div>
+
+    </div>
+
+    <form
+        method="post"
+        id="feeForm"
+        novalidate
+    >
+
+        {% csrf_token %}
+
+        <div class="form-layout">
+
+            <!-- MAIN FORM -->
+            <div class="form-card">
+
+                <div class="card-header-custom">
+
+                    <div class="card-header-icon">
+                        <i class="bi bi-pencil-square"></i>
+                    </div>
+
+                    <div>
+                        <h2 class="card-title">
+                            Fee Information
+                        </h2>
+
+                        <div class="card-subtitle">
+                            Enter the details for this fee record
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="card-body-custom">
+
+                    <!-- STUDENT -->
+                    <div class="field">
+
+                        <label
+                            for="student"
+                            class="form-label-custom"
+                        >
+                            Student
+                            <span class="required">*</span>
+                        </label>
+
+                        <div class="student-select-wrap">
+
+                            <select
+                                name="student"
+                                id="student"
+                                class="form-select-custom"
+                                required
+                            >
+                                <option value="">
+                                    Select active student...
+                                </option>
+
+                                {% for s in students %}
+                                <option
+                                    value="{{ s.pk }}"
+                                    data-name="{{ s.full_name }}"
+                                    data-id="{{ s.student_id }}"
+                                    {% if preselect == s.pk|stringformat:"s" %}
+                                    selected
+                                    {% endif %}
+                                >
+                                    {{ s.full_name }} ({{ s.student_id }})
+                                </option>
+                                {% endfor %}
+
+                            </select>
+
+                        </div>
+
+                        <div class="field-hint">
+                            Only active students are available for fee assignment.
+                        </div>
+
+                        <div
+                            class="student-preview"
+                            id="studentPreview"
+                        >
+                            <div
+                                class="preview-avatar"
+                                id="previewAvatar"
+                            >
+                                --
+                            </div>
+
+                            <div>
+                                <div
+                                    class="preview-name"
+                                    id="previewName"
+                                >
+                                    Student
+                                </div>
+
+                                <div
+                                    class="preview-id"
+                                    id="previewId"
+                                >
+                                    Student ID
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- FEE TYPE + AMOUNT -->
+                    <div class="row g-3">
+
+                        <div class="col-md-6">
+
+                            <div class="field">
+
+                                <label
+                                    for="fee_type"
+                                    class="form-label-custom"
+                                >
+                                    Fee Type
+                                    <span class="required">*</span>
+                                </label>
+
+                                <select
+                                    name="fee_type"
+                                    id="fee_type"
+                                    class="form-select-custom"
+                                    required
+                                >
+
+                                    {% for val, label in fee_types %}
+                                    <option value="{{ val }}">
+                                        {{ label }}
+                                    </option>
+                                    {% endfor %}
+
+                                </select>
+
+                                <div class="field-hint">
+                                    Choose the category that best matches the charge.
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="col-md-6">
+
+                            <div class="field">
+
+                                <label
+                                    for="amount"
+                                    class="form-label-custom"
+                                >
+                                    Amount
+                                    <span class="required">*</span>
+                                </label>
+
+                                <div class="amount-wrap">
+
+                                    <span class="currency-prefix">
+                                        ₹
+                                    </span>
+
+                                    <input
+                                        type="number"
+                                        name="amount"
+                                        id="amount"
+                                        class="form-control-custom amount-input"
+                                        step="0.01"
+                                        min="1"
+                                        placeholder="5000.00"
+                                        required
+                                    >
+
+                                </div>
+
+                                <div class="field-hint">
+                                    Enter the total amount to be collected.
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- DUE DATE + DESCRIPTION -->
+                    <div class="row g-3">
+
+                        <div class="col-md-6">
+
+                            <div class="field">
+
+                                <label
+                                    for="due_date"
+                                    class="form-label-custom"
+                                >
+                                    Due Date
+                                    <span class="required">*</span>
+                                </label>
+
+                                <input
+                                    type="date"
+                                    name="due_date"
+                                    id="due_date"
+                                    class="form-control-custom"
+                                    value="{{ today|date:'Y-m-d' }}"
+                                    required
+                                >
+
+                                <div class="field-hint">
+                                    The fee becomes overdue after this date if unpaid.
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="col-md-6">
+
+                            <div class="field">
+
+                                <label
+                                    for="description"
+                                    class="form-label-custom"
+                                >
+                                    Description
+                                </label>
+
+                                <input
+                                    type="text"
+                                    name="description"
+                                    id="description"
+                                    class="form-control-custom"
+                                    maxlength="200"
+                                    placeholder="e.g. June 2026 Hostel Fee"
+                                >
+
+                                <div class="field-hint">
+                                    Optional note to identify this charge.
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- FOOTER -->
+                <div class="form-footer">
+
+                    <a
+                        href="{% url 'fees:list' %}"
+                        class="footer-btn cancel"
+                    >
+                        Cancel
+                    </a>
+
+                    <button
+                        type="submit"
+                        class="footer-btn submit"
+                        id="submitBtn"
+                    >
+                        <i class="bi bi-check2-circle"></i>
+                        Create Fee
+                    </button>
+
+                </div>
+
+            </div>
+
+            <!-- SIDE PANEL -->
+            <aside class="side-panel">
+
+                <div class="side-section">
+
+                    <div class="side-title">
+                        <i class="bi bi-grid"></i>
+                        Fee Categories
+                    </div>
+
+                    <div class="type-list">
+
+                        {% for val, label in fee_types %}
+                        <div class="type-item">
+                            <span class="type-dot"></span>
+                            <span class="type-name">
+                                {{ label }}
+                            </span>
+                        </div>
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+                <div class="side-section">
+
+                    <div class="side-title">
+                        <i class="bi bi-lightbulb"></i>
+                        Quick Tip
+                    </div>
+
+                    <div class="tip">
+
+                        <i class="bi bi-info-circle tip-icon"></i>
+
+                        <p class="tip-text">
+                            After creating the fee, you can open the record
+                            and use <strong>Record Payment</strong> to add
+                            payments and generate receipts.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </aside>
+
+        </div>
+
+    </form>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    const form = document.getElementById('feeForm');
+    const studentSelect = document.getElementById('student');
+    const studentPreview = document.getElementById('studentPreview');
+    const previewAvatar = document.getElementById('previewAvatar');
+    const previewName = document.getElementById('previewName');
+    const previewId = document.getElementById('previewId');
+
+    const amountInput = document.getElementById('amount');
+    const dueDateInput = document.getElementById('due_date');
+    const submitBtn = document.getElementById('submitBtn');
+
+    function initials(name) {
+
+        if (!name) return '--';
+
+        const parts = name.trim().split(/\s+/);
+
+        if (parts.length === 1) {
+            return parts[0].substring(0, 2).toUpperCase();
+        }
+
+        return (
+            parts[0].charAt(0) +
+            parts[parts.length - 1].charAt(0)
+        ).toUpperCase();
+    }
+
+    function updateStudentPreview() {
+
+        const option =
+            studentSelect.options[studentSelect.selectedIndex];
+
+        if (
+            !studentSelect.value ||
+            !option ||
+            !option.dataset.name
+        ) {
+            studentPreview.classList.remove('show');
+            return;
+        }
+
+        const name = option.dataset.name;
+        const studentId = option.dataset.id || '';
+
+        previewAvatar.textContent = initials(name);
+        previewName.textContent = name;
+        previewId.textContent = studentId;
+
+        studentPreview.classList.add('show');
+    }
+
+    studentSelect.addEventListener(
+        'change',
+        updateStudentPreview
+    );
+
+    updateStudentPreview();
+
+
+    function clearErrors() {
+
+        document
+            .querySelectorAll('.input-error')
+            .forEach(function (element) {
+                element.classList.remove('input-error');
+            });
+
+        document
+            .querySelectorAll('.field-error')
+            .forEach(function (element) {
+                element.remove();
+            });
+    }
+
+
+    function addError(input, message) {
+
+        input.classList.add('input-error');
+
+        const error = document.createElement('div');
+
+        error.className = 'field-error';
+        error.textContent = message;
+
+        input.parentElement.appendChild(error);
+    }
+
+
+    form.addEventListener('submit', function (event) {
+
+        clearErrors();
+
+        let valid = true;
+
+        if (!studentSelect.value) {
+
+            addError(
+                studentSelect,
+                'Please select a student.'
+            );
+
+            valid = false;
+        }
+
+        if (!amountInput.value) {
+
+            addError(
+                amountInput,
+                'Please enter the fee amount.'
+            );
+
+            valid = false;
+
+        } else if (
+            parseFloat(amountInput.value) <= 0
+        ) {
+
+            addError(
+                amountInput,
+                'Amount must be greater than 0.'
+            );
+
+            valid = false;
+        }
+
+        if (!dueDateInput.value) {
+
+            addError(
+                dueDateInput,
+                'Please select a due date.'
+            );
+
+            valid = false;
+        }
+
+        if (!valid) {
+
+            event.preventDefault();
+
+            const firstError =
+                document.querySelector('.input-error');
+
+            if (firstError) {
+                firstError.focus();
+            }
+
+            return;
+        }
+
+        submitBtn.disabled = true;
+
+        submitBtn.innerHTML =
+            '<span class="spinner-border spinner-border-sm me-1" role="status"></span>' +
+            'Creating Fee...';
+
+    });
+
+
+    amountInput.addEventListener('input', function () {
+
+        if (parseFloat(this.value) < 0) {
+            this.value = '';
+        }
+
+    });
+
+
+    document.addEventListener('keydown', function (event) {
+
+        if (
+            (event.ctrlKey || event.metaKey) &&
+            event.key.toLowerCase() === 's'
+        ) {
+            event.preventDefault();
+
+            if (!submitBtn.disabled) {
+                form.requestSubmit();
+            }
+        }
+
+    });
+
+});
+</script>
+{% endblock %}

@@ -1,0 +1,802 @@
+{% extends 'base.html' %}
+
+{% block title %}Visitors{% endblock %}
+{% block page_title %}Visitors{% endblock %}
+
+{% block extra_css %}
+<style>
+    .visitors-page {
+        max-width: 1500px;
+        margin: 0 auto;
+    }
+
+    /* =========================
+       HERO
+    ========================= */
+    .visitor-hero {
+        position: relative;
+        overflow: hidden;
+        padding: 34px;
+        margin-bottom: 24px;
+        border-radius: 24px;
+        background:
+            radial-gradient(circle at 88% 15%, rgba(14,165,233,.16), transparent 28%),
+            radial-gradient(circle at 10% 100%, rgba(99,102,241,.13), transparent 30%),
+            linear-gradient(135deg, #111827 0%, #1e293b 100%);
+        color: #fff;
+        box-shadow: 0 18px 50px rgba(15,23,42,.14);
+    }
+
+    .visitor-hero::before {
+        content: "";
+        position: absolute;
+        width: 270px;
+        height: 270px;
+        right: -90px;
+        top: -135px;
+        border: 1px solid rgba(255,255,255,.07);
+        border-radius: 50%;
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 2;
+        max-width: 760px;
+    }
+
+    .hero-icon {
+        width: 60px;
+        height: 60px;
+        margin-bottom: 20px;
+        border-radius: 17px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(14,165,233,.13);
+        border: 1px solid rgba(125,211,252,.13);
+        color: #7dd3fc;
+        font-size: 25px;
+    }
+
+    .hero-title {
+        margin: 0 0 9px;
+        font-size: clamp(27px, 3vw, 38px);
+        font-weight: 800;
+        letter-spacing: -.8px;
+    }
+
+    .hero-text {
+        max-width: 680px;
+        margin: 0;
+        color: rgba(255,255,255,.64);
+        font-size: 14px;
+        line-height: 1.75;
+    }
+
+    .hero-actions {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 25px;
+    }
+
+    .hero-actions .btn {
+        padding: 11px 17px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 750;
+    }
+
+    /* =========================
+       QUICK ACTIONS
+    ========================= */
+    .section-title {
+        margin-bottom: 16px;
+        color: #111827;
+        font-size: 18px;
+        font-weight: 800;
+    }
+
+    .quick-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 18px;
+        margin-bottom: 24px;
+    }
+
+    .quick-card {
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        min-height: 105px;
+        padding: 21px;
+        border: 1px solid #e5e7eb;
+        border-radius: 18px;
+        background: #fff;
+        color: inherit;
+        text-decoration: none;
+        box-shadow: 0 5px 20px rgba(15,23,42,.04);
+        transition: .2s ease;
+    }
+
+    .quick-card:hover {
+        transform: translateY(-3px);
+        border-color: #bae6fd;
+        box-shadow: 0 14px 30px rgba(15,23,42,.08);
+    }
+
+    .quick-icon {
+        width: 50px;
+        height: 50px;
+        flex: 0 0 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 14px;
+        font-size: 21px;
+    }
+
+    .icon-blue {
+        background: #eff6ff;
+        color: #2563eb;
+    }
+
+    .icon-cyan {
+        background: #ecfeff;
+        color: #0891b2;
+    }
+
+    .icon-indigo {
+        background: #eef2ff;
+        color: #4f46e5;
+    }
+
+    .quick-title {
+        margin-bottom: 4px;
+        color: #111827;
+        font-size: 14px;
+        font-weight: 800;
+    }
+
+    .quick-desc {
+        color: #9ca3af;
+        font-size: 11px;
+        line-height: 1.55;
+    }
+
+    .quick-arrow {
+        margin-left: auto;
+        color: #c0c5cc;
+        transition: .2s ease;
+    }
+
+    .quick-card:hover .quick-arrow {
+        color: #2563eb;
+        transform: translateX(3px);
+    }
+
+    /* =========================
+       MAIN PANELS
+    ========================= */
+    .content-grid {
+        display: grid;
+        grid-template-columns: 1.2fr .8fr;
+        gap: 20px;
+        margin-bottom: 24px;
+    }
+
+    .panel {
+        padding: 24px;
+        border: 1px solid #e5e7eb;
+        border-radius: 20px;
+        background: #fff;
+        box-shadow: 0 5px 20px rgba(15,23,42,.04);
+    }
+
+    .panel-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+
+    .panel-title {
+        margin: 0 0 4px;
+        color: #111827;
+        font-size: 16px;
+        font-weight: 800;
+    }
+
+    .panel-subtitle {
+        margin: 0;
+        color: #9ca3af;
+        font-size: 11px;
+    }
+
+    .panel-icon {
+        width: 37px;
+        height: 37px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        background: #eff6ff;
+        color: #2563eb;
+    }
+
+    /* =========================
+       VISITOR FLOW
+    ========================= */
+    .flow-list {
+        display: grid;
+        gap: 12px;
+    }
+
+    .flow-item {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        padding: 14px;
+        border: 1px solid #eef2f7;
+        border-radius: 14px;
+        background: #f8fafc;
+    }
+
+    .flow-number {
+        width: 31px;
+        height: 31px;
+        flex: 0 0 31px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 9px;
+        background: #fff;
+        color: #4f46e5;
+        font-size: 11px;
+        font-weight: 800;
+        box-shadow: 0 3px 9px rgba(15,23,42,.05);
+    }
+
+    .flow-name {
+        margin-bottom: 3px;
+        color: #374151;
+        font-size: 12px;
+        font-weight: 750;
+    }
+
+    .flow-text {
+        color: #9ca3af;
+        font-size: 10px;
+    }
+
+    .flow-arrow {
+        margin-left: auto;
+        color: #cbd5e1;
+    }
+
+    /* =========================
+       GUIDELINES
+    ========================= */
+    .guideline-list {
+        display: grid;
+        gap: 12px;
+    }
+
+    .guideline {
+        display: flex;
+        align-items: flex-start;
+        gap: 11px;
+    }
+
+    .guideline-icon {
+        width: 31px;
+        height: 31px;
+        flex: 0 0 31px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 9px;
+        background: #f0fdf4;
+        color: #16a34a;
+        font-size: 13px;
+    }
+
+    .guideline-title {
+        margin-bottom: 2px;
+        color: #374151;
+        font-size: 12px;
+        font-weight: 750;
+    }
+
+    .guideline-text {
+        color: #9ca3af;
+        font-size: 10px;
+        line-height: 1.5;
+    }
+
+    /* =========================
+       INFO BANNER
+    ========================= */
+    .info-banner {
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+        padding: 20px;
+        border: 1px solid #dbeafe;
+        border-radius: 18px;
+        background: linear-gradient(135deg, #eff6ff, #f8fafc);
+    }
+
+    .info-icon {
+        width: 43px;
+        height: 43px;
+        flex: 0 0 43px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+        background: #fff;
+        color: #2563eb;
+        box-shadow: 0 4px 12px rgba(37,99,235,.08);
+    }
+
+    .info-title {
+        margin-bottom: 5px;
+        color: #1e3a8a;
+        font-size: 13px;
+        font-weight: 800;
+    }
+
+    .info-text {
+        margin: 0;
+        color: #3b82f6;
+        font-size: 11px;
+        line-height: 1.6;
+    }
+
+    /* =========================
+       RESPONSIVE
+    ========================= */
+    @media (max-width: 992px) {
+        .quick-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .content-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .visitor-hero {
+            padding: 25px 20px;
+            border-radius: 19px;
+        }
+
+        .hero-actions {
+            flex-direction: column;
+        }
+
+        .hero-actions .btn {
+            width: 100%;
+        }
+
+        .panel {
+            padding: 18px;
+        }
+    }
+</style>
+{% endblock %}
+
+
+{% block content %}
+<div class="visitors-page">
+
+    <!-- =========================
+         HERO
+    ========================== -->
+    <section class="visitor-hero">
+
+        <div class="hero-content">
+
+            <div class="hero-icon">
+                <i class="bi bi-person-walking"></i>
+            </div>
+
+            <h1 class="hero-title">
+                Visitor Management
+            </h1>
+
+            <p class="hero-text">
+                Keep track of hostel visitors, student visits and
+                check-in/check-out activity from one simple dashboard.
+            </p>
+
+            <div class="hero-actions">
+
+                <a href="{% url 'visitors:checkin' %}"
+                   class="btn btn-primary">
+
+                    <i class="bi bi-person-plus me-2"></i>
+                    Check In Visitor
+
+                </a>
+
+
+                <a href="{% url 'visitors:list' %}"
+                   class="btn btn-outline-light">
+
+                    <i class="bi bi-list-ul me-2"></i>
+                    View Visitor Records
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         QUICK ACTIONS
+    ========================== -->
+    <div class="section-title">
+        Quick Actions
+    </div>
+
+
+    <div class="quick-grid">
+
+        <a href="{% url 'visitors:checkin' %}"
+           class="quick-card">
+
+            <div class="quick-icon icon-blue">
+                <i class="bi bi-person-plus"></i>
+            </div>
+
+            <div>
+
+                <div class="quick-title">
+                    Check In Visitor
+                </div>
+
+                <div class="quick-desc">
+                    Register a visitor and link the visit to a student.
+                </div>
+
+            </div>
+
+            <i class="bi bi-chevron-right quick-arrow"></i>
+
+        </a>
+
+
+        <a href="{% url 'visitors:list' %}"
+           class="quick-card">
+
+            <div class="quick-icon icon-cyan">
+                <i class="bi bi-journal-text"></i>
+            </div>
+
+            <div>
+
+                <div class="quick-title">
+                    Visitor Records
+                </div>
+
+                <div class="quick-desc">
+                    Search and review all visitor check-in records.
+                </div>
+
+            </div>
+
+            <i class="bi bi-chevron-right quick-arrow"></i>
+
+        </a>
+
+
+        <a href="{% url 'visitors:list' %}?inside=1"
+           class="quick-card">
+
+            <div class="quick-icon icon-indigo">
+                <i class="bi bi-person-check"></i>
+            </div>
+
+            <div>
+
+                <div class="quick-title">
+                    Currently Inside
+                </div>
+
+                <div class="quick-desc">
+                    Quickly see visitors who have not checked out.
+                </div>
+
+            </div>
+
+            <i class="bi bi-chevron-right quick-arrow"></i>
+
+        </a>
+
+    </div>
+
+
+    <!-- =========================
+         MANAGEMENT PANELS
+    ========================== -->
+    <div class="content-grid">
+
+        <!-- Visitor Flow -->
+        <div class="panel">
+
+            <div class="panel-header">
+
+                <div>
+
+                    <h2 class="panel-title">
+                        Visitor Flow
+                    </h2>
+
+                    <p class="panel-subtitle">
+                        Simple process for managing every visit
+                    </p>
+
+                </div>
+
+                <div class="panel-icon">
+                    <i class="bi bi-arrow-left-right"></i>
+                </div>
+
+            </div>
+
+
+            <div class="flow-list">
+
+                <div class="flow-item">
+
+                    <div class="flow-number">
+                        01
+                    </div>
+
+                    <div>
+
+                        <div class="flow-name">
+                            Register Visitor
+                        </div>
+
+                        <div class="flow-text">
+                            Enter visitor and student details.
+                        </div>
+
+                    </div>
+
+                    <i class="bi bi-chevron-right flow-arrow"></i>
+
+                </div>
+
+
+                <div class="flow-item">
+
+                    <div class="flow-number">
+                        02
+                    </div>
+
+                    <div>
+
+                        <div class="flow-name">
+                            Visitor Checks In
+                        </div>
+
+                        <div class="flow-text">
+                            Record the entry time automatically.
+                        </div>
+
+                    </div>
+
+                    <i class="bi bi-chevron-right flow-arrow"></i>
+
+                </div>
+
+
+                <div class="flow-item">
+
+                    <div class="flow-number">
+                        03
+                    </div>
+
+                    <div>
+
+                        <div class="flow-name">
+                            Visit in Progress
+                        </div>
+
+                        <div class="flow-text">
+                            Visitor remains active until checkout.
+                        </div>
+
+                    </div>
+
+                    <i class="bi bi-chevron-right flow-arrow"></i>
+
+                </div>
+
+
+                <div class="flow-item">
+
+                    <div class="flow-number">
+                        04
+                    </div>
+
+                    <div>
+
+                        <div class="flow-name">
+                            Check Out
+                        </div>
+
+                        <div class="flow-text">
+                            Record the exit time and complete the visit.
+                        </div>
+
+                    </div>
+
+                    <i class="bi bi-check2 flow-arrow"></i>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Guidelines -->
+        <div class="panel">
+
+            <div class="panel-header">
+
+                <div>
+
+                    <h2 class="panel-title">
+                        Visitor Guidelines
+                    </h2>
+
+                    <p class="panel-subtitle">
+                        Keep visitor records accurate
+                    </p>
+
+                </div>
+
+                <div class="panel-icon">
+                    <i class="bi bi-shield-check"></i>
+                </div>
+
+            </div>
+
+
+            <div class="guideline-list">
+
+                <div class="guideline">
+
+                    <div class="guideline-icon">
+                        <i class="bi bi-check-lg"></i>
+                    </div>
+
+                    <div>
+
+                        <div class="guideline-title">
+                            Verify visitor details
+                        </div>
+
+                        <div class="guideline-text">
+                            Make sure the visitor name and phone number
+                            are entered correctly.
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="guideline">
+
+                    <div class="guideline-icon">
+                        <i class="bi bi-check-lg"></i>
+                    </div>
+
+                    <div>
+
+                        <div class="guideline-title">
+                            Link to the correct student
+                        </div>
+
+                        <div class="guideline-text">
+                            Select the student being visited before
+                            completing check-in.
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="guideline">
+
+                    <div class="guideline-icon">
+                        <i class="bi bi-check-lg"></i>
+                    </div>
+
+                    <div>
+
+                        <div class="guideline-title">
+                            Record checkout
+                        </div>
+
+                        <div class="guideline-text">
+                            Check out visitors when their visit is complete
+                            to keep active records accurate.
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="guideline">
+
+                    <div class="guideline-icon">
+                        <i class="bi bi-check-lg"></i>
+                    </div>
+
+                    <div>
+
+                        <div class="guideline-title">
+                            Keep ID information updated
+                        </div>
+
+                        <div class="guideline-text">
+                            Record available identification details during
+                            visitor registration.
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         INFO
+    ========================== -->
+    <div class="info-banner">
+
+        <div class="info-icon">
+            <i class="bi bi-lightbulb"></i>
+        </div>
+
+        <div>
+
+            <div class="info-title">
+                Need to find an active visitor?
+            </div>
+
+            <p class="info-text">
+                Open Visitor Records and use the
+                <strong>Inside</strong> filter to quickly find everyone
+                who is currently inside the hostel.
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}

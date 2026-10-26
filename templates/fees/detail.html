@@ -1,0 +1,1364 @@
+{% extends 'base.html' %}
+
+{% block title %}Fee Detail{% endblock %}
+{% block page_title %}Fee Detail{% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item">
+    <a href="{% url 'fees:list' %}">Fees</a>
+</li>
+<li class="breadcrumb-item active">
+    #{{ fee.pk }}
+</li>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .fee-detail-page {
+        max-width: 1120px;
+        margin: 0 auto;
+        padding-bottom: 45px;
+    }
+
+    /* HERO */
+    .fee-hero {
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 20px;
+        padding: 28px;
+        border-radius: 23px;
+        background: linear-gradient(135deg, #111827 0%, #1e293b 58%, #312e81 100%);
+        color: #fff;
+        box-shadow: 0 16px 40px rgba(15, 23, 42, .15);
+    }
+
+    .fee-hero::before {
+        content: "";
+        position: absolute;
+        width: 270px;
+        height: 270px;
+        right: -95px;
+        top: -155px;
+        border-radius: 50%;
+        background: rgba(255,255,255,.065);
+    }
+
+    .fee-hero::after {
+        content: "";
+        position: absolute;
+        width: 170px;
+        height: 170px;
+        right: 150px;
+        bottom: -125px;
+        border-radius: 50%;
+        background: rgba(99,102,241,.14);
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 25px;
+    }
+
+    .hero-main {
+        display: flex;
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    .hero-icon {
+        width: 58px;
+        height: 58px;
+        flex: 0 0 58px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid rgba(255,255,255,.13);
+        border-radius: 16px;
+        background: rgba(255,255,255,.1);
+        font-size: 24px;
+    }
+
+    .hero-eyebrow {
+        margin-bottom: 5px;
+        color: rgba(255,255,255,.5);
+        font-size: 9px;
+        font-weight: 800;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+    }
+
+    .hero-title {
+        margin: 0;
+        font-size: 25px;
+        font-weight: 800;
+        letter-spacing: -.5px;
+    }
+
+    .hero-subtitle {
+        margin: 6px 0 0;
+        color: rgba(255,255,255,.65);
+        font-size: 11px;
+    }
+
+    .hero-actions {
+        position: relative;
+        z-index: 3;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .hero-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        min-height: 40px;
+        padding: 0 14px;
+        border-radius: 10px;
+        text-decoration: none;
+        font-size: 10px;
+        font-weight: 800;
+        transition: .2s ease;
+    }
+
+    .hero-btn.primary {
+        background: #fff;
+        color: #312e81;
+    }
+
+    .hero-btn.primary:hover {
+        background: #eef2ff;
+        color: #312e81;
+        transform: translateY(-1px);
+    }
+
+    .hero-btn.secondary {
+        border: 1px solid rgba(255,255,255,.14);
+        background: rgba(255,255,255,.09);
+        color: #fff;
+    }
+
+    .hero-btn.secondary:hover {
+        background: rgba(255,255,255,.15);
+        color: #fff;
+    }
+
+    /* STATUS */
+    .status-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        width: fit-content;
+        margin-top: 12px;
+        padding: 6px 10px;
+        border-radius: 999px;
+        font-size: 9px;
+        font-weight: 800;
+    }
+
+    .status-pill::before {
+        content: "";
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+    }
+
+    .status-pill.pending {
+        background: rgba(245,158,11,.13);
+        color: #fbbf24;
+    }
+
+    .status-pill.pending::before {
+        background: #f59e0b;
+    }
+
+    .status-pill.paid {
+        background: rgba(34,197,94,.13);
+        color: #86efac;
+    }
+
+    .status-pill.paid::before {
+        background: #22c55e;
+    }
+
+    .status-pill.overdue {
+        background: rgba(239,68,68,.13);
+        color: #fca5a5;
+    }
+
+    .status-pill.overdue::before {
+        background: #ef4444;
+    }
+
+    .status-pill.partial {
+        background: rgba(99,102,241,.18);
+        color: #c7d2fe;
+    }
+
+    .status-pill.partial::before {
+        background: #818cf8;
+    }
+
+    /* FINANCIAL STATS */
+    .money-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 13px;
+        margin-bottom: 20px;
+    }
+
+    .money-card {
+        padding: 19px;
+        border: 1px solid #e8ebf0;
+        border-radius: 17px;
+        background: #fff;
+        box-shadow: 0 5px 20px rgba(15,23,42,.045);
+    }
+
+    .money-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 13px;
+    }
+
+    .money-icon {
+        width: 34px;
+        height: 34px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        background: #eef2ff;
+        color: #4f46e5;
+        font-size: 15px;
+    }
+
+    .money-card.paid .money-icon {
+        background: #ecfdf5;
+        color: #059669;
+    }
+
+    .money-card.balance .money-icon {
+        background: #fef2f2;
+        color: #dc2626;
+    }
+
+    .money-card.clear .money-icon {
+        background: #ecfdf5;
+        color: #059669;
+    }
+
+    .money-label {
+        color: #94a3b8;
+        font-size: 9px;
+        font-weight: 800;
+        letter-spacing: .5px;
+        text-transform: uppercase;
+    }
+
+    .money-value {
+        color: #111827;
+        font-size: 22px;
+        font-weight: 800;
+        letter-spacing: -.5px;
+    }
+
+    .money-card.paid .money-value,
+    .money-card.clear .money-value {
+        color: #059669;
+    }
+
+    .money-card.balance .money-value {
+        color: #dc2626;
+    }
+
+    /* PROGRESS */
+    .payment-progress {
+        margin-bottom: 20px;
+        padding: 18px 20px;
+        border: 1px solid #e8ebf0;
+        border-radius: 17px;
+        background: #fff;
+        box-shadow: 0 5px 20px rgba(15,23,42,.045);
+    }
+
+    .progress-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 10px;
+    }
+
+    .progress-title {
+        color: #334155;
+        font-size: 11px;
+        font-weight: 800;
+    }
+
+    .progress-percent {
+        color: #4f46e5;
+        font-size: 11px;
+        font-weight: 800;
+    }
+
+    .progress-track {
+        height: 8px;
+        overflow: hidden;
+        border-radius: 999px;
+        background: #eef2f7;
+    }
+
+    .progress-fill {
+        height: 100%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, #6366f1, #4f46e5);
+    }
+
+    .progress-caption {
+        margin-top: 8px;
+        color: #94a3b8;
+        font-size: 9px;
+    }
+
+    /* MAIN GRID */
+    .main-grid {
+        display: grid;
+        grid-template-columns: 390px minmax(0, 1fr);
+        gap: 18px;
+        align-items: start;
+    }
+
+    .panel {
+        overflow: hidden;
+        border: 1px solid #e8ebf0;
+        border-radius: 19px;
+        background: #fff;
+        box-shadow: 0 5px 22px rgba(15,23,42,.045);
+    }
+
+    .panel + .panel {
+        margin-top: 18px;
+    }
+
+    .panel-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 17px 19px;
+        border-bottom: 1px solid #eef0f4;
+    }
+
+    .panel-heading {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .panel-icon {
+        width: 35px;
+        height: 35px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        background: #f1f5f9;
+        color: #475569;
+        font-size: 14px;
+    }
+
+    .panel-title {
+        margin: 0;
+        color: #1e293b;
+        font-size: 13px;
+        font-weight: 800;
+    }
+
+    .panel-subtitle {
+        margin-top: 2px;
+        color: #94a3b8;
+        font-size: 9px;
+    }
+
+    .panel-body {
+        padding: 19px;
+    }
+
+    /* STUDENT */
+    .student-card {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px;
+        margin-bottom: 16px;
+        border: 1px solid #eef2f7;
+        border-radius: 13px;
+        background: #f8fafc;
+    }
+
+    .student-avatar {
+        width: 43px;
+        height: 43px;
+        flex: 0 0 43px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+        background: #eef2ff;
+        color: #4f46e5;
+        font-size: 12px;
+        font-weight: 800;
+    }
+
+    .student-name {
+        margin: 0 0 3px;
+        color: #1e293b;
+        font-size: 12px;
+        font-weight: 800;
+    }
+
+    .student-id {
+        color: #94a3b8;
+        font-size: 9px;
+    }
+
+    .student-link {
+        margin-left: auto;
+        color: #4f46e5;
+        font-size: 12px;
+    }
+
+    /* INFO */
+    .info-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    .info-row {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 15px;
+        padding: 11px 0;
+        border-bottom: 1px solid #f1f3f6;
+    }
+
+    .info-row:first-child {
+        padding-top: 0;
+    }
+
+    .info-row:last-child {
+        padding-bottom: 0;
+        border-bottom: 0;
+    }
+
+    .info-label {
+        color: #94a3b8;
+        font-size: 9px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .info-value {
+        color: #475569;
+        font-size: 10px;
+        font-weight: 700;
+        text-align: right;
+    }
+
+    .info-value a {
+        color: #4f46e5;
+        text-decoration: none;
+    }
+
+    .info-value a:hover {
+        text-decoration: underline;
+    }
+
+    .info-value code {
+        padding: 3px 6px;
+        border-radius: 5px;
+        background: #f1f5f9;
+        color: #475569;
+        font-size: 9px;
+    }
+
+    .description-box {
+        margin-top: 15px;
+        padding: 12px;
+        border-radius: 11px;
+        background: #f8fafc;
+    }
+
+    .description-label {
+        margin-bottom: 5px;
+        color: #94a3b8;
+        font-size: 8px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: .5px;
+    }
+
+    .description-text {
+        margin: 0;
+        color: #64748b;
+        font-size: 10px;
+        line-height: 1.6;
+    }
+
+    /* PAYMENT HEADER COUNT */
+    .count-badge {
+        padding: 5px 9px;
+        border-radius: 999px;
+        background: #f1f5f9;
+        color: #64748b;
+        font-size: 9px;
+        font-weight: 800;
+    }
+
+    /* PAYMENT TABLE */
+    .payment-table-wrap {
+        overflow-x: auto;
+    }
+
+    .payment-table {
+        width: 100%;
+        min-width: 590px;
+        border-collapse: collapse;
+    }
+
+    .payment-table th {
+        padding: 11px 14px;
+        border-bottom: 1px solid #eef0f4;
+        background: #fafbfc;
+        color: #94a3b8;
+        font-size: 8px;
+        font-weight: 800;
+        text-align: left;
+        text-transform: uppercase;
+        letter-spacing: .45px;
+        white-space: nowrap;
+    }
+
+    .payment-table td {
+        padding: 13px 14px;
+        border-bottom: 1px solid #f1f3f6;
+        color: #475569;
+        font-size: 10px;
+        vertical-align: middle;
+    }
+
+    .payment-table tbody tr:last-child td {
+        border-bottom: 0;
+    }
+
+    .payment-table tbody tr:hover {
+        background: #fafbff;
+    }
+
+    .payment-amount {
+        color: #059669;
+        font-size: 11px;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .method-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 5px 8px;
+        border-radius: 7px;
+        background: #f8fafc;
+        color: #64748b;
+        font-size: 9px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .reference {
+        max-width: 120px;
+        overflow: hidden;
+        color: #94a3b8;
+        font-size: 9px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .payment-date {
+        color: #64748b;
+        font-size: 9px;
+        white-space: nowrap;
+    }
+
+    .receipt-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        color: #4f46e5;
+        text-decoration: none;
+        font-size: 9px;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .receipt-link:hover {
+        color: #3730a3;
+    }
+
+    /* EMPTY */
+    .empty-payment {
+        padding: 50px 20px;
+        text-align: center;
+    }
+
+    .empty-icon {
+        width: 58px;
+        height: 58px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 13px;
+        border-radius: 17px;
+        background: #f1f5f9;
+        color: #94a3b8;
+        font-size: 23px;
+    }
+
+    .empty-payment h3 {
+        margin: 0 0 5px;
+        color: #334155;
+        font-size: 14px;
+        font-weight: 800;
+    }
+
+    .empty-payment p {
+        margin: 0 auto 15px;
+        color: #94a3b8;
+        font-size: 10px;
+    }
+
+    .empty-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 12px;
+        border-radius: 9px;
+        background: #4f46e5;
+        color: #fff;
+        text-decoration: none;
+        font-size: 9px;
+        font-weight: 800;
+    }
+
+    .empty-btn:hover {
+        background: #4338ca;
+        color: #fff;
+    }
+
+    /* DELETE */
+    .danger-zone {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+        padding: 14px 19px;
+        border-top: 1px solid #eef0f4;
+        background: #fffafa;
+    }
+
+    .danger-info-title {
+        color: #991b1b;
+        font-size: 10px;
+        font-weight: 800;
+    }
+
+    .danger-info-text {
+        margin-top: 2px;
+        color: #b91c1c;
+        opacity: .65;
+        font-size: 8px;
+    }
+
+    .delete-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        height: 32px;
+        padding: 0 10px;
+        border: 1px solid #fecaca;
+        border-radius: 8px;
+        background: #fff;
+        color: #dc2626;
+        font-size: 9px;
+        font-weight: 800;
+        cursor: pointer;
+    }
+
+    .delete-btn:hover {
+        background: #fef2f2;
+    }
+
+    /* BACK */
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 18px;
+        color: #64748b;
+        text-decoration: none;
+        font-size: 10px;
+        font-weight: 700;
+    }
+
+    .back-link:hover {
+        color: #4f46e5;
+    }
+
+    @media (max-width: 900px) {
+        .main-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 700px) {
+        .fee-hero {
+            padding: 21px;
+            border-radius: 19px;
+        }
+
+        .hero-content {
+            flex-direction: column;
+        }
+
+        .hero-actions {
+            width: 100%;
+        }
+
+        .hero-btn {
+            flex: 1;
+        }
+
+        .money-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .hero-main {
+            gap: 11px;
+        }
+
+        .hero-icon {
+            width: 48px;
+            height: 48px;
+            flex-basis: 48px;
+            font-size: 20px;
+        }
+
+        .hero-title {
+            font-size: 21px;
+        }
+
+        .hero-actions {
+            flex-direction: column;
+        }
+
+        .hero-btn {
+            width: 100%;
+        }
+
+        .danger-zone {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="fee-detail-page">
+
+    <!-- HERO -->
+    <div class="fee-hero">
+
+        <div class="hero-content">
+
+            <div class="hero-main">
+
+                <div class="hero-icon">
+                    <i class="bi bi-receipt-cutoff"></i>
+                </div>
+
+                <div>
+
+                    <div class="hero-eyebrow">
+                        Fee Record #{{ fee.pk }}
+                    </div>
+
+                    <h1 class="hero-title">
+                        {{ fee.get_fee_type_display }}
+                    </h1>
+
+                    <p class="hero-subtitle">
+                        {{ fee.student.full_name }}
+                        · Due {{ fee.due_date|date:"d M Y" }}
+                    </p>
+
+                    <span class="status-pill {{ fee.status }}">
+                        {{ fee.get_status_display }}
+                    </span>
+
+                </div>
+
+            </div>
+
+            <div class="hero-actions">
+
+                <a
+                    href="{% url 'fees:list' %}"
+                    class="hero-btn secondary"
+                >
+                    <i class="bi bi-arrow-left"></i>
+                    Back
+                </a>
+
+                {% if request.user.can_manage_hostel and fee.status != 'paid' %}
+
+                <a
+                    href="{% url 'fees:payment_create' fee.pk %}"
+                    class="hero-btn primary"
+                >
+                    <i class="bi bi-cash-stack"></i>
+                    Record Payment
+                </a>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- MONEY SUMMARY -->
+    <div class="money-grid">
+
+        <div class="money-card">
+
+            <div class="money-top">
+                <div class="money-icon">
+                    <i class="bi bi-receipt"></i>
+                </div>
+
+                <div class="money-label">
+                    Total Billed
+                </div>
+            </div>
+
+            <div class="money-value">
+                ₹{{ fee.amount }}
+            </div>
+
+        </div>
+
+        <div class="money-card paid">
+
+            <div class="money-top">
+                <div class="money-icon">
+                    <i class="bi bi-check-circle"></i>
+                </div>
+
+                <div class="money-label">
+                    Paid
+                </div>
+            </div>
+
+            <div class="money-value">
+                ₹{{ fee.total_paid }}
+            </div>
+
+        </div>
+
+        <div class="money-card {% if fee.balance > 0 %}balance{% else %}clear{% endif %}">
+
+            <div class="money-top">
+                <div class="money-icon">
+                    {% if fee.balance > 0 %}
+                    <i class="bi bi-exclamation-circle"></i>
+                    {% else %}
+                    <i class="bi bi-check2-circle"></i>
+                    {% endif %}
+                </div>
+
+                <div class="money-label">
+                    Balance
+                </div>
+            </div>
+
+            <div class="money-value">
+                ₹{{ fee.balance }}
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- PAYMENT PROGRESS -->
+    <div class="payment-progress">
+
+        <div class="progress-head">
+
+            <div class="progress-title">
+                Payment Progress
+            </div>
+
+            <div class="progress-percent" id="paymentPercent">
+                0%
+            </div>
+
+        </div>
+
+        <div class="progress-track">
+            <div
+                class="progress-fill"
+                id="paymentProgress"
+                style="width:0%;"
+            ></div>
+        </div>
+
+        <div class="progress-caption">
+            ₹{{ fee.total_paid }} paid out of ₹{{ fee.amount }}
+        </div>
+
+    </div>
+
+    <!-- MAIN -->
+    <div class="main-grid">
+
+        <!-- LEFT -->
+        <div>
+
+            <!-- STUDENT + FEE INFO -->
+            <div class="panel">
+
+                <div class="panel-header">
+
+                    <div class="panel-heading">
+
+                        <div class="panel-icon">
+                            <i class="bi bi-person"></i>
+                        </div>
+
+                        <div>
+                            <h3 class="panel-title">
+                                Fee Details
+                            </h3>
+
+                            <div class="panel-subtitle">
+                                Record information
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="panel-body">
+
+                    <div class="student-card">
+
+                        <div class="student-avatar">
+                            {{ fee.student.initials }}
+                        </div>
+
+                        <div>
+                            <div class="student-name">
+                                {{ fee.student.full_name }}
+                            </div>
+
+                            <div class="student-id">
+                                {{ fee.student.student_id }}
+                            </div>
+                        </div>
+
+                        <a
+                            href="{% url 'students:detail' fee.student.pk %}"
+                            class="student-link"
+                            title="View Student"
+                        >
+                            <i class="bi bi-arrow-up-right-circle"></i>
+                        </a>
+
+                    </div>
+
+                    <ul class="info-list">
+
+                        <li class="info-row">
+                            <span class="info-label">
+                                Student
+                            </span>
+
+                            <span class="info-value">
+                                <a href="{% url 'students:detail' fee.student.pk %}">
+                                    {{ fee.student.full_name }}
+                                </a>
+                            </span>
+                        </li>
+
+                        <li class="info-row">
+                            <span class="info-label">
+                                Student ID
+                            </span>
+
+                            <span class="info-value">
+                                <code>{{ fee.student.student_id }}</code>
+                            </span>
+                        </li>
+
+                        <li class="info-row">
+                            <span class="info-label">
+                                Fee Type
+                            </span>
+
+                            <span class="info-value">
+                                {{ fee.get_fee_type_display }}
+                            </span>
+                        </li>
+
+                        <li class="info-row">
+                            <span class="info-label">
+                                Amount
+                            </span>
+
+                            <span class="info-value">
+                                ₹{{ fee.amount }}
+                            </span>
+                        </li>
+
+                        <li class="info-row">
+                            <span class="info-label">
+                                Due Date
+                            </span>
+
+                            <span class="info-value">
+                                {{ fee.due_date|date:"d M Y" }}
+                            </span>
+                        </li>
+
+                        <li class="info-row">
+                            <span class="info-label">
+                                Status
+                            </span>
+
+                            <span class="info-value">
+                                {{ fee.get_status_display }}
+                            </span>
+                        </li>
+
+                        <li class="info-row">
+                            <span class="info-label">
+                                Created
+                            </span>
+
+                            <span class="info-value">
+                                {{ fee.created_at|date:"d M Y" }}
+                            </span>
+                        </li>
+
+                    </ul>
+
+                    {% if fee.description %}
+
+                    <div class="description-box">
+
+                        <div class="description-label">
+                            Description
+                        </div>
+
+                        <p class="description-text">
+                            {{ fee.description }}
+                        </p>
+
+                    </div>
+
+                    {% endif %}
+
+                </div>
+
+                {% if request.user.is_admin %}
+
+                <div class="danger-zone">
+
+                    <div>
+                        <div class="danger-info-title">
+                            Delete Fee
+                        </div>
+
+                        <div class="danger-info-text">
+                            This action cannot be undone.
+                        </div>
+                    </div>
+
+                    <form
+                        method="post"
+                        action="{% url 'fees:delete' fee.pk %}"
+                        id="feeDeleteForm"
+                    >
+                        {% csrf_token %}
+
+                        <button
+                            type="button"
+                            class="delete-btn"
+                            onclick="confirmDeleteFee()"
+                        >
+                            <i class="bi bi-trash3"></i>
+                            Delete
+                        </button>
+
+                    </form>
+
+                </div>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+        <!-- RIGHT -->
+        <div>
+
+            <div class="panel">
+
+                <div class="panel-header">
+
+                    <div class="panel-heading">
+
+                        <div class="panel-icon">
+                            <i class="bi bi-clock-history"></i>
+                        </div>
+
+                        <div>
+                            <h3 class="panel-title">
+                                Payment History
+                            </h3>
+
+                            <div class="panel-subtitle">
+                                All payments made against this fee
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <span class="count-badge">
+                        {{ payments.count }}
+                        payment{{ payments.count|pluralize }}
+                    </span>
+
+                </div>
+
+                {% if payments %}
+
+                <div class="payment-table-wrap">
+
+                    <table class="payment-table">
+
+                        <thead>
+                            <tr>
+                                <th>Amount</th>
+                                <th>Method</th>
+                                <th>Reference</th>
+                                <th>Date</th>
+                                <th>Receipt</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            {% for p in payments %}
+
+                            <tr>
+
+                                <td>
+                                    <span class="payment-amount">
+                                        ₹{{ p.amount }}
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <span class="method-badge">
+
+                                        {% if p.payment_method == 'cash' %}
+                                        <i class="bi bi-cash"></i>
+                                        {% elif p.payment_method == 'upi' %}
+                                        <i class="bi bi-phone"></i>
+                                        {% elif p.payment_method == 'bank_transfer' %}
+                                        <i class="bi bi-bank"></i>
+                                        {% elif p.payment_method == 'cheque' %}
+                                        <i class="bi bi-file-earmark-text"></i>
+                                        {% else %}
+                                        <i class="bi bi-credit-card"></i>
+                                        {% endif %}
+
+                                        {{ p.get_payment_method_display }}
+
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <div
+                                        class="reference"
+                                        title="{{ p.transaction_reference }}"
+                                    >
+                                        {{ p.transaction_reference|default:"—" }}
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <span class="payment-date">
+                                        {{ p.paid_at|date:"d M Y" }}
+                                    </span>
+                                </td>
+
+                                <td>
+
+                                    <a
+                                        href="{% url 'fees:receipt' p.pk %}"
+                                        class="receipt-link"
+                                    >
+                                        <i class="bi bi-file-earmark-pdf"></i>
+                                        {{ p.receipt_number }}
+                                    </a>
+
+                                </td>
+
+                            </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+                {% else %}
+
+                <div class="empty-payment">
+
+                    <div class="empty-icon">
+                        <i class="bi bi-wallet2"></i>
+                    </div>
+
+                    <h3>
+                        No Payments Yet
+                    </h3>
+
+                    <p>
+                        No payment has been recorded for this fee.
+                    </p>
+
+                    {% if request.user.can_manage_hostel %}
+
+                    <a
+                        href="{% url 'fees:payment_create' fee.pk %}"
+                        class="empty-btn"
+                    >
+                        <i class="bi bi-plus-lg"></i>
+                        Record Payment
+                    </a>
+
+                    {% endif %}
+
+                </div>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <a
+        href="{% url 'fees:list' %}"
+        class="back-link"
+    >
+        <i class="bi bi-arrow-left"></i>
+        Back to Fee Records
+    </a>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    const amount = parseFloat('{{ fee.amount|default:0 }}') || 0;
+    const paid = parseFloat('{{ fee.total_paid|default:0 }}') || 0;
+
+    let percentage = 0;
+
+    if (amount > 0) {
+        percentage = Math.min(100, Math.max(0, (paid / amount) * 100));
+    }
+
+    const progress = document.getElementById('paymentProgress');
+    const percent = document.getElementById('paymentPercent');
+
+    if (progress) {
+        progress.style.width = percentage.toFixed(1) + '%';
+    }
+
+    if (percent) {
+        percent.textContent = Math.round(percentage) + '%';
+    }
+
+});
+
+
+function confirmDeleteFee() {
+
+    const form = document.getElementById('feeDeleteForm');
+
+    if (!form) return;
+
+    if (typeof showConfirm === 'function') {
+
+        showConfirm(
+            'Delete this fee record? This action cannot be undone.',
+            function () {
+                form.submit();
+            },
+            {
+                title: 'Delete Fee'
+            }
+        );
+
+    } else {
+
+        if (
+            confirm(
+                'Delete this fee record? This action cannot be undone.'
+            )
+        ) {
+            form.submit();
+        }
+
+    }
+
+}
+</script>
+{% endblock %}

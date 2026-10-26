@@ -1,0 +1,1066 @@
+{% extends "base.html" %}
+
+{% block title %}Visitors{% endblock %}
+
+{% block extra_css %}
+<style>
+    .visitor-page {
+        max-width: 1600px;
+        margin: 0 auto;
+    }
+
+    .visitor-hero {
+        position: relative;
+        overflow: hidden;
+        border-radius: 24px;
+        padding: 28px 30px;
+        background:
+            radial-gradient(circle at 90% 20%, rgba(99, 102, 241, .16), transparent 30%),
+            radial-gradient(circle at 70% 100%, rgba(59, 130, 246, .10), transparent 35%),
+            #fff;
+        border: 1px solid #e8eaf0;
+        box-shadow: 0 10px 35px rgba(15, 23, 42, .06);
+    }
+
+    .visitor-hero-icon {
+        width: 54px;
+        height: 54px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 16px;
+        background: #eef2ff;
+        color: #4f46e5;
+        font-size: 25px;
+        flex-shrink: 0;
+    }
+
+    .visitor-hero h2 {
+        font-size: 25px;
+        font-weight: 800;
+        letter-spacing: -.5px;
+        color: #111827;
+    }
+
+    .visitor-hero p {
+        color: #6b7280;
+        font-size: 14px;
+    }
+
+    .stat-card {
+        position: relative;
+        overflow: hidden;
+        background: #fff;
+        border: 1px solid #e8eaf0;
+        border-radius: 20px;
+        padding: 20px;
+        height: 100%;
+        box-shadow: 0 8px 28px rgba(15, 23, 42, .045);
+        transition: all .2s ease;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 14px 34px rgba(15, 23, 42, .08);
+    }
+
+    .stat-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 13px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 19px;
+    }
+
+    .stat-icon.primary {
+        background: #eef2ff;
+        color: #4f46e5;
+    }
+
+    .stat-icon.success {
+        background: #ecfdf3;
+        color: #16a34a;
+    }
+
+    .stat-icon.warning {
+        background: #fff7ed;
+        color: #ea580c;
+    }
+
+    .stat-label {
+        font-size: 12px;
+        font-weight: 600;
+        color: #6b7280;
+        margin-bottom: 5px;
+    }
+
+    .stat-value {
+        font-size: 25px;
+        line-height: 1;
+        font-weight: 800;
+        color: #111827;
+    }
+
+    .filter-card,
+    .table-card {
+        background: #fff;
+        border: 1px solid #e8eaf0;
+        border-radius: 20px;
+        box-shadow: 0 8px 28px rgba(15, 23, 42, .045);
+    }
+
+    .filter-card {
+        padding: 20px;
+    }
+
+    .filter-label {
+        display: block;
+        margin-bottom: 7px;
+        font-size: 11px;
+        font-weight: 700;
+        color: #6b7280;
+        text-transform: uppercase;
+        letter-spacing: .5px;
+    }
+
+    .filter-card .form-control,
+    .filter-card .form-select {
+        min-height: 44px;
+        border-radius: 11px;
+        border-color: #e5e7eb;
+        font-size: 13px;
+        box-shadow: none;
+    }
+
+    .filter-card .form-control:focus,
+    .filter-card .form-select:focus {
+        border-color: #818cf8;
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, .10);
+    }
+
+    .btn-premium {
+        min-height: 44px;
+        border: 0;
+        border-radius: 11px;
+        padding: 0 18px;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .btn-primary.btn-premium {
+        background: #4f46e5;
+    }
+
+    .btn-primary.btn-premium:hover {
+        background: #4338ca;
+    }
+
+    .btn-soft {
+        background: #f8fafc;
+        color: #475569;
+        border: 1px solid #e5e7eb;
+    }
+
+    .btn-soft:hover {
+        background: #f1f5f9;
+        color: #111827;
+    }
+
+    .table-card-header {
+        padding: 20px 22px;
+        border-bottom: 1px solid #eef0f4;
+    }
+
+    .table-title {
+        font-size: 16px;
+        font-weight: 800;
+        color: #111827;
+    }
+
+    .table-subtitle {
+        font-size: 12px;
+        color: #94a3b8;
+    }
+
+    .visitor-table {
+        margin: 0;
+        min-width: 1050px;
+    }
+
+    .visitor-table thead th {
+        background: #f8fafc;
+        color: #64748b;
+        font-size: 10px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: .55px;
+        padding: 13px 18px;
+        border-bottom: 1px solid #e9edf2;
+        white-space: nowrap;
+    }
+
+    .visitor-table tbody td {
+        padding: 15px 18px;
+        border-bottom: 1px solid #f0f2f5;
+        vertical-align: middle;
+        font-size: 13px;
+        color: #475569;
+    }
+
+    .visitor-table tbody tr {
+        transition: background .15s ease;
+    }
+
+    .visitor-table tbody tr:hover {
+        background: #fafbff;
+    }
+
+    .visitor-avatar {
+        width: 42px;
+        height: 42px;
+        border-radius: 13px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #eef2ff;
+        color: #4f46e5;
+        font-weight: 800;
+        font-size: 14px;
+        flex-shrink: 0;
+    }
+
+    .visitor-name {
+        color: #111827;
+        font-weight: 750;
+        font-size: 13px;
+    }
+
+    .visitor-meta {
+        color: #94a3b8;
+        font-size: 11px;
+        margin-top: 2px;
+    }
+
+    .student-name {
+        color: #334155;
+        font-weight: 650;
+    }
+
+    .student-id {
+        color: #94a3b8;
+        font-size: 11px;
+    }
+
+    .phone-link {
+        color: #475569;
+        text-decoration: none;
+    }
+
+    .phone-link:hover {
+        color: #4f46e5;
+    }
+
+    .purpose-text {
+        max-width: 180px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        color: #64748b;
+    }
+
+    .time-box {
+        display: inline-flex;
+        flex-direction: column;
+        gap: 1px;
+    }
+
+    .time-date {
+        color: #334155;
+        font-size: 12px;
+        font-weight: 650;
+    }
+
+    .time-clock {
+        color: #94a3b8;
+        font-size: 11px;
+    }
+
+    .status-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        border-radius: 999px;
+        padding: 6px 10px;
+        font-size: 10px;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .status-pill.inside {
+        color: #15803d;
+        background: #ecfdf3;
+    }
+
+    .status-pill.outside {
+        color: #64748b;
+        background: #f1f5f9;
+    }
+
+    .status-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: currentColor;
+    }
+
+    .checkout-btn {
+        border: 1px solid #fed7aa;
+        background: #fff7ed;
+        color: #c2410c;
+        border-radius: 9px;
+        padding: 7px 10px;
+        font-size: 11px;
+        font-weight: 750;
+    }
+
+    .checkout-btn:hover {
+        background: #ffedd5;
+        color: #9a3412;
+    }
+
+    .checked-out {
+        color: #94a3b8;
+        font-size: 11px;
+    }
+
+    .empty-state {
+        padding: 65px 20px;
+        text-align: center;
+    }
+
+    .empty-icon {
+        width: 70px;
+        height: 70px;
+        margin: 0 auto 18px;
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f1f5f9;
+        color: #94a3b8;
+        font-size: 30px;
+    }
+
+    .empty-state h5 {
+        font-weight: 800;
+        color: #1e293b;
+    }
+
+    .empty-state p {
+        max-width: 430px;
+        margin: 0 auto;
+        color: #94a3b8;
+        font-size: 13px;
+    }
+
+    .pagination-wrap {
+        padding: 16px 20px;
+        border-top: 1px solid #eef0f4;
+    }
+
+    .pagination .page-link {
+        border: 0;
+        margin: 0 2px;
+        border-radius: 8px;
+        color: #64748b;
+        font-size: 12px;
+        font-weight: 650;
+    }
+
+    .pagination .page-item.active .page-link {
+        background: #4f46e5;
+        color: #fff;
+    }
+
+    .quick-filter {
+        font-size: 11px;
+        color: #64748b;
+        text-decoration: none;
+        font-weight: 650;
+    }
+
+    .quick-filter:hover {
+        color: #4f46e5;
+    }
+
+    @media (max-width: 767.98px) {
+        .visitor-hero {
+            padding: 20px;
+            border-radius: 18px;
+        }
+
+        .visitor-hero h2 {
+            font-size: 21px;
+        }
+
+        .stat-card {
+            border-radius: 16px;
+        }
+
+        .filter-card,
+        .table-card {
+            border-radius: 16px;
+        }
+
+        .table-card-header {
+            padding: 17px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid py-4 visitor-page">
+
+    <!-- Hero -->
+    <div class="visitor-hero mb-4">
+        <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+
+            <div class="d-flex align-items-center gap-3">
+                <div class="visitor-hero-icon">
+                    <i class="bi bi-person-walking"></i>
+                </div>
+
+                <div>
+                    <div class="d-flex align-items-center gap-2 mb-1">
+                        <h2 class="mb-0">Visitor Management</h2>
+
+                        {% if inside_count %}
+                        <span class="status-pill inside">
+                            <span class="status-dot"></span>
+                            {{ inside_count }} inside
+                        </span>
+                        {% endif %}
+                    </div>
+
+                    <p class="mb-0">
+                        Track hostel visitors, check-ins and check-outs from one place.
+                    </p>
+                </div>
+            </div>
+
+            {% if request.user.can_manage_hostel %}
+            <a href="{% url 'visitors:create' %}"
+               class="btn btn-primary btn-premium">
+                <i class="bi bi-person-plus-fill me-2"></i>
+                Check In Visitor
+            </a>
+            {% endif %}
+
+        </div>
+    </div>
+
+
+    <!-- Statistics -->
+    <div class="row g-3 mb-4">
+
+        <div class="col-md-4">
+            <div class="stat-card">
+                <div class="d-flex align-items-center justify-content-between">
+
+                    <div>
+                        <div class="stat-label">Total Records</div>
+                        <div class="stat-value">{{ total }}</div>
+                    </div>
+
+                    <div class="stat-icon primary">
+                        <i class="bi bi-people-fill"></i>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-md-4">
+            <div class="stat-card">
+                <div class="d-flex align-items-center justify-content-between">
+
+                    <div>
+                        <div class="stat-label">Today's Visitors</div>
+                        <div class="stat-value">{{ today_count }}</div>
+                    </div>
+
+                    <div class="stat-icon warning">
+                        <i class="bi bi-calendar-day-fill"></i>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-md-4">
+            <div class="stat-card">
+                <div class="d-flex align-items-center justify-content-between">
+
+                    <div>
+                        <div class="stat-label">Currently Inside</div>
+                        <div class="stat-value">{{ inside_count }}</div>
+                    </div>
+
+                    <div class="stat-icon success">
+                        <i class="bi bi-person-check-fill"></i>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- Filters -->
+    <div class="filter-card mb-4">
+
+        <div class="d-flex align-items-center justify-content-between mb-3">
+            <div>
+                <div class="fw-bold text-dark">
+                    <i class="bi bi-funnel me-1"></i>
+                    Filter Visitor Records
+                </div>
+
+                <div class="text-muted small mt-1">
+                    Search by visitor, student or phone number.
+                </div>
+            </div>
+
+            {% if q or date_filter or inside_only %}
+            <a href="{% url 'visitors:list' %}" class="quick-filter">
+                <i class="bi bi-x-circle me-1"></i>
+                Clear filters
+            </a>
+            {% endif %}
+        </div>
+
+
+        <form method="get">
+            <div class="row g-3">
+
+                <!-- Search -->
+                <div class="col-lg-5 col-md-6">
+                    <label class="filter-label">Search</label>
+
+                    <div class="position-relative">
+                        <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+
+                        <input
+                            type="text"
+                            name="q"
+                            value="{{ q }}"
+                            class="form-control ps-5"
+                            placeholder="Visitor name, student or phone..."
+                            autocomplete="off"
+                        >
+                    </div>
+                </div>
+
+
+                <!-- Date -->
+                <div class="col-lg-3 col-md-6">
+                    <label class="filter-label">Visit Date</label>
+
+                    <input
+                        type="date"
+                        name="date"
+                        value="{{ date_filter }}"
+                        class="form-control"
+                    >
+                </div>
+
+
+                <!-- Inside -->
+                <div class="col-lg-2 col-md-6">
+                    <label class="filter-label">Current Status</label>
+
+                    <select name="inside" class="form-select">
+                        <option value="">All Visitors</option>
+
+                        <option value="1"
+                            {% if inside_only == "1" %}selected{% endif %}>
+                            Currently Inside
+                        </option>
+                    </select>
+                </div>
+
+
+                <!-- Button -->
+                <div class="col-lg-2 col-md-6 d-flex align-items-end">
+                    <button type="submit"
+                            class="btn btn-primary btn-premium w-100">
+                        <i class="bi bi-search me-1"></i>
+                        Apply Filters
+                    </button>
+                </div>
+
+            </div>
+        </form>
+
+
+        <!-- Quick filters -->
+        <div class="d-flex flex-wrap align-items-center gap-3 mt-3 pt-3 border-top">
+
+            <span class="text-muted small fw-semibold">
+                Quick:
+            </span>
+
+            <a href="?date={{ today }}"
+               class="quick-filter">
+                <i class="bi bi-calendar-event me-1"></i>
+                Today
+            </a>
+
+            <a href="?inside=1"
+               class="quick-filter">
+                <i class="bi bi-person-check me-1"></i>
+                Currently Inside
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- Visitor Table -->
+    <div class="table-card">
+
+        <div class="table-card-header">
+            <div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-2">
+
+                <div>
+                    <div class="table-title">
+                        Visitor Records
+                    </div>
+
+                    <div class="table-subtitle">
+                        {% if total %}
+                            Showing {{ total }} matching record{{ total|pluralize }}.
+                        {% else %}
+                            No visitor records match the current filters.
+                        {% endif %}
+                    </div>
+                </div>
+
+                {% if inside_count %}
+                <div class="status-pill inside">
+                    <span class="status-dot"></span>
+                    {{ inside_count }} visitor{{ inside_count|pluralize }} currently inside
+                </div>
+                {% endif %}
+
+            </div>
+        </div>
+
+
+        {% if visitors %}
+
+        <div class="table-responsive">
+
+            <table class="table visitor-table align-middle">
+
+                <thead>
+                    <tr>
+                        <th>Visitor</th>
+                        <th>Student</th>
+                        <th>Contact</th>
+                        <th>Relation</th>
+                        <th>Purpose</th>
+                        <th>Check In</th>
+                        <th>Check Out</th>
+                        <th>Status</th>
+                        {% if request.user.can_manage_hostel %}
+                        <th class="text-end">Action</th>
+                        {% endif %}
+                    </tr>
+                </thead>
+
+
+                <tbody>
+
+                {% for visitor in visitors %}
+
+                    <tr>
+
+                        <!-- Visitor -->
+                        <td>
+                            <div class="d-flex align-items-center gap-3">
+
+                                <div class="visitor-avatar">
+                                    {{ visitor.visitor_name|first|upper }}
+                                </div>
+
+                                <div>
+                                    <div class="visitor-name">
+                                        {{ visitor.visitor_name }}
+                                    </div>
+
+                                    {% if visitor.id_proof %}
+                                    <div class="visitor-meta">
+                                        ID: {{ visitor.id_proof }}
+                                    </div>
+                                    {% else %}
+                                    <div class="visitor-meta">
+                                        Visitor
+                                    </div>
+                                    {% endif %}
+                                </div>
+
+                            </div>
+                        </td>
+
+
+                        <!-- Student -->
+                        <td>
+                            <div class="student-name">
+                                {{ visitor.student.full_name }}
+                            </div>
+
+                            {% if visitor.student.student_id %}
+                            <div class="student-id">
+                                {{ visitor.student.student_id }}
+                            </div>
+                            {% endif %}
+                        </td>
+
+
+                        <!-- Phone -->
+                        <td>
+                            {% if visitor.phone %}
+                            <a href="tel:{{ visitor.phone }}"
+                               class="phone-link">
+                                <i class="bi bi-telephone me-1"></i>
+                                {{ visitor.phone }}
+                            </a>
+                            {% else %}
+                            <span class="text-muted">—</span>
+                            {% endif %}
+                        </td>
+
+
+                        <!-- Relation -->
+                        <td>
+                            {% if visitor.relation %}
+                                <span class="fw-semibold text-secondary">
+                                    {{ visitor.relation }}
+                                </span>
+                            {% else %}
+                                <span class="text-muted">—</span>
+                            {% endif %}
+                        </td>
+
+
+                        <!-- Purpose -->
+                        <td>
+                            {% if visitor.purpose %}
+                                <div class="purpose-text"
+                                     title="{{ visitor.purpose }}">
+                                    {{ visitor.purpose }}
+                                </div>
+                            {% else %}
+                                <span class="text-muted">—</span>
+                            {% endif %}
+                        </td>
+
+
+                        <!-- Check In -->
+                        <td>
+                            <div class="time-box">
+
+                                <span class="time-date">
+                                    {{ visitor.check_in|date:"d M Y" }}
+                                </span>
+
+                                <span class="time-clock">
+                                    <i class="bi bi-clock me-1"></i>
+                                    {{ visitor.check_in|date:"h:i A" }}
+                                </span>
+
+                            </div>
+                        </td>
+
+
+                        <!-- Check Out -->
+                        <td>
+                            {% if visitor.check_out %}
+
+                                <div class="time-box">
+
+                                    <span class="time-date">
+                                        {{ visitor.check_out|date:"d M Y" }}
+                                    </span>
+
+                                    <span class="time-clock">
+                                        <i class="bi bi-clock me-1"></i>
+                                        {{ visitor.check_out|date:"h:i A" }}
+                                    </span>
+
+                                </div>
+
+                            {% else %}
+
+                                <span class="text-muted">—</span>
+
+                            {% endif %}
+                        </td>
+
+
+                        <!-- Status -->
+                        <td>
+
+                            {% if visitor.is_inside %}
+
+                                <span class="status-pill inside">
+                                    <span class="status-dot"></span>
+                                    Inside
+                                </span>
+
+                                {% if visitor.duration %}
+                                <div class="visitor-meta mt-1">
+                                    {{ visitor.duration }}
+                                </div>
+                                {% endif %}
+
+                            {% else %}
+
+                                <span class="status-pill outside">
+                                    <span class="status-dot"></span>
+                                    Checked Out
+                                </span>
+
+                                {% if visitor.duration %}
+                                <div class="visitor-meta mt-1">
+                                    {{ visitor.duration }}
+                                </div>
+                                {% endif %}
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- Action -->
+                        {% if request.user.can_manage_hostel %}
+                        <td class="text-end">
+
+                            {% if visitor.is_inside %}
+
+                                <form method="post"
+                                      action="{% url 'visitors:checkout' visitor.pk %}"
+                                      class="d-inline checkout-form">
+
+                                    {% csrf_token %}
+
+                                    <button type="submit"
+                                            class="checkout-btn"
+                                            onclick="return confirm('Check out {{ visitor.visitor_name|escapejs }}?');">
+
+                                        <i class="bi bi-box-arrow-right me-1"></i>
+                                        Check Out
+
+                                    </button>
+
+                                </form>
+
+                            {% else %}
+
+                                <span class="checked-out">
+                                    <i class="bi bi-check2-circle me-1"></i>
+                                    Completed
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+                        {% endif %}
+
+                    </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        <!-- Pagination -->
+        {% if visitors.has_other_pages %}
+
+        <div class="pagination-wrap">
+
+            <div class="d-flex flex-column flex-sm-row align-items-center justify-content-between gap-3">
+
+                <div class="text-muted small">
+                    Page {{ visitors.number }} of {{ visitors.paginator.num_pages }}
+                </div>
+
+
+                <nav aria-label="Visitor pagination">
+
+                    <ul class="pagination mb-0">
+
+                        {% if visitors.has_previous %}
+
+                        <li class="page-item">
+                            <a class="page-link"
+                               href="?{% if q %}q={{ q|urlencode }}&{% endif %}{% if date_filter %}date={{ date_filter }}&{% endif %}{% if inside_only %}inside={{ inside_only }}&{% endif %}page={{ visitors.previous_page_number }}">
+                                <i class="bi bi-chevron-left"></i>
+                            </a>
+                        </li>
+
+                        {% endif %}
+
+
+                        {% for num in visitors.paginator.page_range %}
+
+                            {% if num == visitors.number %}
+
+                            <li class="page-item active">
+                                <span class="page-link">{{ num }}</span>
+                            </li>
+
+                            {% elif num > visitors.number|add:"-2" and num < visitors.number|add:"2" %}
+
+                            <li class="page-item">
+                                <a class="page-link"
+                                   href="?{% if q %}q={{ q|urlencode }}&{% endif %}{% if date_filter %}date={{ date_filter }}&{% endif %}{% if inside_only %}inside={{ inside_only }}&{% endif %}page={{ num }}">
+                                    {{ num }}
+                                </a>
+                            </li>
+
+                            {% endif %}
+
+                        {% endfor %}
+
+
+                        {% if visitors.has_next %}
+
+                        <li class="page-item">
+                            <a class="page-link"
+                               href="?{% if q %}q={{ q|urlencode }}&{% endif %}{% if date_filter %}date={{ date_filter }}&{% endif %}{% if inside_only %}inside={{ inside_only }}&{% endif %}page={{ visitors.next_page_number }}">
+                                <i class="bi bi-chevron-right"></i>
+                            </a>
+                        </li>
+
+                        {% endif %}
+
+                    </ul>
+
+                </nav>
+
+            </div>
+
+        </div>
+
+        {% endif %}
+
+
+        {% else %}
+
+        <!-- Empty -->
+        <div class="empty-state">
+
+            <div class="empty-icon">
+                <i class="bi bi-person-walking"></i>
+            </div>
+
+            <h5>No visitors found</h5>
+
+            <p class="mb-4">
+                There are no visitor records matching your current filters.
+                Try changing the filters or check in a new visitor.
+            </p>
+
+            <div class="d-flex justify-content-center gap-2 flex-wrap">
+
+                {% if q or date_filter or inside_only %}
+                <a href="{% url 'visitors:list' %}"
+                   class="btn btn-soft btn-premium">
+                    <i class="bi bi-arrow-counterclockwise me-1"></i>
+                    Clear Filters
+                </a>
+                {% endif %}
+
+                {% if request.user.can_manage_hostel %}
+                <a href="{% url 'visitors:checkin' %}"
+                   class="btn btn-primary btn-premium">
+                    <i class="bi bi-person-plus me-1"></i>
+                    Check In Visitor
+                </a>
+                {% endif %}
+
+            </div>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    /* Focus search with "/" */
+    document.addEventListener('keydown', function (event) {
+
+        if (
+            event.key === '/' &&
+            !['INPUT', 'TEXTAREA', 'SELECT'].includes(
+                document.activeElement.tagName
+            )
+        ) {
+            event.preventDefault();
+
+            const search = document.querySelector(
+                'input[name="q"]'
+            );
+
+            if (search) {
+                search.focus();
+            }
+        }
+
+    });
+
+
+    /* Prevent accidental double checkout */
+    document.querySelectorAll('.checkout-form').forEach(function (form) {
+
+        form.addEventListener('submit', function () {
+
+            const button = form.querySelector(
+                'button[type="submit"]'
+            );
+
+            if (!button) return;
+
+            button.disabled = true;
+
+            button.innerHTML =
+                '<span class="spinner-border spinner-border-sm me-1"></span> Checking out...';
+
+        });
+
+    });
+
+});
+</script>
+
+{% endblock %}

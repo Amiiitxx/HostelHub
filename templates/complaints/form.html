@@ -1,0 +1,536 @@
+{% extends 'base.html' %}
+
+{% block title %}New Complaint{% endblock %}
+{% block page_title %}New Complaint{% endblock %}
+
+{% block extra_css %}
+<style>
+.complaint-form-page{
+    max-width:1180px;
+    margin:0 auto;
+    padding-bottom:35px;
+}
+
+.form-hero{
+    position:relative;
+    overflow:hidden;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    min-height:145px;
+    padding:30px 34px;
+    margin-bottom:22px;
+    border:1px solid #e7e8fb;
+    border-radius:26px;
+    background:
+        radial-gradient(circle at 86% 15%,rgba(99,102,241,.15),transparent 25%),
+        linear-gradient(135deg,#fff 0%,#f7f7ff 55%,#f0f2ff 100%);
+    box-shadow:0 14px 38px rgba(15,23,42,.06);
+}
+
+.form-hero-content{
+    display:flex;
+    align-items:center;
+    gap:18px;
+    position:relative;
+    z-index:2;
+}
+
+.form-hero-icon{
+    width:64px;
+    height:64px;
+    flex:0 0 64px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:19px;
+    color:#fff;
+    font-size:26px;
+    background:linear-gradient(135deg,#6d5dfc,#4938dc);
+    box-shadow:0 10px 24px rgba(79,70,229,.22);
+}
+
+.form-hero h1{
+    margin:0 0 6px;
+    color:#111827;
+    font-size:30px;
+    font-weight:850;
+    letter-spacing:-.8px;
+}
+
+.form-hero p{
+    margin:0;
+    color:#64748b;
+    font-size:13px;
+}
+
+.form-layout{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) 310px;
+    gap:20px;
+}
+
+.form-card,.info-card{
+    background:#fff;
+    border:1px solid #e7e9f0;
+    border-radius:22px;
+    box-shadow:0 8px 26px rgba(15,23,42,.045);
+}
+
+.form-card{overflow:hidden}
+
+.form-card-header{
+    display:flex;
+    align-items:center;
+    gap:13px;
+    padding:21px 24px;
+    border-bottom:1px solid #edf0f4;
+}
+
+.form-card-header-icon,.info-icon{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:11px;
+    color:#5b4df5;
+    background:#f0efff;
+}
+
+.form-card-header-icon{
+    width:38px;
+    height:38px;
+    font-size:17px;
+}
+
+.form-card-header h2{
+    margin:0;
+    color:#111827;
+    font-size:16px;
+    font-weight:820;
+}
+
+.form-card-header p{
+    margin:3px 0 0;
+    color:#94a3b8;
+    font-size:11px;
+}
+
+.form-body{
+    padding:25px 24px;
+}
+
+.form-row{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:18px;
+}
+
+.form-field{
+    margin-bottom:19px;
+}
+
+.form-field label{
+    display:block;
+    margin-bottom:7px;
+    color:#334155;
+    font-size:11px;
+    font-weight:800;
+}
+
+.form-field input,
+.form-field select,
+.form-field textarea{
+    width:100%;
+    min-height:45px;
+    padding:10px 13px;
+    border:1px solid #e2e8f0;
+    border-radius:12px;
+    outline:none;
+    box-sizing:border-box;
+    color:#1e293b;
+    background:#fff;
+    font-size:13px;
+    transition:.18s ease;
+}
+
+.form-field textarea{
+    min-height:140px;
+    resize:vertical;
+    line-height:1.55;
+}
+
+.form-field input:focus,
+.form-field select:focus,
+.form-field textarea:focus{
+    border-color:#8b82ff;
+    box-shadow:0 0 0 4px rgba(99,102,241,.09);
+}
+
+.form-field input::placeholder,
+.form-field textarea::placeholder{
+    color:#a0aec0;
+}
+
+.form-help{
+    display:block;
+    margin-top:6px;
+    color:#94a3b8;
+    font-size:10px;
+}
+
+.form-error{
+    margin-top:6px;
+    color:#dc2626;
+    font-size:10px;
+    font-weight:650;
+}
+
+.non-field-error{
+    margin-bottom:18px;
+    padding:12px 14px;
+    border:1px solid #fecaca;
+    border-radius:11px;
+    color:#b91c1c;
+    background:#fef2f2;
+    font-size:12px;
+}
+
+.form-actions{
+    display:flex;
+    justify-content:flex-end;
+    gap:10px;
+    padding:18px 24px;
+    border-top:1px solid #edf0f4;
+    background:#fafbff;
+}
+
+.cancel-btn,.submit-btn{
+    min-height:42px;
+    padding:10px 17px;
+    border-radius:11px;
+    font-size:12px;
+    font-weight:750;
+    text-decoration:none;
+    transition:.18s ease;
+}
+
+.cancel-btn{
+    border:1px solid #e2e8f0;
+    color:#64748b;
+    background:#fff;
+}
+
+.cancel-btn:hover{
+    color:#334155;
+    background:#f8fafc;
+}
+
+.submit-btn{
+    border:0;
+    color:#fff;
+    background:linear-gradient(135deg,#5b4df5,#4938dc);
+    box-shadow:0 8px 18px rgba(79,70,229,.20);
+}
+
+.submit-btn:hover{
+    color:#fff;
+    transform:translateY(-1px);
+    box-shadow:0 11px 23px rgba(79,70,229,.27);
+}
+
+.info-card{
+    align-self:start;
+    overflow:hidden;
+}
+
+.info-header{
+    padding:21px;
+    border-bottom:1px solid #edf0f4;
+}
+
+.info-header h3{
+    margin:0;
+    color:#111827;
+    font-size:15px;
+    font-weight:820;
+}
+
+.info-header p{
+    margin:5px 0 0;
+    color:#94a3b8;
+    font-size:11px;
+    line-height:1.5;
+}
+
+.info-body{padding:19px 21px 22px}
+
+.info-item{
+    display:flex;
+    align-items:flex-start;
+    gap:11px;
+    margin-bottom:16px;
+}
+
+.info-item:last-child{margin-bottom:0}
+
+.info-icon{
+    width:34px;
+    height:34px;
+    flex:0 0 34px;
+    font-size:14px;
+}
+
+.info-item strong{
+    display:block;
+    margin-bottom:3px;
+    color:#334155;
+    font-size:11px;
+    font-weight:800;
+}
+
+.info-item span{
+    display:block;
+    color:#94a3b8;
+    font-size:10px;
+    line-height:1.45;
+}
+
+@media(max-width:900px){
+    .form-layout{grid-template-columns:1fr}
+    .info-card{order:2}
+}
+
+@media(max-width:600px){
+    .form-hero{
+        align-items:flex-start;
+        padding:22px;
+        border-radius:20px;
+    }
+
+    .form-hero-icon{
+        width:52px;
+        height:52px;
+        flex-basis:52px;
+        font-size:21px;
+    }
+
+    .form-hero h1{font-size:24px}
+    .form-body{padding:20px 17px}
+    .form-card-header{padding:18px}
+    .form-row{grid-template-columns:1fr}
+
+    .form-actions{
+        flex-direction:column-reverse;
+        padding:16px 17px;
+    }
+
+    .cancel-btn,.submit-btn{
+        width:100%;
+        text-align:center;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="complaint-form-page">
+
+    <div class="form-hero">
+        <div class="form-hero-content">
+            <div class="form-hero-icon">
+                <i class="bi bi-chat-square-text"></i>
+            </div>
+            <div>
+                <h1>New Complaint</h1>
+                <p>Submit a complaint or service request to the hostel management.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-layout">
+
+        <div class="form-card">
+
+            <div class="form-card-header">
+                <div class="form-card-header-icon">
+                    <i class="bi bi-pencil-square"></i>
+                </div>
+                <div>
+                    <h2>Complaint Details</h2>
+                    <p>Fill in the details below to submit your complaint.</p>
+                </div>
+            </div>
+
+            <form method="post">
+                {% csrf_token %}
+
+                <div class="form-body">
+
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="non-field-error">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <!-- Student -->
+                    <div class="form-field">
+                        <label for="id_student">Student</label>
+
+                        <select name="student" id="id_student" required>
+                            <option value="">Select student</option>
+
+                            {% for student in students %}
+                                <option value="{{ student.pk }}"
+                                    {% if preselect_student|stringformat:"s" == student.pk|stringformat:"s" %}selected{% endif %}>
+                                    {{ student.first_name }} {{ student.last_name }}
+                                    {% if student.student_id %} — {{ student.student_id }}{% endif %}
+                                </option>
+                            {% endfor %}
+                        </select>
+
+                        <span class="form-help">
+                            Select the student submitting this complaint.
+                        </span>
+                    </div>
+
+                    <!-- Category + Priority -->
+                    <div class="form-row">
+
+                        <div class="form-field">
+                            <label for="id_category">Category</label>
+
+                            <select name="category" id="id_category" required>
+                                <option value="">Select category</option>
+
+                                {% for value, label in categories %}
+                                    <option value="{{ value }}">
+                                        {{ label }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="id_priority">Priority</label>
+
+                            <select name="priority" id="id_priority">
+                                {% for value, label in priorities %}
+                                    <option value="{{ value }}"
+                                        {% if value == 'medium' %}selected{% endif %}>
+                                        {{ label }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                    </div>
+
+                    <!-- Title -->
+                    <div class="form-field">
+                        <label for="id_title">Complaint Title</label>
+
+                        <input
+                            type="text"
+                            name="title"
+                            id="id_title"
+                            maxlength="200"
+                            placeholder="e.g. Water leakage in room 204"
+                            required
+                        >
+
+                        <span class="form-help">
+                            Keep the title short and clearly describe the issue.
+                        </span>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="form-field">
+                        <label for="id_description">Description</label>
+
+                        <textarea
+                            name="description"
+                            id="id_description"
+                            rows="6"
+                            placeholder="Describe the problem in detail..."
+                            required
+                        ></textarea>
+
+                        <span class="form-help">
+                            Mention the location, issue details and anything management should know.
+                        </span>
+                    </div>
+
+                </div>
+
+                <div class="form-actions">
+                    <a href="{% url 'complaints:list' %}" class="cancel-btn">
+                        <i class="bi bi-arrow-left me-1"></i>
+                        Cancel
+                    </a>
+
+                    <button type="submit" class="submit-btn">
+                        <i class="bi bi-send me-2"></i>
+                        Submit Complaint
+                    </button>
+                </div>
+
+            </form>
+        </div>
+
+        <aside class="info-card">
+
+            <div class="info-header">
+                <h3>Before you submit</h3>
+                <p>A few simple tips can help the management understand your complaint quickly.</p>
+            </div>
+
+            <div class="info-body">
+
+                <div class="info-item">
+                    <div class="info-icon">
+                        <i class="bi bi-card-text"></i>
+                    </div>
+                    <div>
+                        <strong>Be specific</strong>
+                        <span>Clearly mention what happened and where the issue occurred.</span>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-icon">
+                        <i class="bi bi-exclamation-circle"></i>
+                    </div>
+                    <div>
+                        <strong>Choose priority</strong>
+                        <span>Select the priority according to how urgently the issue needs attention.</span>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-icon">
+                        <i class="bi bi-chat-left-text"></i>
+                    </div>
+                    <div>
+                        <strong>Add useful details</strong>
+                        <span>A clear description helps the hostel team resolve the complaint faster.</span>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-icon">
+                        <i class="bi bi-check2-circle"></i>
+                    </div>
+                    <div>
+                        <strong>Review before sending</strong>
+                        <span>Check the student, category, priority and description before submitting.</span>
+                    </div>
+                </div>
+
+            </div>
+        </aside>
+
+    </div>
+</div>
+{% endblock %}

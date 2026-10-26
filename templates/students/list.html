@@ -1,0 +1,1186 @@
+{% extends 'base.html' %}
+
+{% block title %}Students{% endblock %}
+{% block page_title %}Students{% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item active">Students</li>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.students-page {
+    max-width: 1500px;
+    margin: 0 auto;
+}
+
+/* HEADER */
+.students-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.students-header h2 {
+    margin: 0;
+    color: var(--color-text-primary);
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: -0.6px;
+}
+
+.students-header p {
+    margin: 5px 0 0;
+    color: var(--color-text-muted);
+    font-size: 10px;
+}
+
+.students-header-actions {
+    display: flex;
+    gap: 8px;
+}
+
+/* SUMMARY */
+.student-summary {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 13px;
+    margin-bottom: 16px;
+}
+
+.summary-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px;
+
+    background: #fff;
+    border: 1px solid var(--color-border);
+    border-radius: 14px;
+    box-shadow: var(--shadow-xs);
+}
+
+.summary-icon {
+    width: 40px;
+    height: 40px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+    background: #eef2ff;
+    color: #4f46e5;
+    font-size: 16px;
+    flex-shrink: 0;
+}
+
+.summary-card:nth-child(2) .summary-icon {
+    background: #ecfdf5;
+    color: #059669;
+}
+
+.summary-card:nth-child(3) .summary-icon {
+    background: #fff7ed;
+    color: #ea580c;
+}
+
+.summary-card:nth-child(4) .summary-icon {
+    background: #fef2f2;
+    color: #dc2626;
+}
+
+.summary-label {
+    color: var(--color-text-muted);
+    font-size: 8px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .4px;
+}
+
+.summary-value {
+    margin-top: 2px;
+    color: var(--color-text-primary);
+    font-size: 20px;
+    font-weight: 800;
+}
+
+/* FILTER CARD */
+.filter-card {
+    padding: 15px;
+    margin-bottom: 16px;
+
+    background: #fff;
+    border: 1px solid var(--color-border);
+    border-radius: 14px;
+    box-shadow: var(--shadow-xs);
+}
+
+.filter-form {
+    display: grid;
+    grid-template-columns: minmax(220px, 1.6fr) repeat(3, minmax(150px, .7fr)) auto;
+    gap: 9px;
+    align-items: center;
+}
+
+.search-box {
+    position: relative;
+}
+
+.search-box i {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+    font-size: 12px;
+}
+
+.search-box input {
+    padding-left: 34px;
+}
+
+.form-control,
+.form-select {
+    min-height: 38px;
+    border-color: #e2e8f0;
+    border-radius: 9px;
+    font-size: 10px;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: #a5b4fc;
+    box-shadow: 0 0 0 3px rgba(99,102,241,.10);
+}
+
+/* TABLE */
+.students-table-card {
+    background: #fff;
+    border: 1px solid var(--color-border);
+    border-radius: 15px;
+    box-shadow: var(--shadow-xs);
+    overflow: hidden;
+}
+
+.table-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+
+    padding: 15px 18px;
+    border-bottom: 1px solid var(--color-border-light);
+}
+
+.table-title {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+
+.table-title-icon {
+    width: 31px;
+    height: 31px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #eef2ff;
+    color: #4f46e5;
+    border-radius: 8px;
+    font-size: 12px;
+}
+
+.table-title h3 {
+    margin: 0;
+    color: var(--color-text-primary);
+    font-size: 11px;
+    font-weight: 750;
+}
+
+.table-title span {
+    display: block;
+    margin-top: 2px;
+    color: var(--color-text-muted);
+    font-size: 8px;
+}
+
+.table-wrap {
+    overflow-x: auto;
+}
+
+.students-table {
+    width: 100%;
+    min-width: 950px;
+    border-collapse: collapse;
+}
+
+.students-table th {
+    padding: 11px 15px;
+    background: #f8fafc;
+
+    color: #64748b;
+    font-size: 8px;
+    font-weight: 750;
+    text-transform: uppercase;
+    letter-spacing: .45px;
+
+    border-bottom: 1px solid #e2e8f0;
+    white-space: nowrap;
+}
+
+.students-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #f1f5f9;
+    vertical-align: middle;
+
+    color: var(--color-text-secondary);
+    font-size: 9px;
+}
+
+.students-table tbody tr {
+    transition: background .15s ease;
+}
+
+.students-table tbody tr:hover {
+    background: #fafbff;
+}
+
+.students-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+/* STUDENT */
+.student-cell {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.student-avatar {
+    width: 36px;
+    height: 36px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    overflow: hidden;
+    flex-shrink: 0;
+
+    background: #eef2ff;
+    color: #4f46e5;
+    border-radius: 10px;
+
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.student-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.student-name {
+    color: var(--color-text-primary);
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.student-id {
+    margin-top: 2px;
+    color: #94a3b8;
+    font-size: 8px;
+}
+
+.contact-main {
+    color: var(--color-text-secondary);
+    font-size: 9px;
+}
+
+.contact-sub {
+    margin-top: 3px;
+    color: #94a3b8;
+    font-size: 8px;
+}
+
+/* BADGES */
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+
+    padding: 5px 8px;
+    border-radius: 999px;
+
+    font-size: 8px;
+    font-weight: 700;
+}
+
+.status-badge::before {
+    content: "";
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+.status-active {
+    background: #ecfdf5;
+    color: #059669;
+}
+
+.status-inactive {
+    background: #f8fafc;
+    color: #64748b;
+}
+
+.status-graduated {
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+/* ACTIONS */
+.action-buttons {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.action-btn {
+    width: 29px;
+    height: 29px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+
+    background: #fff;
+    color: #64748b;
+
+    font-size: 11px;
+    text-decoration: none;
+
+    transition: .15s ease;
+}
+
+.action-btn:hover {
+    border-color: #c7d2fe;
+    background: #eef2ff;
+    color: #4f46e5;
+}
+
+.action-btn.danger:hover {
+    border-color: #fecaca;
+    background: #fef2f2;
+    color: #dc2626;
+}
+
+/* EMPTY */
+.empty-state {
+    padding: 55px 20px;
+    text-align: center;
+}
+
+.empty-icon {
+    width: 55px;
+    height: 55px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin: 0 auto 12px;
+
+    background: #f8fafc;
+    color: #94a3b8;
+    border-radius: 15px;
+
+    font-size: 22px;
+}
+
+.empty-state h4 {
+    margin: 0;
+    color: var(--color-text-primary);
+    font-size: 13px;
+    font-weight: 750;
+}
+
+.empty-state p {
+    max-width: 400px;
+    margin: 5px auto 15px;
+    color: var(--color-text-muted);
+    font-size: 9px;
+}
+
+/* PAGINATION */
+.table-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+
+    padding: 13px 17px;
+    border-top: 1px solid var(--color-border-light);
+}
+
+.results-text {
+    color: var(--color-text-muted);
+    font-size: 8px;
+}
+
+.pagination {
+    margin: 0;
+    gap: 4px;
+}
+
+.pagination .page-link {
+    width: 30px;
+    height: 30px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    border: 1px solid #e2e8f0;
+    border-radius: 7px !important;
+
+    color: #64748b;
+    background: #fff;
+
+    font-size: 9px;
+}
+
+.pagination .page-item.active .page-link {
+    background: #4f46e5;
+    border-color: #4f46e5;
+    color: #fff;
+}
+
+.pagination .page-item.disabled .page-link {
+    opacity: .45;
+}
+
+/* RESPONSIVE */
+@media (max-width: 1000px) {
+    .student-summary {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .filter-form {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .filter-form .search-box {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 650px) {
+    .students-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .students-header-actions {
+        width: 100%;
+    }
+
+    .students-header-actions .btn {
+        flex: 1;
+    }
+
+    .student-summary {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .filter-form {
+        grid-template-columns: 1fr;
+    }
+
+    .filter-form .search-box {
+        grid-column: auto;
+    }
+
+    .table-footer {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 430px) {
+    .student-summary {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+{% endblock %}
+
+
+{% block content %}
+
+<div class="students-page">
+
+    <!-- HEADER -->
+    <div class="students-header">
+
+        <div>
+            <h2>Students</h2>
+            <p>
+                Manage student profiles, academic details and hostel records.
+            </p>
+        </div>
+
+        <div class="students-header-actions">
+
+            <a
+                href="{% url 'students:list' %}"
+                class="btn btn-light btn-sm">
+
+                <i class="bi bi-grid-1x2 me-1"></i>
+                Overview
+
+            </a>
+
+            {% if request.user.can_manage_hostel %}
+
+            <a
+                href="{% url 'students:create' %}"
+                class="btn btn-primary btn-sm">
+
+                <i class="bi bi-plus-lg me-1"></i>
+                Add Student
+
+            </a>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+    <!-- SUMMARY -->
+    <div class="student-summary">
+
+        <div class="summary-card">
+
+            <div class="summary-icon">
+                <i class="bi bi-people-fill"></i>
+            </div>
+
+            <div>
+                <div class="summary-label">Total Students</div>
+                <div class="summary-value">{{ total_students }}</div>
+            </div>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <div class="summary-icon">
+                <i class="bi bi-person-check-fill"></i>
+            </div>
+
+            <div>
+                <div class="summary-label">Active</div>
+                <div class="summary-value">
+                    {{ active_students|default:"0" }}
+                </div>
+            </div>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <div class="summary-icon">
+                <i class="bi bi-person-dash-fill"></i>
+            </div>
+
+            <div>
+                <div class="summary-label">Inactive</div>
+                <div class="summary-value">
+                    {{ inactive_students|default:"0" }}
+                </div>
+            </div>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <div class="summary-icon">
+                <i class="bi bi-mortarboard-fill"></i>
+            </div>
+
+            <div>
+                <div class="summary-label">Graduated</div>
+                <div class="summary-value">
+                    {{ graduated_students|default:"0" }}
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- FILTER -->
+    <div class="filter-card">
+
+        <form method="get" class="filter-form">
+
+            <div class="search-box">
+
+                <i class="bi bi-search"></i>
+
+                <input
+                    type="text"
+                    name="q"
+                    value="{{ q }}"
+                    class="form-control"
+                    placeholder="Search by name, student ID, email or phone..."
+                    autocomplete="off"
+                >
+
+            </div>
+
+
+            <select
+                name="status"
+                class="form-select">
+
+                <option value="">All Status</option>
+
+                <option
+                    value="active"
+                    {% if status_filter == 'active' %}selected{% endif %}>
+                    Active
+                </option>
+
+                <option
+                    value="inactive"
+                    {% if status_filter == 'inactive' %}selected{% endif %}>
+                    Inactive
+                </option>
+
+                <option
+                    value="graduated"
+                    {% if status_filter == 'graduated' %}selected{% endif %}>
+                    Graduated
+                </option>
+
+            </select>
+
+
+            <select
+                name="course"
+                class="form-select">
+
+                <option value="">All Courses</option>
+
+                {% for course in courses %}
+
+                <option
+                    value="{{ course }}"
+                    {% if course_filter == course %}selected{% endif %}>
+                    {{ course }}
+                </option>
+
+                {% endfor %}
+
+            </select>
+
+            <select
+                name="occupation"
+                class="form-select">
+
+                <option value="">All Occupations</option>
+
+                {% for item in occupations %}
+
+                <option
+                    value="{{ item }}"
+                    {% if occupation_filter == item %}selected{% endif %}>
+                    {{ item }}
+                </option>
+
+                {% endfor %}
+
+            </select>
+
+
+            <button
+                type="submit"
+                class="btn btn-primary btn-sm">
+
+                <i class="bi bi-funnel me-1"></i>
+                Filter
+
+            </button>
+
+        </form>
+
+    </div>
+
+
+    <!-- TABLE -->
+    <div class="students-table-card">
+
+        <div class="table-top">
+
+            <div class="table-title">
+
+                <div class="table-title-icon">
+                    <i class="bi bi-table"></i>
+                </div>
+
+                <div>
+                    <h3>Student Directory</h3>
+                    <span>
+                        {% if q or status_filter or course_filter or occupation_filter %}
+                            Filtered student records
+                        {% else %}
+                            All registered students
+                        {% endif %}
+                    </span>
+                </div>
+
+            </div>
+
+
+            {% if q or status_filter or course_filter or occupation_filter %}
+
+            <a
+                href="{% url 'students:list' %}"
+                class="btn btn-light btn-sm">
+
+                <i class="bi bi-x-lg me-1"></i>
+                Clear Filters
+
+            </a>
+
+            {% endif %}
+
+        </div>
+
+
+        {% if students %}
+
+        <div class="table-wrap">
+
+            <table class="students-table">
+
+                <thead>
+                    <tr>
+
+                        <th>Student</th>
+                        <th>Course</th>
+                        <th>Contact</th>
+                        <th>Year</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+
+                    </tr>
+                </thead>
+
+
+                <tbody>
+
+                {% for student in students %}
+
+                    <tr>
+
+                        <!-- STUDENT -->
+                        <td>
+
+                            <div class="student-cell">
+
+                                <div class="student-avatar">
+
+                                    {% if student.photo %}
+                                        <img
+                                            src="{{ student.photo.url }}"
+                                            alt="{{ student.first_name }}"
+                                        >
+                                    {% else %}
+                                        {{ student.first_name|first|upper }}{{ student.last_name|first|upper }}
+                                    {% endif %}
+
+                                </div>
+
+                                <div>
+
+                                    <div class="student-name">
+                                        {{ student.first_name }}
+                                        {{ student.last_name }}
+                                    </div>
+
+                                    <div class="student-id">
+                                        {{ student.student_id }}
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </td>
+
+
+                        <!-- COURSE -->
+                        <td>
+
+                            <div class="contact-main">
+                                {{ student.course|default:"—" }}
+                            </div>
+
+                            {% if student.email %}
+                            <div class="contact-sub">
+                                {{ student.email }}
+                            </div>
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- CONTACT -->
+                        <td>
+
+                            <div class="contact-main">
+                                {{ student.phone|default:"—" }}
+                            </div>
+
+                            {% if student.city %}
+                            <div class="contact-sub">
+                                {{ student.city }}
+                            </div>
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- YEAR -->
+                        <td>
+                            Year {{ student.year }}
+                        </td>
+
+
+                        <!-- STATUS -->
+                        <td>
+
+                            <span class="status-badge
+                                {% if student.status == 'active' %}
+                                    status-active
+                                {% elif student.status == 'graduated' %}
+                                    status-graduated
+                                {% else %}
+                                    status-inactive
+                                {% endif %}
+                            ">
+
+                                {{ student.get_status_display }}
+
+                            </span>
+
+                        </td>
+
+
+                        <!-- ACTIONS -->
+                        <td>
+
+                            <div class="action-buttons">
+
+                                <a
+                                    href="{% url 'students:detail' student.pk %}"
+                                    class="action-btn"
+                                    title="View">
+
+                                    <i class="bi bi-eye"></i>
+
+                                </a>
+
+
+                                {% if request.user.can_manage_hostel %}
+
+                                <a
+                                    href="{% url 'students:edit' student.pk %}"
+                                    class="action-btn"
+                                    title="Edit">
+
+                                    <i class="bi bi-pencil"></i>
+
+                                </a>
+
+
+                                <button
+                                    type="button"
+                                    class="action-btn danger"
+                                    title="Delete"
+                                    onclick="confirmDelete('{{ student.pk }}', '{{ student.first_name|escapejs }} {{ student.last_name|escapejs }}')">
+
+                                    <i class="bi bi-trash3"></i>
+
+                                </button>
+
+
+                                <form
+                                    id="delete-form-{{ student.pk }}"
+                                    method="post"
+                                    action="{% url 'students:delete' student.pk %}"
+                                    style="display:none;">
+
+                                    {% csrf_token %}
+
+                                </form>
+
+                                {% endif %}
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        <!-- FOOTER -->
+        <div class="table-footer">
+
+            <div class="results-text">
+
+                Showing
+                <strong>{{ students|length }}</strong>
+                student{{ students|length|pluralize }}
+
+                {% if q or status_filter or course_filter or occupation_filter %}
+                    matching your filters
+                {% endif %}
+
+            </div>
+
+
+            {% if students.has_other_pages %}
+
+            <nav aria-label="Student pagination">
+
+                <ul class="pagination">
+
+                    {% if students.has_previous %}
+
+                    <li class="page-item">
+
+                        <a
+                            class="page-link"
+                            href="?page={{ students.previous_page_number }}&q={{ q|urlencode }}&status={{ status_filter|urlencode }}&course={{ course_filter|urlencode }}&occupation={{ occupation_filter|urlencode }}">
+
+                            <i class="bi bi-chevron-left"></i>
+
+                        </a>
+
+                    </li>
+
+                    {% else %}
+
+                    <li class="page-item disabled">
+                        <span class="page-link">
+                            <i class="bi bi-chevron-left"></i>
+                        </span>
+                    </li>
+
+                    {% endif %}
+
+
+                    {% for num in students.paginator.page_range %}
+
+                        {% if num == students.number %}
+
+                        <li class="page-item active">
+                            <span class="page-link">{{ num }}</span>
+                        </li>
+
+                        {% elif num > students.number|add:'-2' and num < students.number|add:'2' %}
+
+                        <li class="page-item">
+
+                            <a
+                                class="page-link"
+                                href="?page={{ num }}&q={{ q|urlencode }}&status={{ status_filter|urlencode }}&course={{ course_filter|urlencode }}&occupation={{ occupation_filter|urlencode }}">
+
+                                {{ num }}
+
+                            </a>
+
+                        </li>
+
+                        {% endif %}
+
+                    {% endfor %}
+
+
+                    {% if students.has_next %}
+
+                    <li class="page-item">
+
+                        <a
+                            class="page-link"
+                            href="?page={{ students.next_page_number }}&q={{ q|urlencode }}&status={{ status_filter|urlencode }}&course={{ course_filter|urlencode }}&occupation={{ occupation_filter|urlencode }}">
+
+                            <i class="bi bi-chevron-right"></i>
+
+                        </a>
+
+                    </li>
+
+                    {% else %}
+
+                    <li class="page-item disabled">
+                        <span class="page-link">
+                            <i class="bi bi-chevron-right"></i>
+                        </span>
+                    </li>
+
+                    {% endif %}
+
+                </ul>
+
+            </nav>
+
+            {% endif %}
+
+        </div>
+
+
+        {% else %}
+
+        <!-- EMPTY -->
+        <div class="empty-state">
+
+            <div class="empty-icon">
+                <i class="bi bi-person-x"></i>
+            </div>
+
+            <h4>No students found</h4>
+
+            <p>
+                No student records match your current search or filters.
+                Try clearing the filters or add a new student.
+            </p>
+
+
+            {% if q or status_filter or course_filter or occupation_filter %}
+
+            <a
+                href="{% url 'students:list' %}"
+                class="btn btn-light btn-sm">
+
+                <i class="bi bi-arrow-counterclockwise me-1"></i>
+                Clear Filters
+
+            </a>
+
+            {% elif request.user.can_manage_hostel %}
+
+            <a
+                href="{% url 'students:create' %}"
+                class="btn btn-primary btn-sm">
+
+                <i class="bi bi-plus-lg me-1"></i>
+                Add First Student
+
+            </a>
+
+            {% endif %}
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+
+<script>
+function confirmDelete(studentId, studentName) {
+
+    const message =
+        `Are you sure you want to delete ${studentName}? This action cannot be undone.`;
+
+    if (typeof showConfirm === "function") {
+
+        showConfirm(
+            "Delete Student",
+            message,
+            function () {
+                const form =
+                    document.getElementById(`delete-form-${studentId}`);
+
+                if (form) {
+                    form.submit();
+                }
+            }
+        );
+
+    } else {
+
+        if (confirm(message)) {
+
+            const form =
+                document.getElementById(`delete-form-${studentId}`);
+
+            if (form) {
+                form.submit();
+            }
+
+        }
+
+    }
+}
+
+
+/* Search shortcut */
+document.addEventListener("keydown", function (event) {
+
+    if (
+        event.key === "/" &&
+        !["INPUT", "TEXTAREA", "SELECT"].includes(
+            document.activeElement.tagName
+        )
+    ) {
+
+        event.preventDefault();
+
+        const search =
+            document.querySelector(
+                'input[name="q"]'
+            );
+
+        if (search) {
+            search.focus();
+        }
+
+    }
+
+});
+</script>
+
+{% endblock %}

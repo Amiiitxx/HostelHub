@@ -1,0 +1,1263 @@
+{% extends 'base.html' %}
+
+{% block title %}Allocation Details{% endblock %}
+{% block page_title %}Allocation Details{% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item">
+    <a href="{% url 'allocations:list' %}">Allocations</a>
+</li>
+<li class="breadcrumb-item active">Allocation #{{ alloc.pk }}</li>
+{% endblock %}
+
+
+{% block extra_css %}
+<style>
+    .allocation-detail {
+        max-width: 1250px;
+        margin: 0 auto;
+    }
+
+    /* ================================
+       HERO
+    ================================= */
+    .detail-hero {
+        position: relative;
+        overflow: hidden;
+        border-radius: 23px;
+        padding: 29px;
+        margin-bottom: 18px;
+        background: linear-gradient(
+            135deg,
+            #111827 0%,
+            #1e293b 55%,
+            #3730a3 100%
+        );
+        color: #fff;
+        box-shadow: 0 17px 42px rgba(15,23,42,.17);
+    }
+
+    .detail-hero::before {
+        content: "";
+        position: absolute;
+        width: 280px;
+        height: 280px;
+        border-radius: 50%;
+        right: -110px;
+        top: -150px;
+        background: rgba(99,102,241,.17);
+    }
+
+    .detail-hero::after {
+        content: "";
+        position: absolute;
+        width: 160px;
+        height: 160px;
+        border-radius: 50%;
+        left: 43%;
+        bottom: -115px;
+        background: rgba(255,255,255,.035);
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 25px;
+    }
+
+    .student-hero {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .student-avatar {
+        width: 62px;
+        height: 62px;
+        border-radius: 17px;
+        background: rgba(255,255,255,.12);
+        border: 1px solid rgba(255,255,255,.15);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        font-weight: 800;
+        flex-shrink: 0;
+    }
+
+    .hero-label {
+        color: rgba(255,255,255,.55);
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .8px;
+        margin-bottom: 4px;
+    }
+
+    .student-name {
+        margin: 0 0 5px;
+        font-size: 24px;
+        font-weight: 800;
+        letter-spacing: -.4px;
+    }
+
+    .student-meta {
+        color: rgba(255,255,255,.68);
+        font-size: 11px;
+    }
+
+    .hero-right {
+        text-align: right;
+    }
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 8px 12px;
+        border-radius: 999px;
+        font-size: 10px;
+        font-weight: 800;
+        margin-bottom: 9px;
+    }
+
+    .status-badge::before {
+        content: "";
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: currentColor;
+    }
+
+    .status-active {
+        background: rgba(16,185,129,.14);
+        color: #6ee7b7;
+        border: 1px solid rgba(110,231,183,.15);
+    }
+
+    .status-vacated {
+        background: rgba(148,163,184,.13);
+        color: #cbd5e1;
+        border: 1px solid rgba(203,213,225,.12);
+    }
+
+    .status-transferred {
+        background: rgba(245,158,11,.13);
+        color: #fcd34d;
+        border: 1px solid rgba(252,211,77,.13);
+    }
+
+    .allocation-number {
+        color: rgba(255,255,255,.48);
+        font-size: 10px;
+    }
+
+
+    /* ================================
+       STATS
+    ================================= */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 13px;
+        margin-bottom: 18px;
+    }
+
+    .stat-card {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 16px;
+        padding: 17px;
+        box-shadow: 0 5px 18px rgba(15,23,42,.035);
+    }
+
+    .stat-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 11px;
+    }
+
+    .stat-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 15px;
+    }
+
+    .stat-icon.indigo {
+        background: #eef2ff;
+        color: #4f46e5;
+    }
+
+    .stat-icon.blue {
+        background: #eff6ff;
+        color: #2563eb;
+    }
+
+    .stat-icon.green {
+        background: #ecfdf5;
+        color: #059669;
+    }
+
+    .stat-icon.amber {
+        background: #fffbeb;
+        color: #d97706;
+    }
+
+    .stat-label {
+        color: #94a3b8;
+        font-size: 10px;
+        font-weight: 650;
+    }
+
+    .stat-value {
+        color: #111827;
+        font-size: 19px;
+        font-weight: 800;
+    }
+
+
+    /* ================================
+       MAIN GRID
+    ================================= */
+    .detail-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 350px;
+        gap: 18px;
+        align-items: start;
+    }
+
+    .content-card {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 19px;
+        padding: 23px;
+        margin-bottom: 17px;
+        box-shadow: 0 5px 18px rgba(15,23,42,.035);
+    }
+
+    .content-card:last-child {
+        margin-bottom: 0;
+    }
+
+    .card-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding-bottom: 15px;
+        margin-bottom: 17px;
+        border-bottom: 1px solid #eef2f7;
+    }
+
+    .card-title-icon {
+        width: 37px;
+        height: 37px;
+        border-radius: 10px;
+        background: #eef2ff;
+        color: #4f46e5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .card-title h3 {
+        margin: 0;
+        font-size: 14px;
+        font-weight: 800;
+        color: #111827;
+    }
+
+
+    /* ================================
+       INFO ROWS
+    ================================= */
+    .info-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0;
+    }
+
+    .info-row {
+        padding: 12px 13px;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    .info-row:nth-last-child(-n+2) {
+        border-bottom: 0;
+    }
+
+    .info-label {
+        color: #94a3b8;
+        font-size: 9px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .45px;
+        margin-bottom: 4px;
+    }
+
+    .info-value {
+        color: #334155;
+        font-size: 12px;
+        font-weight: 650;
+    }
+
+    .info-value a {
+        color: #4f46e5;
+        text-decoration: none;
+    }
+
+    .info-value a:hover {
+        text-decoration: underline;
+    }
+
+
+    /* ================================
+       LOCATION
+    ================================= */
+    .location-box {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+    }
+
+    .location-item {
+        border: 1px solid #e2e8f0;
+        border-radius: 13px;
+        padding: 14px;
+        background: #f8fafc;
+    }
+
+    .location-item i {
+        color: #4f46e5;
+        font-size: 17px;
+        margin-bottom: 9px;
+    }
+
+    .location-item span {
+        display: block;
+        color: #94a3b8;
+        font-size: 9px;
+        margin-bottom: 3px;
+    }
+
+    .location-item strong {
+        color: #1e293b;
+        font-size: 11px;
+    }
+
+
+    /* ================================
+       TIMELINE
+    ================================= */
+    .timeline {
+        position: relative;
+        padding-left: 24px;
+    }
+
+    .timeline::before {
+        content: "";
+        position: absolute;
+        left: 5px;
+        top: 7px;
+        bottom: 7px;
+        width: 1px;
+        background: #e2e8f0;
+    }
+
+    .timeline-item {
+        position: relative;
+        padding-bottom: 21px;
+    }
+
+    .timeline-item:last-child {
+        padding-bottom: 0;
+    }
+
+    .timeline-dot {
+        position: absolute;
+        left: -24px;
+        top: 2px;
+        width: 11px;
+        height: 11px;
+        border-radius: 50%;
+        background: #4f46e5;
+        box-shadow: 0 0 0 4px #eef2ff;
+    }
+
+    .timeline-title {
+        color: #334155;
+        font-size: 11px;
+        font-weight: 750;
+        margin-bottom: 3px;
+    }
+
+    .timeline-date {
+        color: #94a3b8;
+        font-size: 9px;
+    }
+
+
+    /* ================================
+       NOTES
+    ================================= */
+    .notes-box {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 13px;
+        padding: 15px;
+        color: #475569;
+        font-size: 11px;
+        line-height: 1.65;
+        min-height: 65px;
+    }
+
+
+    /* ================================
+       SIDE ACTIONS
+    ================================= */
+    .side-card {
+        position: sticky;
+        top: 18px;
+    }
+
+    .side-action {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        background: #fff;
+        color: #334155;
+        text-decoration: none;
+        margin-bottom: 8px;
+        transition: .18s ease;
+    }
+
+    .side-action:hover {
+        color: #4f46e5;
+        border-color: #c7d2fe;
+        background: #f8faff;
+        transform: translateX(2px);
+    }
+
+    .side-action-icon {
+        width: 34px;
+        height: 34px;
+        border-radius: 9px;
+        background: #f1f5f9;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #64748b;
+        font-size: 14px;
+    }
+
+    .side-action strong {
+        display: block;
+        font-size: 11px;
+        font-weight: 750;
+    }
+
+    .side-action span {
+        display: block;
+        color: #94a3b8;
+        font-size: 9px;
+        margin-top: 2px;
+    }
+
+    .vacate-button {
+        width: 100%;
+        min-height: 42px;
+        border: 0;
+        border-radius: 11px;
+        background: #fff7ed;
+        color: #c2410c;
+        font-size: 11px;
+        font-weight: 750;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        cursor: pointer;
+        margin-top: 10px;
+    }
+
+    .vacate-button:hover {
+        background: #ffedd5;
+    }
+
+
+    /* ================================
+       RECORD INFO
+    ================================= */
+    .record-box {
+        padding: 14px;
+        border-radius: 12px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+    }
+
+    .record-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 7px 0;
+    }
+
+    .record-row span {
+        color: #94a3b8;
+        font-size: 9px;
+    }
+
+    .record-row strong {
+        color: #475569;
+        font-size: 9px;
+        text-align: right;
+    }
+
+
+    /* ================================
+       RESPONSIVE
+    ================================= */
+    @media (max-width: 950px) {
+        .detail-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .side-card {
+            position: static;
+        }
+
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 650px) {
+        .detail-hero {
+            padding: 22px;
+        }
+
+        .hero-content {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .hero-right {
+            text-align: left;
+        }
+
+        .student-name {
+            font-size: 20px;
+        }
+
+        .stats-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .info-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .info-row:nth-last-child(-n+2) {
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .info-row:last-child {
+            border-bottom: 0;
+        }
+
+        .location-box {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 430px) {
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .student-hero {
+            align-items: flex-start;
+        }
+    }
+</style>
+{% endblock %}
+
+
+{% block content %}
+
+<div class="allocation-detail">
+
+    <!-- =====================================================
+         HERO
+    ====================================================== -->
+    <section class="detail-hero">
+
+        <div class="hero-content">
+
+            <div class="student-hero">
+
+                <div class="student-avatar">
+                    {{ alloc.student.initials }}
+                </div>
+
+                <div>
+
+                    <div class="hero-label">
+                        Room Allocation
+                    </div>
+
+                    <h1 class="student-name">
+                        {{ alloc.student.full_name }}
+                    </h1>
+
+                    <div class="student-meta">
+                        {{ alloc.student.student_id }}
+                        {% if alloc.student.course %}
+                            • {{ alloc.student.course }}
+                        {% endif %}
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="hero-right">
+
+                <div class="status-badge
+                    {% if alloc.status == 'active' %}
+                        status-active
+                    {% elif alloc.status == 'vacated' %}
+                        status-vacated
+                    {% else %}
+                        status-transferred
+                    {% endif %}
+                ">
+                    {{ alloc.get_status_display }}
+                </div>
+
+                <div class="allocation-number">
+                    Allocation #{{ alloc.pk }}
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         STATS
+    ====================================================== -->
+    <div class="stats-grid">
+
+        <div class="stat-card">
+
+            <div class="stat-top">
+
+                <div class="stat-label">
+                    Allocated Date
+                </div>
+
+                <div class="stat-icon indigo">
+                    <i class="bi bi-calendar-check-fill"></i>
+                </div>
+
+            </div>
+
+            <div class="stat-value">
+                {{ alloc.allocated_date|date:"d M Y" }}
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-top">
+
+                <div class="stat-label">
+                    Duration
+                </div>
+
+                <div class="stat-icon blue">
+                    <i class="bi bi-clock-fill"></i>
+                </div>
+
+            </div>
+
+            <div class="stat-value">
+                {{ alloc.duration_days }}
+                <span style="font-size:11px;font-weight:600;color:#94a3b8;">
+                    days
+                </span>
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-top">
+
+                <div class="stat-label">
+                    Room
+                </div>
+
+                <div class="stat-icon green">
+                    <i class="bi bi-door-open-fill"></i>
+                </div>
+
+            </div>
+
+            <div class="stat-value">
+                {{ alloc.bed.room.room_number }}
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-top">
+
+                <div class="stat-label">
+                    Bed
+                </div>
+
+                <div class="stat-icon amber">
+                    <i class="bi bi-grid-3x3-gap-fill"></i>
+                </div>
+
+            </div>
+
+            <div class="stat-value">
+                {{ alloc.bed.bed_number }}
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         MAIN
+    ====================================================== -->
+    <div class="detail-grid">
+
+        <!-- LEFT -->
+        <div>
+
+            <!-- STUDENT -->
+            <div class="content-card">
+
+                <div class="card-title">
+
+                    <div class="card-title-icon">
+                        <i class="bi bi-person-vcard-fill"></i>
+                    </div>
+
+                    <h3>Student Information</h3>
+
+                </div>
+
+
+                <div class="info-grid">
+
+                    <div class="info-row">
+
+                        <div class="info-label">
+                            Full Name
+                        </div>
+
+                        <div class="info-value">
+                            {{ alloc.student.full_name }}
+                        </div>
+
+                    </div>
+
+
+                    <div class="info-row">
+
+                        <div class="info-label">
+                            Student ID
+                        </div>
+
+                        <div class="info-value">
+                            {{ alloc.student.student_id }}
+                        </div>
+
+                    </div>
+
+
+                    <div class="info-row">
+
+                        <div class="info-label">
+                            Course
+                        </div>
+
+                        <div class="info-value">
+                            {{ alloc.student.course|default:"—" }}
+                        </div>
+
+                    </div>
+
+
+                    <div class="info-row">
+
+                        <div class="info-label">
+                            Year
+                        </div>
+
+                        <div class="info-value">
+                            {{ alloc.student.get_year_display|default:"—" }}
+                        </div>
+
+                    </div>
+
+
+                    <div class="info-row">
+
+                        <div class="info-label">
+                            Phone
+                        </div>
+
+                        <div class="info-value">
+                            {{ alloc.student.phone|default:"—" }}
+                        </div>
+
+                    </div>
+
+
+                    <div class="info-row">
+
+                        <div class="info-label">
+                            Email
+                        </div>
+
+                        <div class="info-value">
+                            {{ alloc.student.email|default:"—" }}
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- LOCATION -->
+            <div class="content-card">
+
+                <div class="card-title">
+
+                    <div class="card-title-icon">
+                        <i class="bi bi-building-fill"></i>
+                    </div>
+
+                    <h3>Allocated Location</h3>
+
+                </div>
+
+
+                <div class="location-box">
+
+                    <div class="location-item">
+
+                        <i class="bi bi-buildings-fill"></i>
+
+                        <span>Building</span>
+
+                        <strong>
+                            {{ alloc.bed.room.floor.building.name }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="location-item">
+
+                        <i class="bi bi-layers-fill"></i>
+
+                        <span>Floor</span>
+
+                        <strong>
+                            {{ alloc.bed.room.floor.name }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="location-item">
+
+                        <i class="bi bi-door-open-fill"></i>
+
+                        <span>Room</span>
+
+                        <strong>
+                            Room {{ alloc.bed.room.room_number }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="location-item">
+
+                        <i class="bi bi-grid-3x3-gap-fill"></i>
+
+                        <span>Bed</span>
+
+                        <strong>
+                            Bed {{ alloc.bed.bed_number }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="location-item">
+
+                        <i class="bi bi-house-check-fill"></i>
+
+                        <span>Room Type</span>
+
+                        <strong>
+                            {{ alloc.bed.room.get_room_type_display }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="location-item">
+
+                        <i class="bi bi-people-fill"></i>
+
+                        <span>Capacity</span>
+
+                        <strong>
+                            {{ alloc.bed.room.capacity }} Beds
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- NOTES -->
+            {% if alloc.notes %}
+
+            <div class="content-card">
+
+                <div class="card-title">
+
+                    <div class="card-title-icon">
+                        <i class="bi bi-sticky-fill"></i>
+                    </div>
+
+                    <h3>Allocation Notes</h3>
+
+                </div>
+
+                <div class="notes-box">
+                    {{ alloc.notes|linebreaksbr }}
+                </div>
+
+            </div>
+
+            {% endif %}
+
+
+            <!-- TIMELINE -->
+            <div class="content-card">
+
+                <div class="card-title">
+
+                    <div class="card-title-icon">
+                        <i class="bi bi-clock-history"></i>
+                    </div>
+
+                    <h3>Allocation Timeline</h3>
+
+                </div>
+
+
+                <div class="timeline">
+
+                    <div class="timeline-item">
+
+                        <div class="timeline-dot"></div>
+
+                        <div class="timeline-title">
+                            Allocation Created
+                        </div>
+
+                        <div class="timeline-date">
+                            {{ alloc.allocated_date|date:"d M Y" }}
+                        </div>
+
+                    </div>
+
+
+                    {% if alloc.vacated_date %}
+
+                    <div class="timeline-item">
+
+                        <div class="timeline-dot"></div>
+
+                        <div class="timeline-title">
+                            Allocation Vacated
+                        </div>
+
+                        <div class="timeline-date">
+                            {{ alloc.vacated_date|date:"d M Y" }}
+                        </div>
+
+                    </div>
+
+                    {% elif alloc.status == 'active' %}
+
+                    <div class="timeline-item">
+
+                        <div class="timeline-dot"
+                             style="background:#059669;box-shadow:0 0 0 4px #ecfdf5;">
+                        </div>
+
+                        <div class="timeline-title">
+                            Currently Active
+                        </div>
+
+                        <div class="timeline-date">
+                            Student is currently assigned to this bed.
+                        </div>
+
+                    </div>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- RIGHT -->
+        <aside>
+
+            <div class="side-card">
+
+                <!-- ACTIONS -->
+                <div class="content-card">
+
+                    <div class="card-title">
+
+                        <div class="card-title-icon">
+                            <i class="bi bi-lightning-charge-fill"></i>
+                        </div>
+
+                        <h3>Quick Actions</h3>
+
+                    </div>
+
+
+                    <a href="{% url 'students:detail' alloc.student.pk %}"
+                       class="side-action">
+
+                        <div class="side-action-icon">
+                            <i class="bi bi-person-fill"></i>
+                        </div>
+
+                        <div>
+                            <strong>View Student</strong>
+                            <span>Open student profile</span>
+                        </div>
+
+                    </a>
+
+
+                    <a href="{% url 'hostel:room_detail' alloc.bed.room.pk %}"
+                       class="side-action">
+
+                        <div class="side-action-icon">
+                            <i class="bi bi-door-open-fill"></i>
+                        </div>
+
+                        <div>
+                            <strong>View Room</strong>
+                            <span>Open room & bed details</span>
+                        </div>
+
+                    </a>
+
+
+                    <a href="{% url 'allocations:list' %}"
+                       class="side-action">
+
+                        <div class="side-action-icon">
+                            <i class="bi bi-list-ul"></i>
+                        </div>
+
+                        <div>
+                            <strong>All Allocations</strong>
+                            <span>Back to allocation list</span>
+                        </div>
+
+                    </a>
+
+
+                    {% if request.user.can_manage_hostel and alloc.status == 'active' %}
+
+                    <form method="post"
+                          action="{% url 'allocations:vacate' alloc.pk %}"
+                          id="vacateForm">
+
+                        {% csrf_token %}
+
+                        <input
+                            type="hidden"
+                            name="next"
+                            value="{% url 'allocations:detail' alloc.pk %}"
+                        >
+
+                        <button
+                            type="button"
+                            class="vacate-button"
+                            onclick="confirmVacate()"
+                        >
+
+                            <i class="bi bi-box-arrow-right"></i>
+
+                            Vacate Allocation
+
+                        </button>
+
+                    </form>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- RECORD -->
+                <div class="content-card">
+
+                    <div class="card-title">
+
+                        <div class="card-title-icon">
+                            <i class="bi bi-info-circle-fill"></i>
+                        </div>
+
+                        <h3>Record Information</h3>
+
+                    </div>
+
+
+                    <div class="record-box">
+
+                        <div class="record-row">
+
+                            <span>Allocation ID</span>
+
+                            <strong>
+                                #{{ alloc.pk }}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="record-row">
+
+                            <span>Status</span>
+
+                            <strong>
+                                {{ alloc.get_status_display }}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="record-row">
+
+                            <span>Allocated</span>
+
+                            <strong>
+                                {{ alloc.allocated_date|date:"d M Y" }}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="record-row">
+
+                            <span>Vacated</span>
+
+                            <strong>
+                                {% if alloc.vacated_date %}
+                                    {{ alloc.vacated_date|date:"d M Y" }}
+                                {% else %}
+                                    —
+                                {% endif %}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </aside>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+
+{% block extra_js %}
+
+<script>
+
+function confirmVacate() {
+
+    showConfirm(
+        'Vacate this allocation?',
+        function () {
+
+            const form =
+                document.getElementById('vacateForm');
+
+            if (form) {
+                form.submit();
+            }
+
+        },
+        {
+            title: 'Vacate Allocation',
+            subtext:
+                'The assigned bed will become available after this action.',
+            btnText: 'Vacate',
+            btnClass: 'warning'
+        }
+    );
+
+}
+
+</script>
+
+{% endblock %}

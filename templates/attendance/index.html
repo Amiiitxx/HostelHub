@@ -1,0 +1,914 @@
+{% extends 'base.html' %}
+
+{% block title %}Fees & Payments{% endblock %}
+{% block page_title %}Fees & Payments{% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item active">Fees & Payments</li>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .fees-overview {
+        max-width: 1450px;
+        margin: 0 auto;
+    }
+
+    .fees-hero {
+        position: relative;
+        overflow: hidden;
+        border-radius: 24px;
+        padding: 32px;
+        margin-bottom: 24px;
+        background:
+            radial-gradient(circle at 90% 10%, rgba(99,102,241,.14), transparent 30%),
+            radial-gradient(circle at 10% 100%, rgba(16,185,129,.09), transparent 32%),
+            #fff;
+        border: 1px solid rgba(15,23,42,.07);
+        box-shadow: 0 12px 35px rgba(15,23,42,.06);
+    }
+
+    .fees-hero::after {
+        content: "";
+        position: absolute;
+        width: 190px;
+        height: 190px;
+        right: -75px;
+        bottom: -115px;
+        border-radius: 50%;
+        background: rgba(99,102,241,.07);
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 25px;
+    }
+
+    .hero-left {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+    }
+
+    .hero-icon {
+        width: 64px;
+        height: 64px;
+        border-radius: 19px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #4f46e5, #6366f1);
+        color: #fff;
+        font-size: 28px;
+        box-shadow: 0 13px 28px rgba(79,70,229,.22);
+        flex-shrink: 0;
+    }
+
+    .hero-title {
+        margin: 0;
+        color: #111827;
+        font-size: 26px;
+        font-weight: 800;
+        letter-spacing: -.6px;
+    }
+
+    .hero-subtitle {
+        margin: 7px 0 0;
+        color: #6b7280;
+        font-size: 14px;
+        max-width: 650px;
+    }
+
+    .hero-actions {
+        position: relative;
+        z-index: 3;
+        display: flex;
+        gap: 10px;
+        flex-shrink: 0;
+    }
+
+    .premium-btn {
+        border-radius: 11px;
+        padding: 10px 15px;
+        font-size: 12px;
+        font-weight: 800;
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        text-decoration: none;
+        transition: .2s ease;
+    }
+
+    .premium-btn:hover {
+        transform: translateY(-1px);
+    }
+
+    .btn-primary-premium {
+        color: #fff;
+        background: #4f46e5;
+        box-shadow: 0 7px 18px rgba(79,70,229,.18);
+    }
+
+    .btn-primary-premium:hover {
+        color: #fff;
+        background: #4338ca;
+    }
+
+    .btn-light-premium {
+        color: #334155;
+        background: #f8fafc;
+        border: 1px solid #e5e7eb;
+    }
+
+    .btn-light-premium:hover {
+        color: #111827;
+        background: #f1f5f9;
+    }
+
+
+    /* QUICK ACTIONS */
+
+    .section-heading {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 15px;
+        margin-bottom: 14px;
+    }
+
+    .section-title {
+        margin: 0;
+        color: #111827;
+        font-size: 17px;
+        font-weight: 800;
+    }
+
+    .section-subtitle {
+        margin: 4px 0 0;
+        color: #94a3b8;
+        font-size: 12px;
+    }
+
+    .action-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+        margin-bottom: 28px;
+    }
+
+    .action-card {
+        position: relative;
+        overflow: hidden;
+        min-height: 170px;
+        padding: 22px;
+        border-radius: 18px;
+        background: #fff;
+        border: 1px solid rgba(15,23,42,.07);
+        box-shadow: 0 7px 25px rgba(15,23,42,.045);
+        text-decoration: none;
+        transition: .22s ease;
+    }
+
+    .action-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 15px 35px rgba(15,23,42,.09);
+        border-color: rgba(99,102,241,.18);
+    }
+
+    .action-card::after {
+        content: "";
+        position: absolute;
+        width: 105px;
+        height: 105px;
+        right: -38px;
+        bottom: -55px;
+        border-radius: 50%;
+        background: rgba(99,102,241,.05);
+    }
+
+    .action-icon {
+        width: 45px;
+        height: 45px;
+        border-radius: 13px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 19px;
+        margin-bottom: 17px;
+    }
+
+    .action-blue {
+        color: #2563eb;
+        background: #eff6ff;
+    }
+
+    .action-green {
+        color: #059669;
+        background: #ecfdf5;
+    }
+
+    .action-orange {
+        color: #ea580c;
+        background: #fff7ed;
+    }
+
+    .action-title {
+        color: #111827;
+        font-size: 14px;
+        font-weight: 800;
+        margin-bottom: 5px;
+    }
+
+    .action-text {
+        color: #94a3b8;
+        font-size: 11px;
+        line-height: 1.6;
+        max-width: 270px;
+    }
+
+    .action-arrow {
+        position: absolute;
+        right: 19px;
+        top: 21px;
+        color: #cbd5e1;
+        font-size: 15px;
+        transition: .2s ease;
+    }
+
+    .action-card:hover .action-arrow {
+        color: #6366f1;
+        transform: translateX(3px);
+    }
+
+
+    /* LOWER GRID */
+
+    .lower-grid {
+        display: grid;
+        grid-template-columns: 1.35fr .85fr;
+        gap: 20px;
+        align-items: stretch;
+    }
+
+    .info-panel {
+        background: #fff;
+        border: 1px solid rgba(15,23,42,.07);
+        border-radius: 20px;
+        box-shadow: 0 7px 25px rgba(15,23,42,.045);
+        overflow: hidden;
+    }
+
+    .panel-header {
+        padding: 20px 22px;
+        border-bottom: 1px solid #eef0f4;
+    }
+
+    .panel-title {
+        margin: 0;
+        color: #111827;
+        font-size: 16px;
+        font-weight: 800;
+    }
+
+    .panel-subtitle {
+        margin: 4px 0 0;
+        color: #94a3b8;
+        font-size: 11px;
+    }
+
+    .fee-types {
+        padding: 8px 22px 15px;
+    }
+
+    .fee-type {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        padding: 14px 0;
+        border-bottom: 1px solid #f1f3f6;
+    }
+
+    .fee-type:last-child {
+        border-bottom: 0;
+    }
+
+    .fee-type-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f8fafc;
+        color: #64748b;
+        font-size: 15px;
+        flex-shrink: 0;
+    }
+
+    .fee-type-info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .fee-type-name {
+        color: #334155;
+        font-size: 12px;
+        font-weight: 800;
+    }
+
+    .fee-type-desc {
+        color: #94a3b8;
+        font-size: 10px;
+        margin-top: 2px;
+    }
+
+    .fee-type-tag {
+        padding: 5px 8px;
+        border-radius: 7px;
+        background: #f8fafc;
+        color: #64748b;
+        font-size: 9px;
+        font-weight: 800;
+        text-transform: uppercase;
+    }
+
+
+    /* STATUS */
+
+    .status-list {
+        padding: 17px 20px 20px;
+    }
+
+    .status-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 13px 0;
+        border-bottom: 1px solid #f1f3f6;
+    }
+
+    .status-item:last-child {
+        border-bottom: 0;
+    }
+
+    .status-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 15px;
+        flex-shrink: 0;
+    }
+
+    .status-paid {
+        background: #ecfdf5;
+        color: #059669;
+    }
+
+    .status-pending {
+        background: #fffbeb;
+        color: #d97706;
+    }
+
+    .status-overdue {
+        background: #fef2f2;
+        color: #dc2626;
+    }
+
+    .status-partial {
+        background: #eff6ff;
+        color: #2563eb;
+    }
+
+    .status-info {
+        flex: 1;
+    }
+
+    .status-name {
+        color: #334155;
+        font-size: 12px;
+        font-weight: 800;
+    }
+
+    .status-desc {
+        color: #94a3b8;
+        font-size: 10px;
+        margin-top: 2px;
+    }
+
+
+    /* INFO BANNER */
+
+    .info-banner {
+        margin-top: 20px;
+        padding: 17px 19px;
+        border-radius: 15px;
+        background: linear-gradient(
+            135deg,
+            #eef2ff,
+            #f8faff
+        );
+        border: 1px solid #e0e7ff;
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+    }
+
+    .info-banner-icon {
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #e0e7ff;
+        color: #4f46e5;
+        flex-shrink: 0;
+    }
+
+    .info-banner strong {
+        display: block;
+        color: #3730a3;
+        font-size: 12px;
+        margin-bottom: 3px;
+    }
+
+    .info-banner span {
+        color: #6366f1;
+        font-size: 10px;
+        line-height: 1.55;
+    }
+
+
+    @media (max-width: 1050px) {
+        .action-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .lower-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 720px) {
+        .fees-hero {
+            padding: 22px;
+        }
+
+        .hero-content {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .hero-actions {
+            width: 100%;
+        }
+
+        .hero-actions .premium-btn {
+            flex: 1;
+            justify-content: center;
+        }
+
+        .action-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .hero-title {
+            font-size: 22px;
+        }
+    }
+
+    @media (max-width: 450px) {
+        .hero-left {
+            align-items: flex-start;
+        }
+
+        .hero-icon {
+            width: 52px;
+            height: 52px;
+            font-size: 23px;
+        }
+
+        .hero-actions {
+            flex-direction: column;
+        }
+    }
+</style>
+{% endblock %}
+
+
+{% block content %}
+<div class="fees-overview">
+
+    <!-- HERO -->
+    <section class="fees-hero">
+
+        <div class="hero-content">
+
+            <div class="hero-left">
+
+                <div class="hero-icon">
+                    <i class="bi bi-wallet2"></i>
+                </div>
+
+                <div>
+                    <h1 class="hero-title">
+                        Fees & Payments
+                    </h1>
+
+                    <p class="hero-subtitle">
+                        Manage student fees, payment records, outstanding balances,
+                        and financial reports from one place.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="hero-actions">
+
+                <a
+                    href="{% url 'fees:list' %}"
+                    class="premium-btn btn-light-premium"
+                >
+                    <i class="bi bi-list-ul"></i>
+                    View Fees
+                </a>
+
+                {% if request.user.can_manage_hostel %}
+                <a
+                    href="{% url 'fees:create' %}"
+                    class="premium-btn btn-primary-premium"
+                >
+                    <i class="bi bi-plus-lg"></i>
+                    Add Fee
+                </a>
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- QUICK ACTIONS -->
+
+    <div class="section-heading">
+
+        <div>
+            <h2 class="section-title">
+                Quick Actions
+            </h2>
+
+            <p class="section-subtitle">
+                Frequently used fee management tools
+            </p>
+        </div>
+
+    </div>
+
+
+    <div class="action-grid">
+
+        <a
+            href="{% url 'fees:list' %}"
+            class="action-card"
+        >
+
+            <i class="bi bi-arrow-right action-arrow"></i>
+
+            <div class="action-icon action-blue">
+                <i class="bi bi-receipt"></i>
+            </div>
+
+            <div class="action-title">
+                Fee Records
+            </div>
+
+            <div class="action-text">
+                Browse all fee records, search students,
+                filter by status and view payment details.
+            </div>
+
+        </a>
+
+
+        {% if request.user.can_manage_hostel %}
+
+        <a
+            href="{% url 'fees:create' %}"
+            class="action-card"
+        >
+
+            <i class="bi bi-arrow-right action-arrow"></i>
+
+            <div class="action-icon action-green">
+                <i class="bi bi-plus-circle"></i>
+            </div>
+
+            <div class="action-title">
+                Create Fee
+            </div>
+
+            <div class="action-text">
+                Add a new fee record for a student with
+                amount, due date and fee category.
+            </div>
+
+        </a>
+
+        {% endif %}
+
+
+        <a
+            href="{% url 'fees:list' %}?status=pending"
+            class="action-card"
+        >
+
+            <i class="bi bi-arrow-right action-arrow"></i>
+
+            <div class="action-icon action-orange">
+                <i class="bi bi-hourglass-split"></i>
+            </div>
+
+            <div class="action-title">
+                Pending Payments
+            </div>
+
+            <div class="action-text">
+                Quickly find fees that still have an
+                outstanding balance and require attention.
+            </div>
+
+        </a>
+
+    </div>
+
+
+    <!-- LOWER CONTENT -->
+
+    <div class="lower-grid">
+
+
+        <!-- FEE TYPES -->
+
+        <section class="info-panel">
+
+            <div class="panel-header">
+
+                <h2 class="panel-title">
+                    Fee Categories
+                </h2>
+
+                <p class="panel-subtitle">
+                    Common payment categories used in hostel management
+                </p>
+
+            </div>
+
+
+            <div class="fee-types">
+
+                <div class="fee-type">
+
+                    <div class="fee-type-icon">
+                        <i class="bi bi-house-door"></i>
+                    </div>
+
+                    <div class="fee-type-info">
+
+                        <div class="fee-type-name">
+                            Hostel Fee
+                        </div>
+
+                        <div class="fee-type-desc">
+                            Accommodation and hostel charges
+                        </div>
+
+                    </div>
+
+                    <span class="fee-type-tag">
+                        Accommodation
+                    </span>
+
+                </div>
+
+
+                <div class="fee-type">
+
+                    <div class="fee-type-icon">
+                        <i class="bi bi-lightning-charge"></i>
+                    </div>
+
+                    <div class="fee-type-info">
+
+                        <div class="fee-type-name">
+                            Utility Fee
+                        </div>
+
+                        <div class="fee-type-desc">
+                            Electricity, water and related charges
+                        </div>
+
+                    </div>
+
+                    <span class="fee-type-tag">
+                        Utility
+                    </span>
+
+                </div>
+
+
+                <div class="fee-type">
+
+                    <div class="fee-type-icon">
+                        <i class="bi bi-shield-check"></i>
+                    </div>
+
+                    <div class="fee-type-info">
+
+                        <div class="fee-type-name">
+                            Security Deposit
+                        </div>
+
+                        <div class="fee-type-desc">
+                            Refundable security or deposit amount
+                        </div>
+
+                    </div>
+
+                    <span class="fee-type-tag">
+                        Deposit
+                    </span>
+
+                </div>
+
+
+                <div class="fee-type">
+
+                    <div class="fee-type-icon">
+                        <i class="bi bi-three-dots"></i>
+                    </div>
+
+                    <div class="fee-type-info">
+
+                        <div class="fee-type-name">
+                            Other Charges
+                        </div>
+
+                        <div class="fee-type-desc">
+                            Miscellaneous hostel-related charges
+                        </div>
+
+                    </div>
+
+                    <span class="fee-type-tag">
+                        Other
+                    </span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- PAYMENT STATUS -->
+
+        <section class="info-panel">
+
+            <div class="panel-header">
+
+                <h2 class="panel-title">
+                    Payment Status
+                </h2>
+
+                <p class="panel-subtitle">
+                    Understand fee record statuses
+                </p>
+
+            </div>
+
+
+            <div class="status-list">
+
+                <div class="status-item">
+
+                    <div class="status-icon status-paid">
+                        <i class="bi bi-check-lg"></i>
+                    </div>
+
+                    <div class="status-info">
+
+                        <div class="status-name">
+                            Paid
+                        </div>
+
+                        <div class="status-desc">
+                            Full amount has been received
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="status-item">
+
+                    <div class="status-icon status-pending">
+                        <i class="bi bi-clock"></i>
+                    </div>
+
+                    <div class="status-info">
+
+                        <div class="status-name">
+                            Pending
+                        </div>
+
+                        <div class="status-desc">
+                            Payment is still outstanding
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="status-item">
+
+                    <div class="status-icon status-partial">
+                        <i class="bi bi-pie-chart"></i>
+                    </div>
+
+                    <div class="status-info">
+
+                        <div class="status-name">
+                            Partial
+                        </div>
+
+                        <div class="status-desc">
+                            Part of the fee has been paid
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="status-item">
+
+                    <div class="status-icon status-overdue">
+                        <i class="bi bi-exclamation-lg"></i>
+                    </div>
+
+                    <div class="status-info">
+
+                        <div class="status-name">
+                            Overdue
+                        </div>
+
+                        <div class="status-desc">
+                            Due date has passed
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </div>
+
+
+    <!-- INFO -->
+
+    <div class="info-banner">
+
+        <div class="info-banner-icon">
+            <i class="bi bi-lightbulb"></i>
+        </div>
+
+        <div>
+            <strong>
+                Keep payment records up to date
+            </strong>
+
+            <span>
+                Record payments as soon as they are received so that
+                outstanding balances and financial reports remain accurate.
+            </span>
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}

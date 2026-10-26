@@ -1,0 +1,3042 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="description"
+          content="{% block meta_description %}Hostel Management System — Premium Administration Dashboard{% endblock %}">
+
+    <title>{% block title %}STAYNEST{% endblock %} | STAYNEST</title>
+
+    <!-- Bootstrap -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+        rel="stylesheet">
+
+    <!-- Inter -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Main CSS -->
+    <link href="{% static 'css/main.css' %}" rel="stylesheet">
+
+
+    {% block extra_css %}{% endblock %}
+
+
+    <style>
+        /* =========================================================
+           HOSTELMS PREMIUM BASE OVERRIDES
+           ========================================================= */
+
+        :root {
+            --sidebar-width: 270px;
+            --sidebar-mini: 82px;
+            --primary: #4f46e5;
+            --primary-dark: #4338ca;
+            --purple: #7c3aed;
+            --text: #172033;
+            --muted: #7b87a3;
+            --border: #e8ebf3;
+            --surface: #ffffff;
+            --bg: #f6f7fb;
+            --danger: #dc2626;
+            --success: #16a34a;
+            --warning: #d97706;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            background:
+                radial-gradient(
+                    circle at 90% 0%,
+                    rgba(99,102,241,.055),
+                    transparent 28%
+                ),
+                var(--bg);
+            color: var(--text);
+            font-family:
+                Inter,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* =========================================================
+           APP
+           ========================================================= */
+
+        .app-wrapper {
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* =========================================================
+           SIDEBAR
+           ========================================================= */
+
+        .sidebar {
+            position: fixed;
+            inset: 0 auto 0 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            z-index: 1050;
+
+            display: flex;
+            flex-direction: column;
+
+            background:
+                radial-gradient(
+                    circle at 80% 0%,
+                    rgba(99,102,241,.20),
+                    transparent 30%
+                ),
+                linear-gradient(
+                    180deg,
+                    #11152d 0%,
+                    #0c1022 100%
+                );
+
+            border-right: 1px solid rgba(255,255,255,.06);
+            box-shadow: 15px 0 45px rgba(15,23,42,.08);
+
+            transition:
+                width .28s ease,
+                transform .28s ease;
+        }
+
+        .sidebar::after {
+            content: "";
+            position: absolute;
+            width: 220px;
+            height: 220px;
+            right: -130px;
+            bottom: 80px;
+            border-radius: 50%;
+            background: rgba(99,102,241,.12);
+            filter: blur(35px);
+            pointer-events: none;
+        }
+/* =========================================================
+   STAYNEST BRAND
+   ========================================================= */
+
+.sidebar-brand {
+    padding: 25px 20px 22px;
+    position: relative;
+    z-index: 2;
+}
+
+.brand-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    color: #ffffff;
+    text-decoration: none;
+
+    transition: transform .2s ease;
+}
+
+.brand-link:hover {
+    color: #ffffff;
+    text-decoration: none;
+    transform: translateX(2px);
+}
+
+
+/* =========================================================
+   STAYNEST LOGO
+   ========================================================= */
+
+.sidebar-brand-logo {
+    width: 46px;
+    height: 46px;
+
+    flex: 0 0 46px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    overflow: hidden;
+
+    border-radius: 14px;
+
+    background: #ffffff;
+
+    border: 1px solid rgba(255,255,255,.15);
+
+    box-shadow:
+        0 10px 25px rgba(99,102,241,.28),
+        inset 0 1px 0 rgba(255,255,255,.8);
+
+    transition:
+        transform .2s ease,
+        box-shadow .2s ease;
+}
+
+
+/* =========================================================
+   LOGO IMAGE
+   ========================================================= */
+
+.sidebar-brand-logo img {
+    width: 100%;
+    height: 100%;
+
+    display: block;
+
+    object-fit: contain;
+
+    padding: 5px;
+
+    border-radius: 13px;
+}
+
+
+/* =========================================================
+   LOGO HOVER
+   ========================================================= */
+
+.brand-link:hover .sidebar-brand-logo {
+    transform: translateY(-1px) scale(1.03);
+
+    box-shadow:
+        0 13px 30px rgba(99,102,241,.35),
+        inset 0 1px 0 rgba(255,255,255,.9);
+}
+
+
+/* =========================================================
+   BRAND TEXT
+   ========================================================= */
+
+.sidebar-brand-text {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+
+/* =========================================================
+   STAYNEST TITLE
+   ========================================================= */
+
+.brand-title {
+    margin: 0;
+
+    color: #ffffff;
+
+    font-size: 18px;
+    line-height: 1.1;
+
+    font-weight: 850;
+
+    letter-spacing: -.4px;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   SUBTITLE
+   ========================================================= */
+
+.brand-subtitle {
+    margin-top: 5px;
+
+    color: rgba(255,255,255,.45);
+
+    font-size: 9px;
+
+    line-height: 1;
+
+    font-weight: 700;
+
+    letter-spacing: .85px;
+
+    text-transform: uppercase;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 576px) {
+
+    .sidebar-brand {
+        padding: 22px 18px 20px;
+    }
+
+    .sidebar-brand-logo {
+        width: 43px;
+        height: 43px;
+
+        flex-basis: 43px;
+
+        border-radius: 13px;
+    }
+
+    .brand-title {
+        font-size: 17px;
+    }
+
+    .brand-subtitle {
+        font-size: 8px;
+        letter-spacing: .7px;
+    }
+}
+        /* =========================================================
+           NAVIGATION
+           ========================================================= */
+
+        .sidebar-nav {
+            flex: 1;
+            min-height: 0;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 8px 13px 18px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .sidebar-nav::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .sidebar-nav::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,.12);
+            border-radius: 20px;
+        }
+
+        .nav-section-label {
+            margin: 21px 10px 8px;
+            color: rgba(255,255,255,.34);
+            font-size: 9px;
+            line-height: 1;
+            font-weight: 800;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+        }
+
+        .nav-section-label:first-child {
+            margin-top: 8px;
+        }
+
+        .nav-link {
+            position: relative;
+
+            min-height: 46px;
+            margin: 3px 0;
+            padding: 0 12px;
+
+            display: flex;
+            align-items: center;
+            gap: 12px;
+
+            color: rgba(255,255,255,.58);
+            text-decoration: none;
+
+            border-radius: 12px;
+
+            font-size: 13px;
+            font-weight: 600;
+
+            transition:
+                background .2s ease,
+                color .2s ease,
+                transform .2s ease;
+        }
+
+        .nav-link:hover {
+            color: white;
+            background: rgba(255,255,255,.065);
+            transform: translateX(2px);
+        }
+
+        .nav-link.active {
+            color: white;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(99,102,241,.95),
+                    rgba(124,58,237,.88)
+                );
+
+            box-shadow:
+                0 8px 22px rgba(79,70,229,.24),
+                inset 0 1px 0 rgba(255,255,255,.12);
+        }
+
+        .nav-link.active::before {
+            content: "";
+            position: absolute;
+            left: -13px;
+            top: 10px;
+            bottom: 10px;
+            width: 3px;
+            border-radius: 0 4px 4px 0;
+            background: #a5b4fc;
+        }
+
+        .nav-icon {
+            width: 23px;
+            height: 23px;
+            flex: 0 0 23px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 15px;
+        }
+
+        .nav-text {
+            flex: 1;
+            min-width: 0;
+            white-space: nowrap;
+        }
+
+        .nav-badge {
+            min-width: 21px;
+            height: 21px;
+            padding: 0 6px;
+
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 20px;
+
+            background: #ef4444;
+            color: white;
+
+            font-size: 10px;
+            font-weight: 800;
+        }
+
+        /* =========================================================
+           SIDEBAR FOOTER
+           ========================================================= */
+
+        .sidebar-footer {
+            position: relative;
+            z-index: 2;
+            padding: 14px;
+            border-top: 1px solid rgba(255,255,255,.06);
+        }
+
+        .sidebar-user {
+            min-width: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            color: white;
+            text-decoration: none;
+            border-radius: 13px;
+            transition: background .2s ease;
+        }
+
+        .sidebar-user:hover {
+            background: rgba(255,255,255,.06);
+        }
+
+        .sidebar-user-avatar {
+            width: 38px;
+            height: 38px;
+            flex: 0 0 38px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            overflow: hidden;
+            border-radius: 12px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #6366f1,
+                    #7c3aed
+                );
+
+            color: white;
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .sidebar-user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .sidebar-user-info {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .sidebar-user-name {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+
+            color: white;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .sidebar-user-role {
+            margin-top: 2px;
+            color: rgba(255,255,255,.4);
+            font-size: 9px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: .6px;
+        }
+
+        .sidebar-user-arrow {
+            color: rgba(255,255,255,.25);
+            font-size: 11px;
+        }
+
+        .sidebar-logout {
+            min-height: 42px;
+            margin-top: 4px;
+            padding: 0 11px;
+
+            display: flex;
+            align-items: center;
+            gap: 11px;
+
+            color: rgba(255,255,255,.42);
+            text-decoration: none;
+
+            border-radius: 11px;
+            font-size: 12px;
+            font-weight: 600;
+
+            transition: all .2s ease;
+        }
+
+        .sidebar-logout:hover {
+            color: #fca5a5;
+            background: rgba(239,68,68,.08);
+        }
+
+        /* =========================================================
+           MAIN CONTENT
+           ========================================================= */
+
+        .main-content {
+            width: calc(100% - var(--sidebar-width));
+            min-height: 100vh;
+            margin-left: var(--sidebar-width);
+            transition:
+                width .28s ease,
+                margin-left .28s ease;
+        }
+
+        /* =========================================================
+           TOPBAR
+           ========================================================= */
+
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+
+            min-height: 78px;
+            padding: 0 30px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+
+            background: rgba(255,255,255,.88);
+            border-bottom: 1px solid var(--border);
+
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+        }
+
+        .topbar-left,
+        .topbar-right {
+            display: flex;
+            align-items: center;
+        }
+
+        .topbar-left {
+            min-width: 0;
+            gap: 15px;
+        }
+
+        .topbar-right {
+            gap: 9px;
+        }
+
+        .sidebar-toggle {
+            width: 40px;
+            height: 40px;
+
+            display: none;
+            align-items: center;
+            justify-content: center;
+
+            border: 1px solid var(--border);
+            border-radius: 11px;
+
+            background: white;
+            color: #475569;
+
+            font-size: 19px;
+            cursor: pointer;
+
+            transition: all .2s ease;
+        }
+
+        .sidebar-toggle:hover {
+            color: var(--primary);
+            border-color: rgba(79,70,229,.2);
+            background: #f8f8ff;
+        }
+
+        .page-title-area {
+            min-width: 0;
+        }
+
+        .page-title-area h1 {
+            margin: 0;
+
+            color: #111827;
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: -.5px;
+        }
+
+        .breadcrumb {
+            margin: 5px 0 0;
+            font-size: 10px;
+        }
+
+        .breadcrumb-item a {
+            color: #8a94a8;
+            text-decoration: none;
+        }
+
+        .breadcrumb-item.active {
+            color: #64748b;
+        }
+
+        /* =========================================================
+           SEARCH
+           ========================================================= */
+
+        .topbar-search {
+            width: 245px;
+            height: 40px;
+
+            position: relative;
+
+            display: flex;
+            align-items: center;
+        }
+
+        .topbar-search > i {
+            position: absolute;
+            left: 13px;
+            color: #9aa4b5;
+            font-size: 13px;
+            pointer-events: none;
+        }
+
+        .topbar-search input {
+            width: 100%;
+            height: 100%;
+
+            padding: 0 38px;
+
+            border: 1px solid var(--border);
+            border-radius: 11px;
+
+            outline: none;
+            background: #f8f9fc;
+
+            color: #1f2937;
+            font-size: 11px;
+            font-weight: 500;
+
+            transition: all .2s ease;
+        }
+
+        .topbar-search input::placeholder {
+            color: #a1a9b8;
+        }
+
+        .topbar-search input:focus {
+            background: white;
+            border-color: rgba(79,70,229,.35);
+            box-shadow: 0 0 0 4px rgba(79,70,229,.07);
+        }
+
+        .search-shortcut {
+            position: absolute;
+            right: 9px;
+
+            min-width: 20px;
+            height: 20px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border: 1px solid #e3e6ed;
+            border-radius: 5px;
+
+            background: white;
+            color: #9aa4b5;
+
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        /* =========================================================
+           TOPBAR ICON BUTTON
+           ========================================================= */
+
+        .topbar-icon-btn {
+            width: 40px;
+            height: 40px;
+
+            position: relative;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border: 1px solid var(--border);
+            border-radius: 11px;
+
+            background: white;
+            color: #64748b;
+
+            cursor: pointer;
+            transition: all .2s ease;
+        }
+
+        .topbar-icon-btn:hover {
+            color: var(--primary);
+            border-color: rgba(79,70,229,.2);
+            background: #fafaff;
+        }
+
+        .notification-dot {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+
+            width: 7px;
+            height: 7px;
+
+            border: 2px solid white;
+            border-radius: 50%;
+
+            background: #ef4444;
+        }
+
+        /* =========================================================
+           PROFILE
+           ========================================================= */
+
+        .topbar-profile {
+            min-height: 44px;
+            padding: 3px 7px 3px 5px;
+
+            display: flex;
+            align-items: center;
+            gap: 9px;
+
+            border: 1px solid transparent;
+            border-radius: 13px;
+
+            background: transparent;
+            cursor: pointer;
+            transition: all .2s ease;
+        }
+
+        .topbar-profile:hover,
+        .topbar-profile[aria-expanded="true"] {
+            background: #f8f9fc;
+            border-color: var(--border);
+        }
+
+        .topbar-avatar,
+        .profile-menu-avatar {
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #6366f1,
+                    #7c3aed
+                );
+
+            color: white;
+            font-weight: 800;
+        }
+
+        .topbar-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 11px;
+            font-size: 12px;
+        }
+
+        .topbar-avatar img,
+        .profile-menu-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .topbar-profile-info {
+            text-align: left;
+            line-height: 1.2;
+        }
+
+        .topbar-profile-info strong {
+            display: block;
+            max-width: 125px;
+
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+
+            color: #1f2937;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .topbar-profile-info span {
+            display: block;
+            margin-top: 3px;
+
+            color: #8b95a7;
+            font-size: 9px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+        }
+
+        .profile-chevron {
+            color: #9aa4b5;
+            font-size: 10px;
+        }
+
+        /* =========================================================
+           DROPDOWNS
+           ========================================================= */
+
+        .dropdown-menu {
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            padding: 7px;
+
+            background: white;
+
+            box-shadow:
+                0 20px 50px rgba(15,23,42,.13),
+                0 4px 12px rgba(15,23,42,.05);
+        }
+
+        /* Notification */
+
+        .notification-menu {
+            width: 335px;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .notification-header {
+            padding: 17px 17px 14px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            border-bottom: 1px solid var(--border);
+        }
+
+        .notification-header strong {
+            display: block;
+            color: #172033;
+            font-size: 13px;
+        }
+
+        .notification-header span {
+            display: block;
+            margin-top: 3px;
+            color: #9aa4b5;
+            font-size: 9px;
+        }
+
+        .notification-header > i {
+            color: var(--primary);
+        }
+
+        .notification-body {
+            padding: 6px;
+        }
+
+        .notification-item {
+            padding: 12px 11px;
+
+            display: flex;
+            align-items: center;
+            gap: 11px;
+
+            color: inherit;
+            text-decoration: none;
+            border-radius: 10px;
+
+            transition: background .2s ease;
+        }
+
+        .notification-item:hover {
+            background: #f8f9fc;
+        }
+
+        .notification-icon {
+            width: 35px;
+            height: 35px;
+            flex: 0 0 35px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 10px;
+        }
+
+        .notification-icon.danger {
+            color: #dc2626;
+            background: #fef2f2;
+        }
+
+        .notification-content {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .notification-content strong {
+            display: block;
+            color: #273142;
+            font-size: 11px;
+        }
+
+        .notification-content span {
+            display: block;
+            margin-top: 3px;
+            color: #8c96a8;
+            font-size: 9px;
+        }
+
+        .notification-item > i {
+            color: #a3acbb;
+            font-size: 10px;
+        }
+
+        .empty-notification {
+            padding: 30px 15px;
+            text-align: center;
+        }
+
+        .empty-notification-icon {
+            width: 42px;
+            height: 42px;
+            margin: 0 auto 10px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 50%;
+            background: #ecfdf3;
+            color: #16a34a;
+        }
+
+        .empty-notification strong {
+            display: block;
+            font-size: 11px;
+        }
+
+        .empty-notification span {
+            display: block;
+            margin-top: 3px;
+            color: #9aa4b5;
+            font-size: 9px;
+        }
+
+        /* Profile */
+
+        .profile-menu {
+            width: 245px;
+        }
+
+        .profile-menu-header {
+            padding: 10px 8px;
+
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .profile-menu-avatar {
+            width: 40px;
+            height: 40px;
+            flex: 0 0 40px;
+            border-radius: 12px;
+            font-size: 12px;
+        }
+
+        .profile-menu-header strong {
+            display: block;
+            color: #172033;
+            font-size: 11px;
+        }
+
+        .profile-menu-header span {
+            display: block;
+            margin-top: 3px;
+            color: #8d97a8;
+            font-size: 9px;
+        }
+
+        .profile-menu-divider {
+            height: 1px;
+            margin: 4px 0;
+            background: var(--border);
+        }
+
+        .profile-menu-item {
+            min-height: 40px;
+            padding: 0 10px;
+
+            display: flex;
+            align-items: center;
+            gap: 10px;
+
+            color: #526075;
+            text-decoration: none;
+
+            border-radius: 9px;
+            font-size: 11px;
+            font-weight: 600;
+
+            transition: all .2s ease;
+        }
+
+        .profile-menu-item:hover {
+            color: var(--primary);
+            background: #f5f5ff;
+        }
+
+        .profile-menu-item.danger:hover {
+            color: #dc2626;
+            background: #fff5f5;
+        }
+
+        /* =========================================================
+           CONTENT AREA
+           ========================================================= */
+
+        .content-area {
+            min-height: calc(100vh - 78px);
+            padding: 30px;
+        }
+
+        /* =========================================================
+           TOAST
+           ========================================================= */
+
+        .toast-container {
+            position: fixed;
+            right: 22px;
+            bottom: 22px;
+            z-index: 2000;
+
+            display: flex;
+            flex-direction: column;
+            gap: 9px;
+        }
+
+        /* =========================================================
+           CONFIRM MODAL
+           ========================================================= */
+
+        .confirm-modal {
+            overflow: hidden;
+            border: 0;
+            border-radius: 20px;
+            box-shadow: 0 30px 70px rgba(15,23,42,.2);
+        }
+
+        .confirm-modal .modal-header {
+            padding: 18px 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .confirm-title-wrap {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+        }
+
+        .confirm-icon {
+            width: 38px;
+            height: 38px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 11px;
+
+            background: #fff7ed;
+            color: #ea580c;
+
+            font-size: 14px;
+        }
+
+        .confirm-modal .modal-title {
+            color: #172033;
+            font-size: 14px;
+            font-weight: 800;
+        }
+
+        .confirm-modal .modal-body {
+            padding: 22px 20px;
+        }
+
+        .confirm-modal .modal-body p {
+            margin: 0;
+            color: #273142;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .confirm-modal .modal-body span {
+            display: block;
+            margin-top: 6px;
+            color: #8b95a7;
+            font-size: 10px;
+        }
+
+        .confirm-modal .modal-footer {
+            padding: 12px 20px 18px;
+            border: 0;
+        }
+
+        /* =========================================================
+           MOBILE OVERLAY
+           ========================================================= */
+
+        .sidebar-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 1040;
+
+            display: none;
+
+            background: rgba(15,23,42,.52);
+            backdrop-filter: blur(2px);
+        }
+
+        .sidebar-overlay.show {
+            display: block;
+        }
+
+        /* =========================================================
+           RESPONSIVE
+           ========================================================= */
+
+        @media (max-width: 1200px) {
+
+            .topbar-search {
+                width: 190px;
+            }
+
+            .content-area {
+                padding: 25px;
+            }
+        }
+
+        @media (max-width: 992px) {
+
+            :root {
+                --sidebar-width: 270px;
+            }
+
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.mobile-open {
+                transform: translateX(0);
+                box-shadow: 25px 0 60px rgba(15,23,42,.2);
+            }
+
+            .main-content {
+                width: 100%;
+                margin-left: 0;
+            }
+
+            .sidebar-toggle {
+                display: flex;
+            }
+
+            .topbar {
+                padding: 0 20px;
+            }
+
+            .topbar-search {
+                display: none;
+            }
+        }
+
+        @media (max-width: 576px) {
+
+            .topbar {
+                min-height: 70px;
+                padding: 0 13px;
+            }
+
+            .page-title-area h1 {
+                font-size: 17px;
+            }
+
+            .breadcrumb {
+                display: none;
+            }
+
+            .topbar-right {
+                gap: 5px;
+            }
+
+            .topbar-profile {
+                padding-right: 3px;
+            }
+
+            .profile-chevron {
+                display: none;
+            }
+
+            .topbar-icon-btn,
+            .sidebar-toggle {
+                width: 37px;
+                height: 37px;
+            }
+
+            .content-area {
+                min-height: calc(100vh - 70px);
+                padding: 18px 13px;
+            }
+
+            .notification-menu {
+                position: fixed !important;
+                top: 68px !important;
+                right: 10px !important;
+                left: 10px !important;
+                width: auto;
+            }
+
+            .profile-menu {
+                position: fixed !important;
+                top: 68px !important;
+                right: 10px !important;
+                width: 240px;
+            }
+
+            .toast-container {
+                right: 12px;
+                left: 12px;
+                bottom: 12px;
+            }
+        }
+
+        /* =========================================================
+           ACCESSIBILITY
+           ========================================================= */
+
+        a:focus-visible,
+        button:focus-visible,
+        input:focus-visible,
+        select:focus-visible,
+        textarea:focus-visible {
+            outline: 3px solid rgba(79,70,229,.18);
+            outline-offset: 2px;
+        }
+
+        /* =========================================================
+           REDUCED MOTION
+           ========================================================= */
+
+        @media (prefers-reduced-motion: reduce) {
+
+            *,
+            *::before,
+            *::after {
+                scroll-behavior: auto !important;
+                transition-duration: .01ms !important;
+                animation-duration: .01ms !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="app-wrapper">
+
+    <!-- =====================================================
+         MOBILE OVERLAY
+    ====================================================== -->
+
+    <div
+        class="sidebar-overlay"
+        id="sidebarOverlay"
+        onclick="closeMobileSidebar()">
+    </div>
+
+
+    <!-- =====================================================
+         SIDEBAR
+    ====================================================== -->
+
+    <aside class="sidebar" id="sidebar">
+<!-- =====================================================
+     STAYNEST BRAND
+====================================================== -->
+
+<div class="sidebar-brand">
+
+    <a
+        href="{% url 'dashboard:index' %}"
+        class="brand-link"
+    >
+
+        <!-- LOGO -->
+        <div class="sidebar-brand-logo">
+
+            <img
+                src="{% static 'images/logo.png' %}"
+                alt="STAYNEST Logo"
+            >
+
+        </div>
+
+
+        <!-- BRAND TEXT -->
+        <div class="sidebar-brand-text">
+
+            <div class="brand-title">
+                STAYNEST
+            </div>
+
+            <div class="brand-subtitle">
+                HOSTEL MANAGEMENT
+            </div>
+
+        </div>
+
+    </a>
+
+</div>
+
+
+        <!-- NAVIGATION -->
+        <div class="sidebar-nav">
+
+            {% with user_occ=request.user.student_profile.occupation|default:request.user.occupation %}
+
+            <!-- ================= MAIN ================= -->
+            <div class="nav-section-label">
+                Main
+            </div>
+
+            {% if request.user.is_admin %}
+            <a
+                href="{% url 'dashboard:admin_dashboard' %}"
+                class="nav-link {% if request.path == '/dashboard/' or request.path == '/admin-dashboard/' or request.resolver_match.url_name == 'admin_dashboard' or request.resolver_match.url_name == 'admin' %}active{% endif %}"
+                data-tooltip="Admin Control Center">
+                <span class="nav-icon">
+                    <i class="bi bi-shield-lock-fill"></i>
+                </span>
+                <span class="nav-text">
+                    Admin Control Center
+                </span>
+            </a>
+            {% elif request.user.is_warden %}
+            <a
+                href="{% url 'dashboard:warden_dashboard' %}"
+                class="nav-link {% if 'warden' in request.path %}active{% endif %}"
+                data-tooltip="Warden Dashboard">
+                <span class="nav-icon">
+                    <i class="bi bi-person-badge-fill"></i>
+                </span>
+                <span class="nav-text">
+                    Warden Dashboard
+                </span>
+            </a>
+            {% elif user_occ == 'Student' or 'student' in user_occ|lower %}
+            <a
+                href="/student/dashboard/"
+                class="nav-link {% if request.path == '/student/dashboard/' or request.resolver_match.url_name == 'student' or request.resolver_match.url_name == 'student_dashboard' %}active{% endif %}"
+                data-tooltip="Student Dashboard">
+                <span class="nav-icon">
+                    <i class="bi bi-grid-1x2-fill"></i>
+                </span>
+                <span class="nav-text">
+                    Student Dashboard
+                </span>
+            </a>
+            {% elif 'working' in user_occ|lower %}
+            <a
+                href="/working-professional/dashboard/"
+                class="nav-link {% if request.path == '/working-professional/dashboard/' or request.resolver_match.url_name == 'working_professional' or request.resolver_match.url_name == 'working_professional_dashboard' %}active{% endif %}"
+                data-tooltip="Professional Dashboard">
+                <span class="nav-icon">
+                    <i class="bi bi-grid-1x2-fill"></i>
+                </span>
+                <span class="nav-text">
+                    Professional Dashboard
+                </span>
+            </a>
+            {% elif 'gov' in user_occ|lower %}
+            <a
+                href="/government-employee/dashboard/"
+                class="nav-link {% if request.path == '/government-employee/dashboard/' or request.resolver_match.url_name == 'government_employee' or request.resolver_match.url_name == 'government_employee_dashboard' %}active{% endif %}"
+                data-tooltip="Government Dashboard">
+                <span class="nav-icon">
+                    <i class="bi bi-grid-1x2-fill"></i>
+                </span>
+                <span class="nav-text">
+                    Government Dashboard
+                </span>
+            </a>
+            {% elif 'priv' in user_occ|lower %}
+            <a
+                href="/private-employee/dashboard/"
+                class="nav-link {% if request.path == '/private-employee/dashboard/' or request.resolver_match.url_name == 'private_employee' or request.resolver_match.url_name == 'private_employee_dashboard' %}active{% endif %}"
+                data-tooltip="Private Employee Dashboard">
+                <span class="nav-icon">
+                    <i class="bi bi-grid-1x2-fill"></i>
+                </span>
+                <span class="nav-text">
+                    Private Employee Dashboard
+                </span>
+            </a>
+            {% elif 'busin' in user_occ|lower or 'self' in user_occ|lower %}
+            <a
+                href="/business/dashboard/"
+                class="nav-link {% if request.path == '/business/dashboard/' or request.resolver_match.url_name == 'business' or request.resolver_match.url_name == 'business_dashboard' %}active{% endif %}"
+                data-tooltip="Business Dashboard">
+                <span class="nav-icon">
+                    <i class="bi bi-grid-1x2-fill"></i>
+                </span>
+                <span class="nav-text">
+                    Business Dashboard
+                </span>
+            </a>
+            {% elif 'job' in user_occ|lower or 'seeker' in user_occ|lower %}
+            <a
+                href="/job-seeker/dashboard/"
+                class="nav-link {% if request.path == '/job-seeker/dashboard/' or request.resolver_match.url_name == 'job_seeker' or request.resolver_match.url_name == 'job_seeker_dashboard' %}active{% endif %}"
+                data-tooltip="Job Seeker Dashboard">
+                <span class="nav-icon">
+                    <i class="bi bi-grid-1x2-fill"></i>
+                </span>
+                <span class="nav-text">
+                    Job Seeker Dashboard
+                </span>
+            </a>
+            {% else %}
+            <a
+                href="/other/dashboard/"
+                class="nav-link {% if request.path == '/other/dashboard/' or request.resolver_match.url_name == 'other' or request.resolver_match.url_name == 'other_dashboard' %}active{% endif %}"
+                data-tooltip="Resident Dashboard">
+                <span class="nav-icon">
+                    <i class="bi bi-grid-1x2-fill"></i>
+                </span>
+                <span class="nav-text">
+                    Resident Dashboard
+                </span>
+            </a>
+            {% endif %}
+
+            <!-- ================= ADMIN NAVIGATION ================= -->
+            {% if request.user.is_admin or request.user.is_warden %}
+
+            <div class="nav-section-label">
+                Student & Resident Affairs
+            </div>
+
+            <a
+                href="{% url 'students:list' %}"
+                class="nav-link {% if request.resolver_match.app_name == 'students' %}active{% endif %}"
+                data-tooltip="Students & Residents">
+                <span class="nav-icon">
+                    <i class="bi bi-people-fill"></i>
+                </span>
+                <span class="nav-text">
+                    All Residents
+                </span>
+            </a>
+
+            <a
+                href="{% url 'attendance:index' %}"
+                class="nav-link {% if request.resolver_match.app_name == 'attendance' %}active{% endif %}"
+                data-tooltip="Attendance">
+                <span class="nav-icon">
+                    <i class="bi bi-calendar2-check-fill"></i>
+                </span>
+                <span class="nav-text">
+                    Attendance
+                </span>
+            </a>
+
+            <div class="nav-section-label">
+                Hostel Management
+            </div>
+
+            <a
+                href="{% url 'hostel:index' %}"
+                class="nav-link {% if request.resolver_match.app_name == 'hostel' %}active{% endif %}"
+                data-tooltip="Rooms & Beds">
+                <span class="nav-icon">
+                    <i class="bi bi-door-open-fill"></i>
+                </span>
+                <span class="nav-text">
+                    Rooms & Beds
+                </span>
+            </a>
+
+            <a
+                href="{% url 'allocations:list' %}"
+                class="nav-link {% if request.resolver_match.app_name == 'allocations' %}active{% endif %}"
+                data-tooltip="Allocations">
+                <span class="nav-icon">
+                    <i class="bi bi-box-arrow-in-right"></i>
+                </span>
+                <span class="nav-text">
+                    Allocations
+                </span>
+            </a>
+
+            <div class="nav-section-label">
+                Finance & Operations
+            </div>
+
+            <a
+                href="{% url 'fees:list' %}"
+                class="nav-link {% if request.resolver_match.app_name == 'fees' %}active{% endif %}"
+                data-tooltip="Fees & Payments">
+                <span class="nav-icon">
+                    <i class="bi bi-credit-card-fill"></i>
+                </span>
+                <span class="nav-text">
+                    Fees & Payments
+                </span>
+            </a>
+
+            <a
+                href="{% url 'complaints:list' %}"
+                class="nav-link {% if request.resolver_match.app_name == 'complaints' %}active{% endif %}"
+                data-tooltip="Complaints">
+                <span class="nav-icon">
+                    <i class="bi bi-chat-left-text-fill"></i>
+                </span>
+                <span class="nav-text">
+                    Complaints
+                </span>
+            </a>
+
+            <a
+                href="{% url 'visitors:list' %}"
+                class="nav-link {% if request.resolver_match.app_name == 'visitors' %}active{% endif %}"
+                data-tooltip="Visitors">
+                <span class="nav-icon">
+                    <i class="bi bi-person-vcard-fill"></i>
+                </span>
+                <span class="nav-text">
+                    Visitors
+                </span>
+            </a>
+
+            <div class="nav-section-label">
+                Analytics & System
+            </div>
+
+            <a
+                href="{% url 'reports:index' %}"
+                class="nav-link {% if request.resolver_match.app_name == 'reports' %}active{% endif %}"
+                data-tooltip="Reports">
+                <span class="nav-icon">
+                    <i class="bi bi-bar-chart-fill"></i>
+                </span>
+                <span class="nav-text">
+                    Reports
+                </span>
+            </a>
+
+            {% if request.user.is_admin %}
+            <a
+                href="{% url 'accounts:user_list' %}"
+                class="nav-link {% if request.resolver_match.url_name == 'user_list' %}active{% endif %}"
+                data-tooltip="Users & Settings">
+                <span class="nav-icon">
+                    <i class="bi bi-people-fill"></i>
+                </span>
+                <span class="nav-text">
+                    Users & Settings
+                </span>
+            </a>
+            {% endif %}
+
+            <!-- ================= RESIDENT / OCCUPATION NAVIGATION ================= -->
+            {% else %}
+
+            <div class="nav-section-label">
+                Profile
+            </div>
+
+            <a
+                href="{% url 'accounts:profile' %}"
+                class="nav-link {% if request.resolver_match.app_name == 'accounts' and request.resolver_match.url_name == 'profile' %}active{% endif %}"
+                data-tooltip="Profile">
+                <span class="nav-icon">
+                    {% if 'student' in user_occ|lower %}
+                        <i class="bi bi-mortarboard-fill"></i>
+                    {% elif 'gov' in user_occ|lower %}
+                        <i class="bi bi-bank2"></i>
+                    {% elif 'job' in user_occ|lower %}
+                        <i class="bi bi-person-badge"></i>
+                    {% elif 'busin' in user_occ|lower %}
+                        <i class="bi bi-shop"></i>
+                    {% else %}
+                        <i class="bi bi-person-workspace"></i>
+                    {% endif %}
+                </span>
+                <span class="nav-text">
+                    {% if 'student' in user_occ|lower %}
+                        My Student Profile
+                    {% elif 'gov' in user_occ|lower %}
+                        My Government Profile
+                    {% elif 'job' in user_occ|lower %}
+                        My Job Profile
+                    {% elif 'busin' in user_occ|lower %}
+                        My Business Profile
+                    {% else %}
+                        My Professional Profile
+                    {% endif %}
+                </span>
+            </a>
+
+            <div class="nav-section-label">
+                Accommodation
+            </div>
+
+            <a
+                href="{% url 'hostel:index' %}"
+                class="nav-link {% if request.resolver_match.app_name == 'hostel' %}active{% endif %}"
+                data-tooltip="Hostel">
+                <span class="nav-icon">
+                    <i class="bi bi-door-open-fill"></i>
+                </span>
+                <span class="nav-text">
+                    Hostel
+                </span>
+            </a>
+
+            <div class="nav-section-label">
+                Services & Dues
+            </div>
+
+            <a
+                href="{% url 'fees:list' %}"
+                class="nav-link {% if request.resolver_match.app_name == 'fees' %}active{% endif %}"
+                data-tooltip="Fees & Payments">
+                <span class="nav-icon">
+                    <i class="bi bi-credit-card-fill"></i>
+                </span>
+                <span class="nav-text">
+                    Fees & Payments
+                </span>
+            </a>
+
+            <a
+                href="{% url 'complaints:list' %}"
+                class="nav-link {% if request.resolver_match.app_name == 'complaints' %}active{% endif %}"
+                data-tooltip="Complaints">
+                <span class="nav-icon">
+                    <i class="bi bi-chat-left-text-fill"></i>
+                </span>
+                <span class="nav-text">
+                    Complaints
+                </span>
+            </a>
+
+            <a
+                href="{% url 'visitors:list' %}"
+                class="nav-link {% if request.resolver_match.app_name == 'visitors' %}active{% endif %}"
+                data-tooltip="Visitors">
+                <span class="nav-icon">
+                    <i class="bi bi-person-vcard-fill"></i>
+                </span>
+                <span class="nav-text">
+                    Visitors
+                </span>
+            </a>
+
+            <a
+                href="#"
+                data-bs-toggle="modal"
+                data-bs-target="#leaveModal"
+                class="nav-link"
+                data-tooltip="Leave Requests">
+                <span class="nav-icon">
+                    <i class="bi bi-calendar2-range-fill"></i>
+                </span>
+                <span class="nav-text">
+                    Leave Requests
+                </span>
+            </a>
+
+            {% if 'job' in user_occ|lower or 'seeker' in user_occ|lower %}
+            <a
+                href="#"
+                data-bs-toggle="modal"
+                data-bs-target="#jobUpdatesModal"
+                class="nav-link"
+                data-tooltip="Job / Training Updates">
+                <span class="nav-icon">
+                    <i class="bi bi-laptop-fill"></i>
+                </span>
+                <span class="nav-text">
+                    Job & Training Updates
+                </span>
+            </a>
+            {% endif %}
+
+            <a
+                href="#"
+                data-bs-toggle="modal"
+                data-bs-target="#noticesModal"
+                class="nav-link"
+                data-tooltip="Notices">
+                <span class="nav-icon">
+                    <i class="bi bi-bell-fill"></i>
+                </span>
+                <span class="nav-text">
+                    Notices
+                </span>
+            </a>
+
+            {% endif %}
+
+            {% endwith %}
+
+        </div>
+
+
+        <!-- =================================================
+             SIDEBAR FOOTER
+        ================================================== -->
+
+        <div class="sidebar-footer">
+
+            <a
+                href="{% url 'accounts:profile' %}"
+                class="sidebar-user">
+
+                <div class="sidebar-user-avatar">
+
+                    {% if request.user.avatar %}
+
+                        <img
+                            src="{{ request.user.avatar.url }}"
+                            alt="Profile">
+
+                    {% else %}
+
+                        {{ request.user.get_full_name|default:request.user.username|first|upper }}
+
+                    {% endif %}
+
+                </div>
+
+
+                <div class="sidebar-user-info">
+
+                    <div class="sidebar-user-name">
+                        {{ request.user.get_full_name|default:request.user.username }}
+                    </div>
+
+                    <div class="sidebar-user-role">
+                        {% if request.user.is_admin or request.user.is_warden %}
+                            {{ request.user.get_role_display }}
+                        {% else %}
+                            {{ request.user.student_profile.occupation|default:request.user.occupation|default:request.user.get_role_display }}
+                        {% endif %}
+                    </div>
+
+                </div>
+
+                <i class="bi bi-chevron-right sidebar-user-arrow"></i>
+
+            </a>
+
+
+            <a
+                href="{% url 'accounts:logout' %}"
+                class="sidebar-logout">
+
+                <i class="bi bi-box-arrow-right"></i>
+
+                <span class="nav-text">
+                    Logout
+                </span>
+
+            </a>
+
+        </div>
+
+    </aside>
+
+
+
+    <!-- =====================================================
+         MAIN CONTENT
+    ====================================================== -->
+
+    <div class="main-content" id="mainContent">
+
+
+        <!-- =================================================
+             TOPBAR
+        ================================================== -->
+
+        <header class="topbar">
+
+            <!-- LEFT -->
+
+            <div class="topbar-left">
+
+                <button
+                    class="sidebar-toggle"
+                    id="sidebarToggle"
+                    onclick="toggleSidebar()"
+                    aria-label="Toggle sidebar">
+
+                    <i class="bi bi-list"></i>
+
+                </button>
+
+
+                <div class="page-title-area">
+
+                    <h1>
+                        {% block page_title %}
+                            Dashboard
+                        {% endblock %}
+                    </h1>
+
+                    <nav aria-label="breadcrumb">
+
+                        <ol class="breadcrumb">
+
+                            <li class="breadcrumb-item">
+                                <a href="{% url 'dashboard:index' %}">
+                                    Home
+                                </a>
+                            </li>
+
+                            {% block breadcrumb %}
+                            {% endblock %}
+
+                        </ol>
+
+                    </nav>
+
+                </div>
+
+            </div>
+
+
+            <!-- RIGHT -->
+
+            <div class="topbar-right">
+
+                <!-- SEARCH -->
+
+                <div class="topbar-search">
+
+                    <i class="bi bi-search"></i>
+
+                    <input
+                        type="text"
+                        id="globalSearch"
+                        placeholder="Search anything..."
+                        autocomplete="off"
+                        oninput="handleGlobalSearch(this.value)">
+
+                    <span class="search-shortcut">
+                        /
+                    </span>
+
+                </div>
+
+
+                <!-- NOTIFICATIONS -->
+
+                <div class="dropdown">
+
+                    <button
+                        class="topbar-icon-btn"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                        aria-label="Notifications">
+
+                        <i class="bi bi-bell"></i>
+
+                        {% if pending_complaints_count %}
+                            <span class="notification-dot"></span>
+                        {% endif %}
+
+                    </button>
+
+
+                    <div class="dropdown-menu dropdown-menu-end notification-menu">
+
+                        <div class="notification-header">
+
+                            <div>
+                                <strong>
+                                    Notifications
+                                </strong>
+
+                                <span>
+                                    Recent activity
+                                </span>
+                            </div>
+
+                            <i class="bi bi-bell-fill"></i>
+
+                        </div>
+
+
+                        <div class="notification-body">
+
+                            {% if pending_complaints_count %}
+
+                                <a
+                                    href="{% url 'complaints:list' %}?status=pending"
+                                    class="notification-item">
+
+                                    <div class="notification-icon danger">
+                                        <i class="bi bi-exclamation-circle-fill"></i>
+                                    </div>
+
+                                    <div class="notification-content">
+
+                                        <strong>
+                                            Pending complaints
+                                        </strong>
+
+                                        <span>
+                                            {{ pending_complaints_count }}
+                                            complaint{{ pending_complaints_count|pluralize }}
+                                            require attention
+                                        </span>
+
+                                    </div>
+
+                                    <i class="bi bi-chevron-right"></i>
+
+                                </a>
+
+                            {% else %}
+
+                                <div class="empty-notification">
+
+                                    <div class="empty-notification-icon">
+                                        <i class="bi bi-check2-circle"></i>
+                                    </div>
+
+                                    <strong>
+                                        You're all caught up
+                                    </strong>
+
+                                    <span>
+                                        No new notifications
+                                    </span>
+
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- PROFILE -->
+
+                <div class="dropdown">
+
+                    <button
+                        class="topbar-profile"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false">
+
+                        <div class="topbar-avatar">
+
+                            {% if request.user.avatar %}
+
+                                <img
+                                    src="{{ request.user.avatar.url }}"
+                                    alt="Profile">
+
+                            {% else %}
+
+                                {{ request.user.get_full_name|default:request.user.username|first|upper }}
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <div class="topbar-profile-info d-none d-lg-block">
+
+                            <strong>
+                                {{ request.user.get_full_name|default:request.user.username }}
+                            </strong>
+
+                            <span>
+                                {% if request.user.is_admin or request.user.is_warden %}
+                                    {{ request.user.get_role_display }}
+                                {% else %}
+                                    {{ request.user.student_profile.occupation|default:request.user.occupation|default:request.user.get_role_display }}
+                                {% endif %}
+                            </span>
+
+                        </div>
+
+                        <i class="bi bi-chevron-down profile-chevron"></i>
+
+                    </button>
+
+
+                    <div class="dropdown-menu dropdown-menu-end profile-menu">
+
+                        <div class="profile-menu-header">
+
+                            <div class="profile-menu-avatar">
+
+                                {% if request.user.avatar %}
+
+                                    <img
+                                        src="{{ request.user.avatar.url }}"
+                                        alt="Profile">
+
+                                {% else %}
+
+                                    {{ request.user.get_full_name|default:request.user.username|first|upper }}
+
+                                {% endif %}
+
+                            </div>
+
+                            <div>
+
+                                <strong>
+                                    {{ request.user.get_full_name|default:request.user.username }}
+                                </strong>
+
+                                <span>
+                                    {% if request.user.is_admin or request.user.is_warden %}
+                                        {{ request.user.get_role_display }}
+                                    {% else %}
+                                        {{ request.user.student_profile.occupation|default:request.user.occupation|default:request.user.get_role_display }}
+                                    {% endif %}
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="profile-menu-divider"></div>
+
+
+                        <a
+                            href="{% url 'accounts:profile' %}"
+                            class="profile-menu-item">
+
+                            <i class="bi bi-person"></i>
+
+                            <span>
+                                My Profile
+                            </span>
+
+                        </a>
+
+
+                        <a
+                            href="{% url 'accounts:logout' %}"
+                            class="profile-menu-item danger">
+
+                            <i class="bi bi-box-arrow-right"></i>
+
+                            <span>
+                                Logout
+                            </span>
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+
+        <!-- =================================================
+             CONTENT
+        ================================================== -->
+
+        <main
+            class="content-area"
+            id="contentArea">
+
+            <!-- Django Messages -->
+
+            {% if messages %}
+
+                <div
+                    id="djangoMessages"
+                    style="display:none;">
+
+                    {% for message in messages %}
+
+                        <div
+                            data-type="{{ message.tags }}"
+                            data-message="{{ message }}">
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            {% endif %}
+
+
+            {% block content %}
+            {% endblock %}
+
+        </main>
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================================================
+     TOAST CONTAINER
+========================================================== -->
+
+<div
+    class="toast-container"
+    id="toastContainer">
+</div>
+
+
+
+<!-- =========================================================
+     CONFIRM MODAL
+========================================================== -->
+
+<div
+    class="modal fade"
+    id="confirmModal"
+    tabindex="-1"
+    aria-hidden="true">
+
+    <div class="modal-dialog modal-dialog-centered">
+
+        <div class="modal-content confirm-modal">
+
+            <div class="modal-header">
+
+                <div class="confirm-title-wrap">
+
+                    <div class="confirm-icon">
+                        <i class="bi bi-exclamation-triangle-fill"></i>
+                    </div>
+
+                    <h5
+                        class="modal-title"
+                        id="confirmModalTitle">
+
+                        Confirm Action
+
+                    </h5>
+
+                </div>
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close">
+                </button>
+
+            </div>
+
+
+            <div class="modal-body">
+
+                <p id="confirmModalMessage">
+                    Are you sure?
+                </p>
+
+                <span id="confirmModalSubtext">
+                    This action cannot be undone.
+                </span>
+
+            </div>
+
+
+            <div class="modal-footer">
+
+                <button
+                    type="button"
+                    class="btn btn-light"
+                    data-bs-dismiss="modal">
+
+                    Cancel
+
+                </button>
+
+                <button
+                    type="button"
+                    class="btn btn-danger"
+                    id="confirmModalBtn">
+
+                    Confirm
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- =========================================================
+     LEAVE REQUEST MODAL
+========================================================== -->
+<div class="modal fade" id="leaveModal" tabindex="-1" aria-labelledby="leaveModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius:18px; border:none; box-shadow:0 20px 60px rgba(0,0,0,.18);">
+            <div class="modal-header" style="background:linear-gradient(135deg, #1e3a8a, #2563eb); color:#fff; border-radius:18px 18px 0 0;">
+                <h5 class="modal-title fs-6 fw-bold" id="leaveModalLabel"><i class="bi bi-calendar2-range-fill me-2"></i> Submit Leave / Outstation Request</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <form id="leaveRequestForm" onsubmit="event.preventDefault(); alert('Your leave/outstation pass request has been submitted to the warden office.'); const m = bootstrap.Modal.getInstance(document.getElementById('leaveModal')); if(m) m.hide();">
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">LEAVE / PASS TYPE</label>
+                        <select class="form-select" required>
+                            <option value="Home Visit">Weekend / Home Visit</option>
+                            <option value="Official Duty">Official Duty / Company Travel</option>
+                            <option value="Job Interview">Job Interview / Recruitment</option>
+                            <option value="Personal Emergency">Personal Emergency</option>
+                        </select>
+                    </div>
+                    <div class="row g-2 mb-3">
+                        <div class="col-6">
+                            <label class="form-label small fw-bold text-muted">FROM DATE</label>
+                            <input type="date" class="form-control" required>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label small fw-bold text-muted">TO DATE</label>
+                            <input type="date" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">REASON & DESTINATION</label>
+                        <textarea class="form-control" rows="3" placeholder="State reason and destination address..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 py-2 fw-bold" style="border-radius:10px;">Submit Request</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- =========================================================
+     PREMIUM NOTICES MODAL
+========================================================== -->
+<div class="modal fade" id="noticesModal" tabindex="-1"
+     aria-labelledby="noticesModalLabel" aria-hidden="true">
+
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+
+        <div class="modal-content premium-notice-modal">
+
+            <!-- HEADER -->
+            <div class="premium-notice-header">
+
+                <div class="notice-heading">
+
+                    <div class="notice-bell">
+                        <i class="bi bi-bell-fill"></i>
+                    </div>
+
+                    <div>
+                        <div class="notice-label">
+                            HOSTEL UPDATES
+                        </div>
+
+                        <h5 id="noticesModalLabel">
+                            Hostel Bulletin
+                        </h5>
+
+                        <p>
+                            Important announcements & official circulars
+                        </p>
+                    </div>
+
+                </div>
+
+                <button
+                    type="button"
+                    class="notice-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                >
+                    <i class="bi bi-x-lg"></i>
+                </button>
+
+            </div>
+
+
+            <!-- BODY -->
+            <div class="premium-notice-body">
+
+                <!-- NOTICE 1 -->
+                <div class="notice-card notice-blue">
+
+                    <div class="notice-icon">
+                        <i class="bi bi-tools"></i>
+                    </div>
+
+                    <div class="notice-content">
+
+                        <div class="notice-top">
+
+                            <h6>
+                                Scheduled Maintenance Drive
+                            </h6>
+
+                            <span class="notice-date">
+                                Oct 25, 2026
+                            </span>
+
+                        </div>
+
+                        <p>
+                            Electrical testing and water distribution
+                            tank cleaning will be performed across all
+                            residential blocks on Saturday between
+                            10 AM and 1 PM.
+                        </p>
+
+                        <span class="notice-type">
+                            <i class="bi bi-info-circle"></i>
+                            Maintenance
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- NOTICE 2 -->
+                <div class="notice-card notice-green">
+
+                    <div class="notice-icon">
+                        <i class="bi bi-cup-hot-fill"></i>
+                    </div>
+
+                    <div class="notice-content">
+
+                        <div class="notice-top">
+
+                            <h6>
+                                Mess & Dining Schedule Update
+                            </h6>
+
+                            <span class="notice-date">
+                                Oct 20, 2026
+                            </span>
+
+                        </div>
+
+                        <p>
+                            Dinner service timings have been revised:
+                            7:30 PM to 9:30 PM daily. Special dietary
+                            requests can be submitted at the food
+                            committee desk.
+                        </p>
+
+                        <span class="notice-type">
+                            <i class="bi bi-egg-fried"></i>
+                            Dining
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- NOTICE 3 -->
+                <div class="notice-card notice-orange">
+
+                    <div class="notice-icon">
+                        <i class="bi bi-shield-check"></i>
+                    </div>
+
+                    <div class="notice-content">
+
+                        <div class="notice-top">
+
+                            <h6>
+                                Main Gate Visitor Pass Regulations
+                            </h6>
+
+                            <span class="notice-date">
+                                Oct 15, 2026
+                            </span>
+
+                        </div>
+
+                        <p>
+                            Non-resident visitors must provide a valid
+                            government-issued photo ID at the security
+                            desk prior to entry. Visiting hours:
+                            9 AM - 8 PM.
+                        </p>
+
+                        <span class="notice-type">
+                            <i class="bi bi-shield-lock"></i>
+                            Security
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- FOOTER -->
+            <div class="premium-notice-footer">
+
+                <span>
+                    <i class="bi bi-check-circle-fill"></i>
+                    Stay updated with hostel announcements
+                </span>
+
+                <button
+                    type="button"
+                    class="notice-done-btn"
+                    data-bs-dismiss="modal"
+                >
+                    Done
+                </button>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<!-- =========================================================
+     PREMIUM NOTICES CSS
+========================================================== -->
+<style>
+
+    /* Modal */
+    .premium-notice-modal {
+        overflow: hidden;
+
+        border: 0 !important;
+        border-radius: 24px !important;
+
+        background: #ffffff;
+
+        box-shadow:
+            0 30px 80px rgba(15, 23, 42, .25);
+
+        animation: noticeModalIn .25s ease;
+    }
+
+    @keyframes noticeModalIn {
+        from {
+            opacity: 0;
+            transform: translateY(12px) scale(.98);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+
+
+    /* =====================================================
+       HEADER
+    ===================================================== */
+
+    .premium-notice-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        gap: 20px;
+
+        padding: 24px 26px;
+
+        background:
+            linear-gradient(
+                135deg,
+                #111827 0%,
+                #172033 55%,
+                #1f2937 100%
+            );
+
+        color: #ffffff;
+    }
+
+    .notice-heading {
+        display: flex;
+        align-items: center;
+
+        gap: 14px;
+    }
+
+    .notice-bell {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        width: 48px;
+        height: 48px;
+
+        flex-shrink: 0;
+
+        border-radius: 15px;
+
+        background: rgba(82, 192, 72, .15);
+
+        border: 1px solid rgba(82, 192, 72, .25);
+
+        color: #6ee65e;
+
+        font-size: 19px;
+    }
+
+    .notice-label {
+        margin-bottom: 3px;
+
+        color: #6ee65e;
+
+        font-size: 10px;
+        font-weight: 800;
+
+        letter-spacing: .12em;
+    }
+
+    .premium-notice-header h5 {
+        margin: 0;
+
+        color: #ffffff;
+
+        font-size: 20px;
+        font-weight: 800;
+    }
+
+    .premium-notice-header p {
+        margin: 4px 0 0;
+
+        color: #9ca3af;
+
+        font-size: 12px;
+    }
+
+
+    /* CLOSE BUTTON */
+
+    .notice-close {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        width: 38px;
+        height: 38px;
+
+        flex-shrink: 0;
+
+        border: 1px solid rgba(255,255,255,.12);
+        border-radius: 11px;
+
+        background: rgba(255,255,255,.07);
+
+        color: #d1d5db;
+
+        cursor: pointer;
+
+        transition: .2s ease;
+    }
+
+    .notice-close:hover {
+        background: rgba(255,255,255,.14);
+
+        color: #ffffff;
+
+        transform: rotate(4deg);
+    }
+
+
+    /* =====================================================
+       BODY
+    ===================================================== */
+
+    .premium-notice-body {
+        padding: 22px 24px;
+
+        background: #f8faf9;
+    }
+
+
+    /* NOTICE CARD */
+
+    .notice-card {
+        position: relative;
+
+        display: flex;
+
+        gap: 15px;
+
+        padding: 18px;
+
+        margin-bottom: 12px;
+
+        background: #ffffff;
+
+        border: 1px solid #e6ebe7;
+
+        border-radius: 16px;
+
+        transition:
+            transform .2s ease,
+            box-shadow .2s ease,
+            border-color .2s ease;
+    }
+
+    .notice-card:last-child {
+        margin-bottom: 0;
+    }
+
+    .notice-card:hover {
+        transform: translateY(-2px);
+
+        box-shadow:
+            0 10px 25px rgba(20, 40, 24, .07);
+
+        border-color: #d8dfda;
+    }
+
+
+    /* LEFT ICON */
+
+    .notice-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        width: 44px;
+        height: 44px;
+
+        flex-shrink: 0;
+
+        border-radius: 13px;
+
+        font-size: 18px;
+    }
+
+
+    /* BLUE */
+
+    .notice-blue .notice-icon {
+        background: #eef2ff;
+        color: #4f46e5;
+    }
+
+
+    /* GREEN */
+
+    .notice-green .notice-icon {
+        background: #ecfdf5;
+        color: #059669;
+    }
+
+
+    /* ORANGE */
+
+    .notice-orange .notice-icon {
+        background: #fff7ed;
+        color: #ea580c;
+    }
+
+
+    /* CONTENT */
+
+    .notice-content {
+        min-width: 0;
+
+        flex: 1;
+    }
+
+    .notice-top {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+
+        gap: 15px;
+
+        margin-bottom: 6px;
+    }
+
+    .notice-top h6 {
+        margin: 0;
+
+        color: #17201a;
+
+        font-size: 14px;
+        font-weight: 800;
+
+        line-height: 1.4;
+    }
+
+
+    /* DATE */
+
+    .notice-date {
+        flex-shrink: 0;
+
+        padding: 5px 9px;
+
+        border-radius: 7px;
+
+        background: #f1f5f2;
+
+        color: #647069;
+
+        font-size: 10px;
+        font-weight: 750;
+
+        white-space: nowrap;
+    }
+
+
+    /* DESCRIPTION */
+
+    .notice-content p {
+        margin: 0 0 10px;
+
+        color: #737d76;
+
+        font-size: 12px;
+
+        line-height: 1.65;
+    }
+
+
+    /* TYPE */
+
+    .notice-type {
+        display: inline-flex;
+        align-items: center;
+
+        gap: 5px;
+
+        padding: 5px 8px;
+
+        border-radius: 7px;
+
+        background: #f7f9f7;
+
+        color: #69736c;
+
+        font-size: 10px;
+        font-weight: 750;
+    }
+
+
+    /* =====================================================
+       FOOTER
+    ===================================================== */
+
+    .premium-notice-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        gap: 15px;
+
+        padding: 15px 24px;
+
+        border-top: 1px solid #e8ece9;
+
+        background: #ffffff;
+    }
+
+    .premium-notice-footer > span {
+        display: flex;
+        align-items: center;
+
+        gap: 7px;
+
+        color: #7a847d;
+
+        font-size: 11px;
+    }
+
+    .premium-notice-footer > span i {
+        color: #52C048;
+    }
+
+
+    /* DONE BUTTON */
+
+    .notice-done-btn {
+        padding: 9px 17px;
+
+        border: 0;
+        border-radius: 9px;
+
+        background: #52C048;
+
+        color: #ffffff;
+
+        font-size: 12px;
+        font-weight: 800;
+
+        cursor: pointer;
+
+        transition: .2s ease;
+    }
+
+    .notice-done-btn:hover {
+        background: #3ea638;
+
+        transform: translateY(-1px);
+    }
+
+
+    /* =====================================================
+       RESPONSIVE
+    ===================================================== */
+
+    @media (max-width: 650px) {
+
+        .premium-notice-header {
+            padding: 20px;
+        }
+
+        .premium-notice-body {
+            padding: 16px;
+        }
+
+        .notice-card {
+            padding: 15px;
+        }
+
+        .notice-top {
+            flex-direction: column;
+
+            gap: 7px;
+        }
+
+        .notice-date {
+            align-self: flex-start;
+        }
+
+        .premium-notice-footer {
+            flex-direction: column;
+
+            align-items: stretch;
+        }
+
+        .notice-done-btn {
+            width: 100%;
+        }
+    }
+
+</style>
+<!-- =========================================================
+     JOB / TRAINING UPDATES MODAL
+========================================================== -->
+<div class="modal fade" id="jobUpdatesModal" tabindex="-1" aria-labelledby="jobUpdatesModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content" style="border-radius:18px; border:none; box-shadow:0 20px 60px rgba(0,0,0,.18);">
+            <div class="modal-header" style="background:linear-gradient(135deg, #0f766e, #0d9488); color:#fff; border-radius:18px 18px 0 0;">
+                <h5 class="modal-title fs-6 fw-bold" id="jobUpdatesModalLabel"><i class="bi bi-laptop-fill me-2"></i> Career & Job Placement Circulars</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="p-3 border rounded-3 bg-light">
+                            <span class="badge bg-primary mb-2">Full Time</span>
+                            <h6 class="fw-bold mb-1">Senior / Associate Python Developer</h6>
+                            <p class="small text-muted mb-2"><i class="bi bi-building"></i> Tech Solutions Global • Bangalore</p>
+                            <p class="small text-muted">Requirements: Python, Django, REST APIs. Package: 6-9 LPA.</p>
+                            <button class="btn btn-sm btn-outline-primary" onclick="alert('Application details opened.');">View & Apply</button>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="p-3 border rounded-3 bg-light">
+                            <span class="badge bg-success mb-2">Remote</span>
+                            <h6 class="fw-bold mb-1">Full Stack Web Engineer</h6>
+                            <p class="small text-muted mb-2"><i class="bi bi-building"></i> CloudScale Systems • Remote</p>
+                            <p class="small text-muted">Requirements: HTML/CSS, JavaScript, Python/Node. Immediate joining.</p>
+                            <button class="btn btn-sm btn-outline-primary" onclick="alert('Application details opened.');">View & Apply</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- =========================================================
+     SCRIPTS
+========================================================== -->
+
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
+
+<script
+    src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js">
+</script>
+
+<script
+    src="{% static 'js/main.js' %}">
+</script>
+
+
+{% block extra_js %}
+{% endblock %}
+
+
+
+<!-- =========================================================
+     DJANGO MESSAGE TOAST INITIALIZATION
+========================================================== -->
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const messageContainer =
+        document.getElementById("djangoMessages");
+
+    if (!messageContainer) return;
+
+    // Map Django message tags to toast types
+    const TAG_MAP = {
+        success : 'success',
+        error   : 'error',
+        warning : 'warning',
+        info    : 'info',
+        debug   : 'info',
+    };
+
+    messageContainer
+        .querySelectorAll("[data-message]")
+        .forEach(function (el, idx) {
+
+            const rawTags = el.dataset.type || '';
+            const message = el.dataset.message || '';
+
+            // Determine type from tags string ("messages success" etc.)
+            let type = 'info';
+            Object.keys(TAG_MAP).forEach(function (tag) {
+                if (rawTags.includes(tag)) type = TAG_MAP[tag];
+            });
+
+            // Stagger multiple messages slightly
+            setTimeout(function () {
+                showToast(message, type, 5000);
+            }, idx * 180);
+        });
+});
+</script>
+
+
+</body>
+</html>

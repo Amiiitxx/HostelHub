@@ -1,0 +1,1823 @@
+{% extends 'base.html' %}
+
+{% block title %}Rooms & Beds{% endblock %}
+{% block page_title %}Rooms & Beds{% endblock %}
+{% block breadcrumb %}
+<li class="breadcrumb-item active">Hostel</li>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .hostel-page {
+        max-width: 1450px;
+        margin: 0 auto;
+    }
+
+    /* HERO */
+    .hostel-hero {
+        position: relative;
+        overflow: hidden;
+        padding: 30px;
+        margin-bottom: 22px;
+        border-radius: 24px;
+        background:
+            radial-gradient(circle at 90% 15%, rgba(99,102,241,.14), transparent 30%),
+            radial-gradient(circle at 10% 90%, rgba(59,130,246,.08), transparent 28%),
+            #fff;
+        border: 1px solid #e5e7eb;
+        box-shadow: 0 12px 35px rgba(15,23,42,.06);
+    }
+
+    .hostel-hero::after {
+        content: "";
+        position: absolute;
+        width: 220px;
+        height: 220px;
+        right: -80px;
+        bottom: -120px;
+        border-radius: 50%;
+        background: rgba(99,102,241,.06);
+    }
+
+    .hero-inner {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 25px;
+    }
+
+    .hero-left {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .hero-icon {
+        width: 58px;
+        height: 58px;
+        flex: 0 0 58px;
+        border-radius: 17px;
+        background: #eef2ff;
+        color: #4f46e5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 25px;
+    }
+
+    .hero-title {
+        margin: 0 0 5px;
+        font-size: 27px;
+        font-weight: 850;
+        letter-spacing: -.6px;
+        color: #111827;
+    }
+
+    .hero-subtitle {
+        margin: 0;
+        font-size: 13px;
+        color: #64748b;
+    }
+
+    .hero-actions {
+        display: flex;
+        gap: 9px;
+        flex-wrap: wrap;
+    }
+
+    .premium-btn {
+        border-radius: 11px;
+        padding: 10px 15px;
+        font-size: 12px;
+        font-weight: 750;
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+    }
+
+    /* STATS */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 15px;
+        margin-bottom: 24px;
+    }
+
+    .stat-card {
+        position: relative;
+        overflow: hidden;
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 18px;
+        padding: 19px;
+        box-shadow: 0 7px 24px rgba(15,23,42,.045);
+        transition: .2s ease;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 30px rgba(15,23,42,.08);
+    }
+
+    .stat-card::after {
+        content: "";
+        position: absolute;
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        right: -35px;
+        bottom: -35px;
+        background: rgba(99,102,241,.035);
+    }
+
+    .stat-content {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+    }
+
+    .stat-label {
+        color: #64748b;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .45px;
+        margin-bottom: 5px;
+    }
+
+    .stat-value {
+        color: #111827;
+        font-size: 25px;
+        font-weight: 850;
+        line-height: 1;
+    }
+
+    .stat-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 13px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 19px;
+    }
+
+    .stat-blue {
+        background: #eff6ff;
+        color: #2563eb;
+    }
+
+    .stat-purple {
+        background: #f5f3ff;
+        color: #7c3aed;
+    }
+
+    .stat-green {
+        background: #ecfdf5;
+        color: #059669;
+    }
+
+    .stat-orange {
+        background: #fff7ed;
+        color: #ea580c;
+    }
+
+    /* SECTION BAR */
+    .section-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+        margin-bottom: 15px;
+    }
+
+    .section-heading {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .section-heading-icon {
+        width: 35px;
+        height: 35px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #eef2ff;
+        color: #4f46e5;
+    }
+
+    .section-heading h2 {
+        margin: 0;
+        color: #111827;
+        font-size: 16px;
+        font-weight: 800;
+    }
+
+    .section-heading p {
+        margin: 2px 0 0;
+        color: #94a3b8;
+        font-size: 11px;
+    }
+
+    .room-list-link {
+        color: #4f46e5;
+        font-size: 12px;
+        font-weight: 750;
+        text-decoration: none;
+    }
+
+    .room-list-link:hover {
+        text-decoration: underline;
+    }
+
+    /* BUILDING */
+    .building-card {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 20px;
+        overflow: hidden;
+        margin-bottom: 20px;
+        box-shadow: 0 8px 26px rgba(15,23,42,.045);
+    }
+
+    .building-header {
+        padding: 18px 20px;
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        border-bottom: 1px solid #eef2f7;
+        background: linear-gradient(180deg, #fff, #fafbff);
+    }
+
+    .building-icon {
+        width: 44px;
+        height: 44px;
+        flex: 0 0 44px;
+        border-radius: 13px;
+        background: #eef2ff;
+        color: #4f46e5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 19px;
+    }
+
+    .building-info {
+        min-width: 0;
+        flex: 1;
+    }
+
+    .building-name {
+        color: #111827;
+        font-size: 15px;
+        font-weight: 800;
+        margin-bottom: 3px;
+    }
+
+    .building-address {
+        color: #94a3b8;
+        font-size: 11px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .building-meta {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .building-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 7px 10px;
+        border-radius: 999px;
+        background: #f8fafc;
+        color: #64748b;
+        border: 1px solid #e5e7eb;
+        font-size: 10px;
+        font-weight: 750;
+    }
+
+    .delete-btn {
+        width: 34px;
+        height: 34px;
+        border: 1px solid #fee2e2;
+        background: #fff;
+        color: #ef4444;
+        border-radius: 10px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: .2s ease;
+    }
+
+    .delete-btn:hover {
+        background: #fef2f2;
+        border-color: #fecaca;
+    }
+
+    /* FLOOR */
+    .floor-section {
+        border-bottom: 1px solid #eef2f7;
+    }
+
+    .floor-section:last-child {
+        border-bottom: none;
+    }
+
+    .floor-header {
+        padding: 11px 20px;
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        background: #f8fafc;
+    }
+
+    .floor-icon {
+        width: 28px;
+        height: 28px;
+        border-radius: 8px;
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        color: #64748b;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+    }
+
+    .floor-name {
+        color: #475569;
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: .5px;
+        flex: 1;
+    }
+
+    .floor-count {
+        color: #94a3b8;
+        font-size: 10px;
+        font-weight: 700;
+    }
+
+    /* ROOMS */
+    .rooms-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(205px, 1fr));
+        gap: 13px;
+        padding: 17px 20px;
+    }
+
+    .room-link {
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .room-card {
+        min-height: 148px;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        padding: 15px;
+        background: #fff;
+        transition: .2s ease;
+    }
+
+    .room-card:hover {
+        transform: translateY(-3px);
+        border-color: #c7d2fe;
+        box-shadow: 0 10px 24px rgba(79,70,229,.10);
+    }
+
+    .room-top {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 8px;
+        margin-bottom: 14px;
+    }
+
+    .room-number {
+        font-size: 18px;
+        font-weight: 850;
+        color: #111827;
+        line-height: 1.1;
+    }
+
+    .room-type {
+        color: #94a3b8;
+        font-size: 10px;
+        margin-top: 4px;
+        font-weight: 650;
+    }
+
+    .room-status {
+        padding: 5px 8px;
+        border-radius: 999px;
+        font-size: 9px;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .status-available {
+        background: #ecfdf5;
+        color: #047857;
+    }
+
+    .status-occupied {
+        background: #fef2f2;
+        color: #b91c1c;
+    }
+
+    .status-maintenance {
+        background: #fff7ed;
+        color: #c2410c;
+    }
+
+    .status-partial {
+        background: #fffbeb;
+        color: #a16207;
+    }
+
+    .capacity-wrap {
+        margin-top: 8px;
+    }
+
+    .capacity-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 7px;
+    }
+
+    .capacity-label {
+        color: #64748b;
+        font-size: 10px;
+        font-weight: 650;
+    }
+
+    .capacity-percent {
+        color: #334155;
+        font-size: 10px;
+        font-weight: 800;
+    }
+
+    .capacity-track {
+        height: 7px;
+        border-radius: 999px;
+        overflow: hidden;
+        background: #f1f5f9;
+    }
+
+    .capacity-fill {
+        height: 100%;
+        border-radius: inherit;
+        transition: width .4s ease;
+    }
+
+    .fill-low {
+        background: #10b981;
+    }
+
+    .fill-medium {
+        background: #f59e0b;
+    }
+
+    .fill-high {
+        background: #ef4444;
+    }
+
+    .room-bottom {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 9px;
+        color: #94a3b8;
+        font-size: 10px;
+    }
+
+    .room-bottom strong {
+        color: #475569;
+    }
+
+    /* ADD ROOM */
+    .add-room-card {
+        min-height: 148px;
+        border: 1.5px dashed #cbd5e1;
+        border-radius: 16px;
+        padding: 15px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        cursor: pointer;
+        color: #94a3b8;
+        transition: .2s ease;
+        background: #fcfdff;
+    }
+
+    .add-room-card:hover {
+        color: #4f46e5;
+        border-color: #818cf8;
+        background: #f8faff;
+    }
+
+    .add-room-icon {
+        width: 39px;
+        height: 39px;
+        border-radius: 11px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #eef2ff;
+        color: #4f46e5;
+        font-size: 17px;
+    }
+
+    .add-room-card span {
+        font-size: 11px;
+        font-weight: 750;
+    }
+
+    /* EMPTY */
+    .empty-card {
+        text-align: center;
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 22px;
+        padding: 65px 25px;
+        box-shadow: 0 8px 25px rgba(15,23,42,.04);
+    }
+
+    .empty-icon {
+        width: 65px;
+        height: 65px;
+        border-radius: 19px;
+        margin: 0 auto 15px;
+        background: #f1f5f9;
+        color: #94a3b8;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 29px;
+    }
+
+    .empty-card h3 {
+        margin: 0 0 7px;
+        font-size: 17px;
+        font-weight: 800;
+        color: #334155;
+    }
+
+    .empty-card p {
+        margin: 0 auto;
+        max-width: 430px;
+        font-size: 12px;
+        color: #94a3b8;
+    }
+
+    /* MODALS */
+    .modal-content {
+        border: 0;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 25px 60px rgba(15,23,42,.18);
+    }
+
+    .modal-header {
+        padding: 19px 21px;
+        border-bottom: 1px solid #eef2f7;
+    }
+
+    .modal-title {
+        font-size: 16px;
+        font-weight: 800;
+        color: #111827;
+    }
+
+    .modal-body {
+        padding: 21px;
+    }
+
+    .modal-footer {
+        padding: 14px 21px;
+        border-top: 1px solid #eef2f7;
+    }
+
+    .modal .form-label {
+        color: #334155;
+        font-size: 12px;
+        font-weight: 750;
+    }
+
+    .modal .form-control,
+    .modal .form-select {
+        border-radius: 10px;
+        min-height: 44px;
+        font-size: 12px;
+        border-color: #dbe1ea;
+    }
+
+    .modal textarea.form-control {
+        min-height: 85px;
+    }
+
+    .modal .form-text {
+        color: #94a3b8;
+        font-size: 10px;
+    }
+
+    .required {
+        color: #ef4444;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 1100px) {
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 760px) {
+        .hero-inner {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .hero-actions {
+            width: 100%;
+        }
+
+        .hero-actions .btn {
+            flex: 1;
+        }
+
+        .building-header {
+            align-items: flex-start;
+            flex-wrap: wrap;
+        }
+
+        .building-meta {
+            width: 100%;
+            padding-left: 57px;
+        }
+
+        .building-meta .building-badge {
+            flex: 1;
+        }
+
+        .rooms-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            padding: 14px;
+        }
+    }
+
+    @media (max-width: 520px) {
+        .hostel-hero {
+            padding: 21px;
+        }
+
+        .hero-left {
+            align-items: flex-start;
+        }
+
+        .hero-title {
+            font-size: 22px;
+        }
+
+        .stats-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .stat-card {
+            padding: 15px;
+        }
+
+        .stat-value {
+            font-size: 21px;
+        }
+
+        .stat-icon {
+            width: 37px;
+            height: 37px;
+            font-size: 16px;
+        }
+
+        .rooms-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .building-meta {
+            padding-left: 0;
+        }
+    }
+</style>
+{% endblock %}
+
+
+{% block content %}
+<div class="hostel-page">
+
+    <!-- HERO -->
+    <div class="hostel-hero">
+
+        <div class="hero-inner">
+
+            <div class="hero-left">
+
+                <div class="hero-icon">
+                    <i class="bi bi-buildings"></i>
+                </div>
+
+                <div>
+                    <h1 class="hero-title">Rooms &amp; Beds</h1>
+
+                    <p class="hero-subtitle">
+                        Manage your hostel buildings, floors, rooms and bed capacity from one place.
+                    </p>
+                </div>
+
+            </div>
+
+
+            {% if request.user.can_manage_hostel %}
+
+            <div class="hero-actions">
+
+                <button
+                    type="button"
+                    class="btn btn-light border premium-btn"
+                    data-bs-toggle="modal"
+                    data-bs-target="#addFloorModal"
+                >
+                    <i class="bi bi-layers"></i>
+                    Add Floor
+                </button>
+
+                <button
+                    type="button"
+                    class="btn btn-primary premium-btn"
+                    data-bs-toggle="modal"
+                    data-bs-target="#addBuildingModal"
+                >
+                    <i class="bi bi-building-add"></i>
+                    Add Building
+                </button>
+
+            </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+    <!-- STATS -->
+    <div class="stats-grid">
+
+        <div class="stat-card">
+            <div class="stat-content">
+                <div>
+                    <div class="stat-label">Buildings</div>
+                    <div class="stat-value">{{ total_buildings }}</div>
+                </div>
+
+                <div class="stat-icon stat-blue">
+                    <i class="bi bi-buildings"></i>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="stat-card">
+            <div class="stat-content">
+                <div>
+                    <div class="stat-label">Total Rooms</div>
+                    <div class="stat-value">{{ total_rooms }}</div>
+                </div>
+
+                <div class="stat-icon stat-purple">
+                    <i class="bi bi-door-open"></i>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="stat-card">
+            <div class="stat-content">
+                <div>
+                    <div class="stat-label">Available Beds</div>
+                    <div class="stat-value">{{ available_beds }}</div>
+                </div>
+
+                <div class="stat-icon stat-green">
+                    <i class="bi bi-check-circle"></i>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="stat-card">
+            <div class="stat-content">
+                <div>
+                    <div class="stat-label">Occupied Beds</div>
+                    <div class="stat-value">{{ occupied_beds }}</div>
+                </div>
+
+                <div class="stat-icon stat-orange">
+                    <i class="bi bi-person-fill"></i>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- SECTION HEADER -->
+    <div class="section-bar">
+
+        <div class="section-heading">
+
+            <div class="section-heading-icon">
+                <i class="bi bi-diagram-3"></i>
+            </div>
+
+            <div>
+                <h2>Hostel Structure</h2>
+                <p>Buildings → Floors → Rooms → Beds</p>
+            </div>
+
+        </div>
+
+
+        <a
+            href="{% url 'hostel:room_list' %}"
+            class="room-list-link"
+        >
+            View Room List
+            <i class="bi bi-arrow-right ms-1"></i>
+        </a>
+
+    </div>
+
+
+    <!-- BUILDINGS -->
+    {% if buildings %}
+
+        {% for building in buildings %}
+
+        <div class="building-card">
+
+            <!-- BUILDING HEADER -->
+            <div class="building-header">
+
+                <div class="building-icon">
+                    <i class="bi bi-building"></i>
+                </div>
+
+
+                <div class="building-info">
+
+                    <div class="building-name">
+                        {{ building.name }}
+                    </div>
+
+                    {% if building.address %}
+                    <div class="building-address">
+                        <i class="bi bi-geo-alt me-1"></i>
+                        {{ building.address }}
+                    </div>
+                    {% else %}
+                    <div class="building-address">
+                        No address specified
+                    </div>
+                    {% endif %}
+
+                </div>
+
+
+                <div class="building-meta">
+
+                    <span class="building-badge">
+                        <i class="bi bi-door-open"></i>
+                        {{ building.total_rooms }} rooms
+                    </span>
+
+                    <span class="building-badge">
+                        <i class="bi bi-check-circle"></i>
+                        {{ building.available_beds }} available
+                    </span>
+
+                    {% if request.user.is_admin %}
+
+                    <form
+                        method="post"
+                        action="{% url 'hostel:building_delete' building.pk %}"
+                        style="display:inline;"
+                        onsubmit="return confirmBuildingDelete('{{ building.name|escapejs }}');"
+                    >
+                        {% csrf_token %}
+
+                        <button
+                            type="submit"
+                            class="delete-btn"
+                            title="Delete building"
+                        >
+                            <i class="bi bi-trash3"></i>
+                        </button>
+
+                    </form>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+
+            <!-- FLOORS -->
+            {% for floor in building.floors.all %}
+
+            <div class="floor-section">
+
+                <div class="floor-header">
+
+                    <div class="floor-icon">
+                        <i class="bi bi-layers-half"></i>
+                    </div>
+
+                    <div class="floor-name">
+                        {{ floor.name|default:"Floor"|title }}
+                        {% if not floor.name %}
+                            {{ floor.floor_number }}
+                        {% endif %}
+                    </div>
+
+                    <div class="floor-count">
+                        {{ floor.rooms.count }} room{{ floor.rooms.count|pluralize }}
+                    </div>
+
+                </div>
+
+
+                <!-- ROOMS -->
+                <div class="rooms-grid">
+
+                    {% for room in floor.rooms.all %}
+
+                    <a
+                        href="{% url 'hostel:room_detail' room.pk %}"
+                        class="room-link"
+                    >
+
+                        <div class="room-card">
+
+                            <div class="room-top">
+
+                                <div>
+                                    <div class="room-number">
+                                        {{ room.room_number }}
+                                    </div>
+
+                                    <div class="room-type">
+                                        {{ room.get_room_type_display }}
+                                    </div>
+                                </div>
+
+
+                                {% if room.display_status == 'available' %}
+
+                                    <span class="room-status status-available">
+                                        Available
+                                    </span>
+
+                                {% elif room.display_status == 'full' %}
+
+                                    <span class="room-status status-occupied">
+                                        Full
+                                    </span>
+
+                                {% elif room.display_status == 'maintenance' %}
+
+                                    <span class="room-status status-maintenance">
+                                        Maintenance
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="room-status status-partial">
+                                        Partial
+                                    </span>
+
+                                {% endif %}
+
+                            </div>
+
+
+                            <div class="capacity-wrap">
+
+                                <div class="capacity-header">
+
+                                    <span class="capacity-label">
+                                        Occupancy
+                                    </span>
+
+                                    <span class="capacity-percent">
+                                        {{ room.occupancy_percent }}%
+                                    </span>
+
+                                </div>
+
+
+                                <div class="capacity-track">
+
+                                    <div
+                                        class="capacity-fill
+                                        {% if room.occupancy_percent >= 100 %}
+                                            fill-high
+                                        {% elif room.occupancy_percent >= 50 %}
+                                            fill-medium
+                                        {% else %}
+                                            fill-low
+                                        {% endif %}"
+                                        style="width:{{ room.occupancy_percent }}%;"
+                                    ></div>
+
+                                </div>
+
+
+                                <div class="room-bottom">
+
+                                    <span>
+                                        <strong>{{ room.occupied_beds }}</strong>
+                                        / {{ room.total_beds }} beds
+                                    </span>
+
+                                    <span>
+                                        {% if room.available_beds %}
+                                            {{ room.available_beds }} free
+                                        {% else %}
+                                            No vacancy
+                                        {% endif %}
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </a>
+
+                    {% empty %}
+
+                    <div
+                        style="
+                            grid-column:1/-1;
+                            padding:25px;
+                            text-align:center;
+                            color:#94a3b8;
+                            font-size:12px;
+                        "
+                    >
+                        <i class="bi bi-door-open d-block mb-2" style="font-size:25px;"></i>
+                        No rooms have been added to this floor yet.
+                    </div>
+
+                    {% endfor %}
+
+
+                    <!-- ADD ROOM -->
+                    {% if request.user.can_manage_hostel %}
+
+                    <div
+                        class="add-room-card"
+                        data-bs-toggle="modal"
+                        data-bs-target="#addRoomModal"
+                        data-floor="{{ floor.pk }}"
+                    >
+
+                        <div class="add-room-icon">
+                            <i class="bi bi-plus-lg"></i>
+                        </div>
+
+                        <span>Add Room</span>
+
+                    </div>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+            {% empty %}
+
+            <!-- NO FLOORS -->
+            <div
+                style="
+                    padding:30px 20px;
+                    text-align:center;
+                    color:#94a3b8;
+                    font-size:12px;
+                "
+            >
+
+                <i
+                    class="bi bi-layers d-block mb-2"
+                    style="font-size:25px;"
+                ></i>
+
+                <div class="mb-2">
+                    No floors have been added to this building yet.
+                </div>
+
+                {% if request.user.can_manage_hostel %}
+
+                <button
+                    type="button"
+                    class="btn btn-primary btn-sm premium-btn"
+                    data-bs-toggle="modal"
+                    data-bs-target="#addFloorModal"
+                    data-building="{{ building.pk }}"
+                >
+                    <i class="bi bi-plus-lg"></i>
+                    Add Floor
+                </button>
+
+                {% endif %}
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+        {% endfor %}
+
+
+    {% else %}
+
+        <!-- EMPTY STATE -->
+        <div class="empty-card">
+
+            <div class="empty-icon">
+                <i class="bi bi-building-x"></i>
+            </div>
+
+            <h3>No Buildings Yet</h3>
+
+            <p>
+                Your hostel structure is empty. Add your first building
+                and start creating floors, rooms and beds.
+            </p>
+
+            {% if request.user.can_manage_hostel %}
+
+            <button
+                type="button"
+                class="btn btn-primary premium-btn mt-4"
+                data-bs-toggle="modal"
+                data-bs-target="#addBuildingModal"
+            >
+                <i class="bi bi-building-add"></i>
+                Add First Building
+            </button>
+
+            {% endif %}
+
+        </div>
+
+    {% endif %}
+
+
+
+    <!-- ========================================================= -->
+    <!-- ADD BUILDING MODAL -->
+    <!-- ========================================================= -->
+
+    {% if request.user.can_manage_hostel %}
+
+    <div
+        class="modal fade"
+        id="addBuildingModal"
+        tabindex="-1"
+        aria-hidden="true"
+    >
+
+        <div class="modal-dialog modal-dialog-centered">
+
+            <div class="modal-content">
+
+                <form
+                    method="post"
+                    action="{% url 'hostel:building_create' %}"
+                >
+
+                    {% csrf_token %}
+
+                    <div class="modal-header">
+
+                        <div>
+                            <div class="modal-title">
+                                <i class="bi bi-building-add text-primary me-2"></i>
+                                Add Building
+                            </div>
+
+                            <small class="text-muted">
+                                Create a new hostel building
+                            </small>
+                        </div>
+
+                        <button
+                            type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                        ></button>
+
+                    </div>
+
+
+                    <div class="modal-body">
+
+                        <div class="mb-3">
+
+                            <label class="form-label">
+                                Building Name
+                                <span class="required">*</span>
+                            </label>
+
+                            <input
+                                type="text"
+                                name="name"
+                                class="form-control"
+                                placeholder="e.g. Block A"
+                                maxlength="100"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div>
+
+                            <label class="form-label">
+                                Address
+                            </label>
+
+                            <textarea
+                                name="address"
+                                class="form-control"
+                                rows="3"
+                                placeholder="Building address or description"
+                            ></textarea>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="modal-footer">
+
+                        <button
+                            type="button"
+                            class="btn btn-light border premium-btn"
+                            data-bs-dismiss="modal"
+                        >
+                            Cancel
+                        </button>
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary premium-btn"
+                        >
+                            <i class="bi bi-check2-circle"></i>
+                            Create Building
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ========================================================= -->
+    <!-- ADD FLOOR MODAL -->
+    <!-- ========================================================= -->
+
+    <div
+        class="modal fade"
+        id="addFloorModal"
+        tabindex="-1"
+        aria-hidden="true"
+    >
+
+        <div class="modal-dialog modal-dialog-centered">
+
+            <div class="modal-content">
+
+                <form
+                    method="post"
+                    action="{% url 'hostel:floor_create' %}"
+                >
+
+                    {% csrf_token %}
+
+                    <div class="modal-header">
+
+                        <div>
+                            <div class="modal-title">
+                                <i class="bi bi-layers text-primary me-2"></i>
+                                Add Floor
+                            </div>
+
+                            <small class="text-muted">
+                                Add a floor to a building
+                            </small>
+                        </div>
+
+                        <button
+                            type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                        ></button>
+
+                    </div>
+
+
+                    <div class="modal-body">
+
+                        <div class="mb-3">
+
+                            <label class="form-label">
+                                Building
+                                <span class="required">*</span>
+                            </label>
+
+                            <select
+                                name="building"
+                                class="form-select"
+                                id="floorBuildingSelect"
+                                required
+                            >
+
+                                <option value="">
+                                    Select Building
+                                </option>
+
+                                {% for b in buildings %}
+
+                                <option value="{{ b.pk }}">
+                                    {{ b.name }}
+                                </option>
+
+                                {% endfor %}
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="mb-3">
+
+                            <label class="form-label">
+                                Floor Number
+                                <span class="required">*</span>
+                            </label>
+
+                            <input
+                                type="number"
+                                name="floor_number"
+                                class="form-control"
+                                min="0"
+                                max="100"
+                                placeholder="e.g. 1"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div>
+
+                            <label class="form-label">
+                                Floor Name
+                            </label>
+
+                            <input
+                                type="text"
+                                name="name"
+                                class="form-control"
+                                placeholder="e.g. First Floor"
+                                maxlength="100"
+                            >
+
+                            <div class="form-text">
+                                Optional. You can leave this blank and use the floor number.
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="modal-footer">
+
+                        <button
+                            type="button"
+                            class="btn btn-light border premium-btn"
+                            data-bs-dismiss="modal"
+                        >
+                            Cancel
+                        </button>
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary premium-btn"
+                        >
+                            <i class="bi bi-check2-circle"></i>
+                            Create Floor
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ========================================================= -->
+    <!-- ADD ROOM MODAL -->
+    <!-- ========================================================= -->
+
+    <div
+        class="modal fade"
+        id="addRoomModal"
+        tabindex="-1"
+        aria-hidden="true"
+    >
+
+        <div class="modal-dialog modal-dialog-centered">
+
+            <div class="modal-content">
+
+                <form
+                    method="post"
+                    action="{% url 'hostel:room_create' %}"
+                >
+
+                    {% csrf_token %}
+
+                    <input
+                        type="hidden"
+                        name="floor"
+                        id="addRoomFloorId"
+                    >
+
+
+                    <div class="modal-header">
+
+                        <div>
+                            <div class="modal-title">
+                                <i class="bi bi-door-open text-primary me-2"></i>
+                                Add Room
+                            </div>
+
+                            <small class="text-muted">
+                                Create a room and automatically generate its beds
+                            </small>
+                        </div>
+
+                        <button
+                            type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                        ></button>
+
+                    </div>
+
+
+                    <div class="modal-body">
+
+                        <div class="mb-3">
+
+                            <label class="form-label">
+                                Room Number
+                                <span class="required">*</span>
+                            </label>
+
+                            <input
+                                type="text"
+                                name="room_number"
+                                class="form-control"
+                                placeholder="e.g. 101"
+                                maxlength="30"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div class="mb-3">
+
+                            <label class="form-label">
+                                Room Type
+                            </label>
+
+                            <select
+                                name="room_type"
+                                class="form-select"
+                            >
+
+                                <option value="single">
+                                    Single
+                                </option>
+
+                                <option
+                                    value="double"
+                                    selected
+                                >
+                                    Double
+                                </option>
+
+                                <option value="triple">
+                                    Triple
+                                </option>
+
+                                <option value="dormitory">
+                                    Dormitory
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="mb-3">
+
+                            <label class="form-label">
+                                Capacity
+                                <span class="required">*</span>
+                            </label>
+
+                            <input
+                                type="number"
+                                name="capacity"
+                                class="form-control"
+                                id="roomCapacity"
+                                value="2"
+                                min="1"
+                                max="20"
+                                required
+                            >
+
+                            <div class="form-text">
+                                Beds will be automatically created based on this capacity.
+                            </div>
+
+                        </div>
+
+
+                        <div>
+
+                            <label class="form-label">
+                                Monthly Rent (₹)
+                            </label>
+
+                            <div class="input-group">
+
+                                <span class="input-group-text">
+                                    ₹
+                                </span>
+
+                                <input
+                                    type="number"
+                                    name="monthly_rent"
+                                    class="form-control"
+                                    value="0"
+                                    min="0"
+                                    step="0.01"
+                                >
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="modal-footer">
+
+                        <button
+                            type="button"
+                            class="btn btn-light border premium-btn"
+                            data-bs-dismiss="modal"
+                        >
+                            Cancel
+                        </button>
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary premium-btn"
+                        >
+                            <i class="bi bi-door-open"></i>
+                            Create Room
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    {% endif %}
+
+</div>
+{% endblock %}
+
+
+{% block extra_js %}
+<script>
+
+document.addEventListener('DOMContentLoaded', function () {
+
+    /* ---------------------------------------------------------
+       ADD ROOM → AUTO SET FLOOR
+    --------------------------------------------------------- */
+
+    const roomModal = document.getElementById('addRoomModal');
+
+    if (roomModal) {
+
+        roomModal.addEventListener(
+            'show.bs.modal',
+            function (event) {
+
+                const button = event.relatedTarget;
+
+                if (!button) {
+                    return;
+                }
+
+                const floorId = button.dataset.floor;
+
+                if (floorId) {
+
+                    const floorInput =
+                        document.getElementById('addRoomFloorId');
+
+                    if (floorInput) {
+                        floorInput.value = floorId;
+                    }
+
+                }
+
+            }
+        );
+
+    }
+
+
+    /* ---------------------------------------------------------
+       ADD FLOOR → AUTO SET BUILDING
+    --------------------------------------------------------- */
+
+    const floorModal =
+        document.getElementById('addFloorModal');
+
+    if (floorModal) {
+
+        floorModal.addEventListener(
+            'show.bs.modal',
+            function (event) {
+
+                const button = event.relatedTarget;
+
+                if (!button) {
+                    return;
+                }
+
+                const buildingId =
+                    button.dataset.building;
+
+                if (buildingId) {
+
+                    const select =
+                        document.getElementById(
+                            'floorBuildingSelect'
+                        );
+
+                    if (select) {
+                        select.value = buildingId;
+                    }
+
+                }
+
+            }
+        );
+
+    }
+
+
+    /* ---------------------------------------------------------
+       ROOM CAPACITY LIMIT
+    --------------------------------------------------------- */
+
+    const capacityInput =
+        document.getElementById('roomCapacity');
+
+    if (capacityInput) {
+
+        capacityInput.addEventListener(
+            'input',
+            function () {
+
+                let value = parseInt(this.value || 1);
+
+                if (value < 1) {
+                    value = 1;
+                }
+
+                if (value > 20) {
+                    value = 20;
+                }
+
+                this.value = value;
+
+            }
+        );
+
+    }
+
+
+    /* ---------------------------------------------------------
+       FORM SUBMIT LOADING STATE
+    --------------------------------------------------------- */
+
+    document.querySelectorAll(
+        '#addBuildingModal form, #addFloorModal form, #addRoomModal form'
+    ).forEach(function (form) {
+
+        form.addEventListener('submit', function () {
+
+            const button =
+                form.querySelector('button[type="submit"]');
+
+            if (!button) {
+                return;
+            }
+
+            button.disabled = true;
+
+            const original =
+                button.innerHTML;
+
+            button.innerHTML =
+                '<span class="spinner-border spinner-border-sm me-1"></span> Saving...';
+
+        });
+
+    });
+
+});
+
+
+/* ---------------------------------------------------------
+   BUILDING DELETE CONFIRMATION
+--------------------------------------------------------- */
+
+function confirmBuildingDelete(name) {
+
+    return confirm(
+        'Delete "' + name +
+        '"?\n\nThis will also remove its floors, rooms and beds.'
+    );
+
+}
+
+</script>
+{% endblock %}

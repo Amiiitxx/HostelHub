@@ -1,0 +1,138 @@
+{% extends 'admin/base_admin.html' %}
+
+{% block title %}Leave Requests Management | HostelMS Enterprise{% endblock %}
+
+{% block content %}
+<div class="admin-page-header">
+    <div>
+        <h1>Resident Leave Requests</h1>
+        <p>Review, approve, or reject resident outstation and leave applications</p>
+    </div>
+</div>
+
+<!-- LEAVE STATS -->
+<div class="row g-3 mb-4">
+    <div class="col-sm-4">
+        <a href="{% url 'dashboard:admin_leaves' %}?status=pending" class="admin-card p-3 d-flex align-items-center gap-3 text-decoration-none text-dark">
+            <div class="metric-icon-box box-amber" style="width: 44px; height: 44px; font-size: 20px;">
+                <i class="bi bi-clock-history"></i>
+            </div>
+            <div>
+                <div class="fs-xs text-muted text-uppercase fw-bold">Pending Review</div>
+                <div class="fs-4 fw-bold text-warning">{{ pending_count }}</div>
+            </div>
+        </a>
+    </div>
+    <div class="col-sm-4">
+        <a href="{% url 'dashboard:admin_leaves' %}?status=approved" class="admin-card p-3 d-flex align-items-center gap-3 text-decoration-none text-dark">
+            <div class="metric-icon-box box-emerald" style="width: 44px; height: 44px; font-size: 20px;">
+                <i class="bi bi-check-circle"></i>
+            </div>
+            <div>
+                <div class="fs-xs text-muted text-uppercase fw-bold">Approved Leaves</div>
+                <div class="fs-4 fw-bold text-success">{{ approved_count }}</div>
+            </div>
+        </a>
+    </div>
+    <div class="col-sm-4">
+        <a href="{% url 'dashboard:admin_leaves' %}?status=rejected" class="admin-card p-3 d-flex align-items-center gap-3 text-decoration-none text-dark">
+            <div class="metric-icon-box box-rose" style="width: 44px; height: 44px; font-size: 20px;">
+                <i class="bi bi-x-circle"></i>
+            </div>
+            <div>
+                <div class="fs-xs text-muted text-uppercase fw-bold">Rejected Leaves</div>
+                <div class="fs-4 fw-bold text-danger">{{ rejected_count }}</div>
+            </div>
+        </a>
+    </div>
+</div>
+
+<!-- LEAVE TABLE -->
+<div class="admin-card">
+    <div class="admin-card-header">
+        <h5 class="admin-card-title"><i class="bi bi-calendar2-range text-primary"></i> Leave Applications</h5>
+        <div class="d-flex gap-2">
+            <a href="{% url 'dashboard:admin_leaves' %}" class="btn btn-sm btn-outline-secondary {% if not selected_status %}active{% endif %}">All</a>
+            <a href="{% url 'dashboard:admin_leaves' %}?status=pending" class="btn btn-sm btn-outline-warning {% if selected_status == 'pending' %}active{% endif %}">Pending</a>
+            <a href="{% url 'dashboard:admin_leaves' %}?status=approved" class="btn btn-sm btn-outline-success {% if selected_status == 'approved' %}active{% endif %}">Approved</a>
+            <a href="{% url 'dashboard:admin_leaves' %}?status=rejected" class="btn btn-sm btn-outline-danger {% if selected_status == 'rejected' %}active{% endif %}">Rejected</a>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Resident</th>
+                    <th>Leave Type</th>
+                    <th>Duration</th>
+                    <th>Reason</th>
+                    <th>Status</th>
+                    <th>Decision Details</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for leave in leaves %}
+                <tr>
+                    <td>
+                        <div class="fw-bold">{{ leave.student.full_name }}</div>
+                        <div class="fs-xs text-muted">{{ leave.student.occupation|default:"Student" }} &bull; {{ leave.student.phone }}</div>
+                    </td>
+                    <td>
+                        <span class="badge bg-light text-dark border">{{ leave.leave_type }}</span>
+                    </td>
+                    <td>
+                        <div class="fw-semibold">{{ leave.start_date|date:"M d, Y" }} &ndash; {{ leave.end_date|date:"M d, Y" }}</div>
+                        <div class="fs-xs text-muted">{{ leave.total_days }} day(s)</div>
+                    </td>
+                    <td style="max-width: 260px;">
+                        <div class="text-truncate fs-xs" title="{{ leave.reason }}">{{ leave.reason }}</div>
+                    </td>
+                    <td>
+                        {% if leave.status == 'approved' %}
+                        <span class="pill-badge pill-success"><i class="bi bi-check-circle"></i> Approved</span>
+                        {% elif leave.status == 'rejected' %}
+                        <span class="pill-badge pill-danger"><i class="bi bi-x-circle"></i> Rejected</span>
+                        {% else %}
+                        <span class="pill-badge pill-warning"><i class="bi bi-clock"></i> Pending</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if leave.action_by %}
+                        <div class="fs-xs text-muted">By: {{ leave.action_by.get_full_name|default:leave.action_by.username }}</div>
+                        {% if leave.action_remarks %}<div class="fs-xs text-muted fst-italic">{{ leave.action_remarks }}</div>{% endif %}
+                        {% else %}
+                        <span class="fs-xs text-muted">-</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-end">
+                        {% if leave.status == 'pending' %}
+                        <form method="POST" action="{% url 'dashboard:admin_leave_action' leave.id %}" class="d-inline">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="approve">
+                            <button type="submit" class="btn btn-sm btn-success px-2 py-1" style="font-size: 11.5px; border-radius: 6px;">Approve</button>
+                        </form>
+                        <form method="POST" action="{% url 'dashboard:admin_leave_action' leave.id %}" class="d-inline ms-1">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="reject">
+                            <button type="submit" class="btn btn-sm btn-outline-danger px-2 py-1" style="font-size: 11.5px; border-radius: 6px;">Reject</button>
+                        </form>
+                        {% else %}
+                        <span class="fs-xs text-muted">Decision logged</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="text-center py-4 text-muted">
+                        <i class="bi bi-calendar2-check fs-2"></i>
+                        <p class="mt-2 mb-0">No leave requests found.</p>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

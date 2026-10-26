@@ -1,0 +1,917 @@
+{% extends "base.html" %}
+
+{% block title %}Check In Visitor{% endblock %}
+
+{% block extra_css %}
+<style>
+    .visitor-form-page {
+        max-width: 1250px;
+        margin: 0 auto;
+    }
+
+    .form-hero {
+        background:
+            radial-gradient(circle at 90% 10%, rgba(99,102,241,.15), transparent 30%),
+            #fff;
+        border: 1px solid #e8eaf0;
+        border-radius: 24px;
+        padding: 28px 30px;
+        box-shadow: 0 10px 35px rgba(15,23,42,.06);
+    }
+
+    .hero-icon {
+        width: 54px;
+        height: 54px;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #eef2ff;
+        color: #4f46e5;
+        font-size: 24px;
+        flex-shrink: 0;
+    }
+
+    .form-hero h2 {
+        font-size: 25px;
+        font-weight: 800;
+        color: #111827;
+        letter-spacing: -.5px;
+    }
+
+    .form-hero p {
+        color: #6b7280;
+        font-size: 13px;
+    }
+
+    .form-card {
+        background: #fff;
+        border: 1px solid #e8eaf0;
+        border-radius: 20px;
+        box-shadow: 0 8px 30px rgba(15,23,42,.045);
+    }
+
+    .form-card-header {
+        padding: 20px 22px;
+        border-bottom: 1px solid #eef0f4;
+    }
+
+    .section-title {
+        color: #111827;
+        font-size: 15px;
+        font-weight: 800;
+    }
+
+    .section-subtitle {
+        color: #94a3b8;
+        font-size: 11px;
+        margin-top: 3px;
+    }
+
+    .form-card-body {
+        padding: 24px 22px;
+    }
+
+    .form-label {
+        color: #475569;
+        font-size: 11px;
+        font-weight: 750;
+        text-transform: uppercase;
+        letter-spacing: .45px;
+        margin-bottom: 7px;
+    }
+
+    .form-control,
+    .form-select {
+        min-height: 46px;
+        border-radius: 11px;
+        border: 1px solid #e2e8f0;
+        font-size: 13px;
+        color: #334155;
+        box-shadow: none;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        border-color: #818cf8;
+        box-shadow: 0 0 0 3px rgba(99,102,241,.10);
+    }
+
+    .input-group-text {
+        border-color: #e2e8f0;
+        background: #f8fafc;
+        color: #64748b;
+        border-radius: 11px 0 0 11px;
+    }
+
+    .input-group .form-control {
+        border-radius: 0 11px 11px 0;
+    }
+
+    .required {
+        color: #ef4444;
+    }
+
+    .info-panel {
+        background: #f8fafc;
+        border: 1px solid #e8edf3;
+        border-radius: 18px;
+        padding: 20px;
+    }
+
+    .info-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #eef2ff;
+        color: #4f46e5;
+        font-size: 17px;
+    }
+
+    .info-title {
+        font-size: 13px;
+        font-weight: 800;
+        color: #1e293b;
+    }
+
+    .info-text {
+        color: #64748b;
+        font-size: 12px;
+        line-height: 1.65;
+    }
+
+    .check-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        margin-top: 14px;
+    }
+
+    .check-item i {
+        color: #16a34a;
+        margin-top: 2px;
+    }
+
+    .check-item span {
+        color: #64748b;
+        font-size: 12px;
+        line-height: 1.5;
+    }
+
+    .student-preview {
+        display: none;
+        margin-top: 10px;
+        padding: 12px 14px;
+        border-radius: 12px;
+        background: #f8fafc;
+        border: 1px solid #e8edf3;
+    }
+
+    .student-preview.show {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+    }
+
+    .student-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        background: #eef2ff;
+        color: #4f46e5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: 800;
+    }
+
+    .student-preview-name {
+        color: #1e293b;
+        font-size: 12px;
+        font-weight: 750;
+    }
+
+    .student-preview-text {
+        color: #94a3b8;
+        font-size: 10px;
+        margin-top: 2px;
+    }
+
+    .bottom-bar {
+        padding: 18px 22px;
+        border-top: 1px solid #eef0f4;
+        background: #fcfcfd;
+        border-radius: 0 0 20px 20px;
+    }
+
+    .btn-premium {
+        min-height: 44px;
+        border-radius: 11px;
+        padding: 0 18px;
+        font-size: 12px;
+        font-weight: 750;
+    }
+
+    .btn-primary.btn-premium {
+        background: #4f46e5;
+        border-color: #4f46e5;
+    }
+
+    .btn-primary.btn-premium:hover {
+        background: #4338ca;
+        border-color: #4338ca;
+    }
+
+    .btn-soft {
+        background: #fff;
+        color: #475569;
+        border: 1px solid #e2e8f0;
+    }
+
+    .btn-soft:hover {
+        background: #f8fafc;
+        color: #111827;
+    }
+
+    .form-hint {
+        color: #94a3b8;
+        font-size: 10px;
+        margin-top: 6px;
+    }
+
+    .step-line {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        margin-top: 20px;
+    }
+
+    .step {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        color: #64748b;
+        font-size: 10px;
+        font-weight: 700;
+    }
+
+    .step-number {
+        width: 25px;
+        height: 25px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #eef2ff;
+        color: #4f46e5;
+        font-size: 10px;
+    }
+
+    .step-line-divider {
+        flex: 1;
+        height: 1px;
+        background: #e5e7eb;
+        max-width: 70px;
+    }
+
+    @media (max-width: 767.98px) {
+        .form-hero {
+            padding: 20px;
+            border-radius: 18px;
+        }
+
+        .form-hero h2 {
+            font-size: 21px;
+        }
+
+        .form-card {
+            border-radius: 16px;
+        }
+
+        .form-card-body {
+            padding: 20px 17px;
+        }
+
+        .bottom-bar {
+            padding: 15px 17px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid py-4 visitor-form-page">
+
+    <!-- Hero -->
+    <div class="form-hero mb-4">
+
+        <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+
+            <div class="d-flex align-items-center gap-3">
+
+                <div class="hero-icon">
+                    <i class="bi bi-person-plus-fill"></i>
+                </div>
+
+                <div>
+                    <h2 class="mb-1">Check In Visitor</h2>
+                    <p class="mb-0">
+                        Register a visitor and create a new hostel entry record.
+                    </p>
+                </div>
+
+            </div>
+
+            <a href="{% url 'visitors:list' %}"
+               class="btn btn-soft btn-premium">
+                <i class="bi bi-arrow-left me-1"></i>
+                Visitor Records
+            </a>
+
+        </div>
+
+        <div class="step-line">
+
+            <div class="step">
+                <span class="step-number">1</span>
+                Visitor Details
+            </div>
+
+            <div class="step-line-divider"></div>
+
+            <div class="step">
+                <span class="step-number">2</span>
+                Student
+            </div>
+
+            <div class="step-line-divider"></div>
+
+            <div class="step">
+                <span class="step-number">3</span>
+                Check In
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="row g-4">
+
+        <!-- Main Form -->
+        <div class="col-xl-8">
+
+            <div class="form-card">
+
+                <div class="form-card-header">
+
+                    <div class="section-title">
+                        <i class="bi bi-person-vcard me-2 text-primary"></i>
+                        Visitor Information
+                    </div>
+
+                    <div class="section-subtitle">
+                        Enter the visitor's basic information accurately.
+                    </div>
+
+                </div>
+
+
+                <form method="post"
+                      id="visitorForm">
+
+                    {% csrf_token %}
+
+                    <div class="form-card-body">
+
+                        <div class="row g-4">
+
+                            <!-- Student -->
+                            <div class="col-12">
+
+                                <label class="form-label">
+                                    Visiting Student
+                                    <span class="required">*</span>
+                                </label>
+
+                                <select name="student"
+                                        id="studentSelect"
+                                        class="form-select"
+                                        required>
+
+                                    <option value="">
+                                        Select the student being visited
+                                    </option>
+
+                                    {% for student in students %}
+
+                                    <option value="{{ student.pk }}"
+                                            data-name="{{ student.full_name }}"
+                                            data-id="{{ student.student_id|default:'' }}"
+                                            data-phone="{{ student.phone|default:'' }}">
+
+                                        {{ student.full_name }}
+                                        {% if student.student_id %}
+                                            — {{ student.student_id }}
+                                        {% endif %}
+
+                                    </option>
+
+                                    {% endfor %}
+
+                                </select>
+
+                                <div class="form-hint">
+                                    Only active students are available for visitor registration.
+                                </div>
+
+
+                                <div class="student-preview"
+                                     id="studentPreview">
+
+                                    <div class="student-avatar"
+                                         id="studentAvatar">
+                                        S
+                                    </div>
+
+                                    <div>
+                                        <div class="student-preview-name"
+                                             id="studentPreviewName">
+                                            Student
+                                        </div>
+
+                                        <div class="student-preview-text"
+                                             id="studentPreviewText">
+                                            Student information
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- Visitor Name -->
+                            <div class="col-md-6">
+
+                                <label class="form-label">
+                                    Visitor Name
+                                    <span class="required">*</span>
+                                </label>
+
+                                <div class="input-group">
+
+                                    <span class="input-group-text">
+                                        <i class="bi bi-person"></i>
+                                    </span>
+
+                                    <input
+                                        type="text"
+                                        name="visitor_name"
+                                        id="visitorName"
+                                        class="form-control"
+                                        placeholder="Enter visitor name"
+                                        maxlength="100"
+                                        required
+                                    >
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- Phone -->
+                            <div class="col-md-6">
+
+                                <label class="form-label">
+                                    Phone Number
+                                    <span class="required">*</span>
+                                </label>
+
+                                <div class="input-group">
+
+                                    <span class="input-group-text">
+                                        <i class="bi bi-telephone"></i>
+                                    </span>
+
+                                    <input
+                                        type="tel"
+                                        name="phone"
+                                        id="visitorPhone"
+                                        class="form-control"
+                                        placeholder="Enter phone number"
+                                        maxlength="20"
+                                        required
+                                    >
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- Relation -->
+                            <div class="col-md-6">
+
+                                <label class="form-label">
+                                    Relation
+                                </label>
+
+                                <div class="input-group">
+
+                                    <span class="input-group-text">
+                                        <i class="bi bi-people"></i>
+                                    </span>
+
+                                    <input
+                                        type="text"
+                                        name="relation"
+                                        class="form-control"
+                                        placeholder="e.g. Parent, Friend, Relative"
+                                        maxlength="50"
+                                    >
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- ID Proof -->
+                            <div class="col-md-6">
+
+                                <label class="form-label">
+                                    ID Proof
+                                </label>
+
+                                <div class="input-group">
+
+                                    <span class="input-group-text">
+                                        <i class="bi bi-card-text"></i>
+                                    </span>
+
+                                    <input
+                                        type="text"
+                                        name="id_proof"
+                                        class="form-control"
+                                        placeholder="ID proof number / reference"
+                                        maxlength="100"
+                                    >
+
+                                </div>
+
+                                <div class="form-hint">
+                                    Optional identification reference.
+                                </div>
+
+                            </div>
+
+
+                            <!-- Purpose -->
+                            <div class="col-12">
+
+                                <label class="form-label">
+                                    Purpose of Visit
+                                </label>
+
+                                <div class="input-group">
+
+                                    <span class="input-group-text align-items-start pt-3">
+                                        <i class="bi bi-chat-left-text"></i>
+                                    </span>
+
+                                    <textarea
+                                        name="purpose"
+                                        id="purpose"
+                                        class="form-control"
+                                        rows="4"
+                                        maxlength="200"
+                                        placeholder="Briefly describe the reason for the visit..."
+                                    ></textarea>
+
+                                </div>
+
+                                <div class="d-flex justify-content-between mt-1">
+                                    <span class="form-hint">
+                                        Keep the purpose short and clear.
+                                    </span>
+
+                                    <span class="form-hint"
+                                          id="purposeCount">
+                                        0 / 200
+                                    </span>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Bottom Actions -->
+                    <div class="bottom-bar">
+
+                        <div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-3">
+
+                            <div class="text-muted small">
+                                <i class="bi bi-info-circle me-1"></i>
+                                Check-in time will be recorded automatically.
+                            </div>
+
+                            <div class="d-flex gap-2">
+
+                                <a href="{% url 'visitors:list' %}"
+                                   class="btn btn-soft btn-premium">
+                                    Cancel
+                                </a>
+
+                                <button type="submit"
+                                        id="submitBtn"
+                                        class="btn btn-primary btn-premium">
+
+                                    <i class="bi bi-box-arrow-in-right me-1"></i>
+                                    Check In Visitor
+
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+
+        <!-- Sidebar -->
+        <div class="col-xl-4">
+
+            <div class="info-panel mb-4">
+
+                <div class="d-flex align-items-center gap-3 mb-3">
+
+                    <div class="info-icon">
+                        <i class="bi bi-shield-check"></i>
+                    </div>
+
+                    <div>
+                        <div class="info-title">
+                            Visitor Check-In
+                        </div>
+
+                        <div class="section-subtitle">
+                            Keep entry records complete
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <div class="check-item">
+                    <i class="bi bi-check-circle-fill"></i>
+                    <span>
+                        Select the correct student before registering the visitor.
+                    </span>
+                </div>
+
+
+                <div class="check-item">
+                    <i class="bi bi-check-circle-fill"></i>
+                    <span>
+                        Verify the visitor's name and contact number.
+                    </span>
+                </div>
+
+
+                <div class="check-item">
+                    <i class="bi bi-check-circle-fill"></i>
+                    <span>
+                        Add an ID proof reference when available.
+                    </span>
+                </div>
+
+
+                <div class="check-item">
+                    <i class="bi bi-check-circle-fill"></i>
+                    <span>
+                        Mention the purpose of the visit for better record keeping.
+                    </span>
+                </div>
+
+            </div>
+
+
+            <div class="info-panel">
+
+                <div class="d-flex align-items-center gap-3 mb-3">
+
+                    <div class="info-icon">
+                        <i class="bi bi-clock-history"></i>
+                    </div>
+
+                    <div>
+                        <div class="info-title">
+                            What happens next?
+                        </div>
+
+                        <div class="section-subtitle">
+                            Automatic visitor tracking
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <p class="info-text mb-3">
+                    After checking in, the visitor will appear in the visitor
+                    records with an active <strong>Inside</strong> status.
+                </p>
+
+                <p class="info-text mb-0">
+                    When the visitor leaves the hostel, use
+                    <strong>Check Out</strong> from the visitor records to
+                    complete the visit.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    const form = document.getElementById('visitorForm');
+    const studentSelect = document.getElementById('studentSelect');
+    const studentPreview = document.getElementById('studentPreview');
+    const studentAvatar = document.getElementById('studentAvatar');
+    const studentPreviewName = document.getElementById('studentPreviewName');
+    const studentPreviewText = document.getElementById('studentPreviewText');
+
+    const purpose = document.getElementById('purpose');
+    const purposeCount = document.getElementById('purposeCount');
+
+    const visitorName = document.getElementById('visitorName');
+    const visitorPhone = document.getElementById('visitorPhone');
+
+    const submitBtn = document.getElementById('submitBtn');
+
+
+    /* Student preview */
+    studentSelect.addEventListener('change', function () {
+
+        const option = this.options[this.selectedIndex];
+
+        if (!option || !option.value) {
+            studentPreview.classList.remove('show');
+            return;
+        }
+
+        const name = option.dataset.name || option.textContent.trim();
+        const id = option.dataset.id || '';
+        const phone = option.dataset.phone || '';
+
+        studentPreviewName.textContent = name;
+
+        const details = [];
+
+        if (id) {
+            details.push(id);
+        }
+
+        if (phone) {
+            details.push(phone);
+        }
+
+        studentPreviewText.textContent =
+            details.length ? details.join(' • ') : 'Active student';
+
+        studentAvatar.textContent =
+            name.charAt(0).toUpperCase();
+
+        studentPreview.classList.add('show');
+    });
+
+
+    /* Purpose counter */
+    function updatePurposeCount() {
+
+        const length = purpose.value.length;
+
+        purposeCount.textContent =
+            length + ' / 200';
+
+    }
+
+    purpose.addEventListener('input', updatePurposeCount);
+
+
+    /* Phone: allow common phone characters */
+    visitorPhone.addEventListener('input', function () {
+
+        this.value = this.value.replace(
+            /[^0-9+\-\s()]/g,
+            ''
+        );
+
+    });
+
+
+    /* Form validation */
+    form.addEventListener('submit', function (event) {
+
+        if (!studentSelect.value) {
+            event.preventDefault();
+
+            studentSelect.focus();
+            studentSelect.classList.add('is-invalid');
+
+            return;
+        }
+
+        studentSelect.classList.remove('is-invalid');
+
+
+        if (!visitorName.value.trim()) {
+            event.preventDefault();
+
+            visitorName.focus();
+            visitorName.classList.add('is-invalid');
+
+            return;
+        }
+
+        visitorName.classList.remove('is-invalid');
+
+
+        if (!visitorPhone.value.trim()) {
+            event.preventDefault();
+
+            visitorPhone.focus();
+            visitorPhone.classList.add('is-invalid');
+
+            return;
+        }
+
+        visitorPhone.classList.remove('is-invalid');
+
+
+        /* Loading state */
+        submitBtn.disabled = true;
+
+        submitBtn.innerHTML =
+            '<span class="spinner-border spinner-border-sm me-2"></span>' +
+            'Checking In...';
+
+    });
+
+
+    /* Remove invalid state while typing */
+    document.querySelectorAll(
+        '#visitorForm input, #visitorForm select, #visitorForm textarea'
+    ).forEach(function (field) {
+
+        field.addEventListener('input', function () {
+            this.classList.remove('is-invalid');
+        });
+
+        field.addEventListener('change', function () {
+            this.classList.remove('is-invalid');
+        });
+
+    });
+
+
+    /* Ctrl/Cmd + S */
+    document.addEventListener('keydown', function (event) {
+
+        if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 's') {
+
+            event.preventDefault();
+
+            if (form.checkValidity()) {
+                form.requestSubmit();
+            } else {
+                form.reportValidity();
+            }
+
+        }
+
+    });
+
+});
+</script>
+
+{% endblock %}

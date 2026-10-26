@@ -1,0 +1,284 @@
+{% extends 'base.html' %}
+
+{% block title %}My Profile{% endblock %}
+{% block page_title %}Resident Profile{% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item active">Profile</li>
+{% endblock %}
+
+{% block extra_css %}
+{% include 'dashboard/_dashboard_styles.html' %}
+<style>
+    .profile-card-header {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        padding-bottom: 24px;
+        border-bottom: 1px solid var(--border, #e2e8f0);
+        margin-bottom: 24px;
+    }
+    .profile-avatar-lg {
+        width: 72px;
+        height: 72px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #4f46e5, #7c3aed);
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+        font-weight: 800;
+        box-shadow: 0 8px 20px rgba(99,102,241,0.25);
+    }
+    .profile-detail-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 16px;
+    }
+    .profile-detail-item {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 14px 18px;
+    }
+    .profile-detail-item label {
+        display: block;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .5px;
+        color: #64748b;
+        margin-bottom: 4px;
+    }
+    .profile-detail-item strong {
+        display: block;
+        font-size: 14px;
+        color: #1e293b;
+        font-weight: 600;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+
+    <!-- PROFILE HERO OVERVIEW -->
+    <div class="dashboard-card mb-4">
+        <div class="card-body-custom">
+            <div class="profile-card-header">
+                <div class="profile-avatar-lg">
+                    {% if request.user.avatar %}
+                        <img src="{{ request.user.avatar.url }}" alt="Profile" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">
+                    {% else %}
+                        {{ request.user.get_full_name|default:request.user.username|first|upper }}
+                    {% endif %}
+                </div>
+                <div>
+                    <h3 class="mb-1 fw-bold text-dark">{{ request.user.get_full_name|default:request.user.username }}</h3>
+                    <div class="d-flex align-items-center gap-2 flex-wrap">
+                        <span class="badge bg-primary px-3 py-2 fw-semibold" style="font-size: 12px;">
+                            <i class="bi bi-person-badge-fill me-1"></i>
+                            {{ profile.occupation|default:request.user.occupation|default:request.user.get_role_display|upper }}
+                        </span>
+                        {% if allocation %}
+                            <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2" style="font-size: 12px;">
+                                <i class="bi bi-door-open me-1"></i> Room {{ allocation.room.room_number }} (Bed {{ allocation.bed.bed_number }})
+                            </span>
+                        {% else %}
+                            <span class="badge bg-secondary-subtle text-secondary px-3 py-2" style="font-size: 12px;">
+                                <i class="bi bi-info-circle me-1"></i> Room Allocation Pending
+                            </span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- CORE DETAILS -->
+            <div class="profile-detail-grid">
+                <div class="profile-detail-item">
+                    <label>Username</label>
+                    <strong>@{{ request.user.username }}</strong>
+                </div>
+                <div class="profile-detail-item">
+                    <label>Registered Email</label>
+                    <strong>{{ request.user.email|default:"Not specified" }}</strong>
+                </div>
+                <div class="profile-detail-item">
+                    <label>Phone Number</label>
+                    <strong>{{ request.user.phone|default:"Not specified" }}</strong>
+                </div>
+                <div class="profile-detail-item">
+                    <label>Account Role</label>
+                    <strong>{{ request.user.get_role_display }}</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TWO COLUMN: OCCUPATION DETAILS & EDIT FORM -->
+    <div class="dashboard-grid">
+
+        <!-- OCCUPATION-SPECIFIC DETAILS CARD -->
+        <div class="dashboard-card">
+            <div class="card-header-custom">
+                <div class="card-header-left">
+                    <div class="header-icon icon-teal">
+                        <i class="bi bi-briefcase-fill"></i>
+                    </div>
+                    <div>
+                        <h3>Occupation Information</h3>
+                        <p>Verified profile credentials</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body-custom">
+                <div class="personal-list">
+                    <div class="personal-item">
+                        <label>Current Occupation</label>
+                        <strong class="text-primary">{{ profile.occupation|default:request.user.occupation|default:"Resident" }}</strong>
+                    </div>
+
+                    {% if 'student' in profile.occupation|default:request.user.occupation|lower %}
+                        <div class="personal-item">
+                            <label>Student ID</label>
+                            <strong>{{ profile.student_id|default:"—" }}</strong>
+                        </div>
+                        <div class="personal-item">
+                            <label>Course & Year</label>
+                            <strong>{{ profile.course|default:"Degree Program" }} (Year {{ profile.year|default:"1" }})</strong>
+                        </div>
+                        <div class="personal-item">
+                            <label>Monthly Attendance</label>
+                            <strong>{{ profile.get_attendance_percentage }}% Recorded</strong>
+                        </div>
+                    {% elif 'gov' in profile.occupation|default:request.user.occupation|lower %}
+                        <div class="personal-item">
+                            <label>Employee ID</label>
+                            <strong>{{ profile.employee_id|default:"—" }}</strong>
+                        </div>
+                        <div class="personal-item">
+                            <label>Department</label>
+                            <strong>{{ profile.department|default:"Government Department" }}</strong>
+                        </div>
+                        <div class="personal-item">
+                            <label>Designation</label>
+                            <strong>{{ profile.designation|default:"Official" }}</strong>
+                        </div>
+                        <div class="personal-item">
+                            <label>Government Office</label>
+                            <strong>{{ profile.government_office|default:"Office / Secretariat" }}</strong>
+                        </div>
+                        <div class="personal-item">
+                            <label>Office Location</label>
+                            <strong>{{ profile.office_location|default:"State / City" }}</strong>
+                        </div>
+                    {% elif 'busin' in profile.occupation|default:request.user.occupation|lower %}
+                        <div class="personal-item">
+                            <label>Business / Enterprise Name</label>
+                            <strong>{{ profile.business_name|default:"Enterprise" }}</strong>
+                        </div>
+                        <div class="personal-item">
+                            <label>Business Type</label>
+                            <strong>{{ profile.business_type|default:"Commercial / Services" }}</strong>
+                        </div>
+                        <div class="personal-item">
+                            <label>Business Location</label>
+                            <strong>{{ profile.business_location|default:"City Center" }}</strong>
+                        </div>
+                    {% elif 'job' in profile.occupation|default:request.user.occupation|lower %}
+                        <div class="personal-item">
+                            <label>Highest Qualification</label>
+                            <strong>{{ profile.qualification|default:"Graduate" }}</strong>
+                        </div>
+                        <div class="personal-item">
+                            <label>Key Skills</label>
+                            <strong>{{ profile.skills|default:"Technical & Professional Skills" }}</strong>
+                        </div>
+                        <div class="personal-item">
+                            <label>Experience</label>
+                            <strong>{{ profile.experience|default:"Fresher / Entry" }}</strong>
+                        </div>
+                        <div class="personal-item">
+                            <label>Preferred Role & Location</label>
+                            <strong>{{ profile.preferred_job|default:"Open to Opportunities" }} ({{ profile.preferred_location|default:"Any" }})</strong>
+                        </div>
+                    {% else %}
+                        <div class="personal-item">
+                            <label>Employee ID</label>
+                            <strong>{{ profile.employee_id|default:"—" }}</strong>
+                        </div>
+                        <div class="personal-item">
+                            <label>Company Name</label>
+                            <strong>{{ profile.company_name|default:"Corporate Enterprise" }}</strong>
+                        </div>
+                        <div class="personal-item">
+                            <label>Designation</label>
+                            <strong>{{ profile.designation|default:"Specialist" }}</strong>
+                        </div>
+                        <div class="personal-item">
+                            <label>Work Location</label>
+                            <strong>{{ profile.work_location|default:"Corporate Hub" }}</strong>
+                        </div>
+                        <div class="personal-item">
+                            <label>Work Shift</label>
+                            <strong>{{ profile.work_shift|default:"General Shift" }}</strong>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- EDIT PROFILE FORM CARD -->
+        <div class="dashboard-card">
+            <div class="card-header-custom">
+                <div class="card-header-left">
+                    <div class="header-icon icon-blue">
+                        <i class="bi bi-pencil-square"></i>
+                    </div>
+                    <div>
+                        <h3>Update Contact Information</h3>
+                        <p>Keep your contact details up to date</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body-custom">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">First Name</label>
+                        {{ form.first_name }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">Last Name</label>
+                        {{ form.last_name }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">Email Address</label>
+                        {{ form.email }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">Phone Number</label>
+                        {{ form.phone }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">Profile Photo</label>
+                        {{ form.avatar }}
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold">
+                        <i class="bi bi-check-circle me-1"></i> Save Profile Changes
+                    </button>
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,340 @@
+{% extends 'base.html' %}
+
+{% block title %}Master Admin Dashboard{% endblock %}
+{% block page_title %}Hostel Administration Dashboard{% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item active">Master Admin Dashboard</li>
+{% endblock %}
+
+{% block extra_css %}
+{% include 'dashboard/_dashboard_styles.html' %}
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+
+    <!-- WELCOME HERO -->
+    <section class="welcome-card">
+        <div class="welcome-content">
+            <div class="welcome-small">
+                <i class="bi bi-shield-lock-fill"></i>
+                Master Administration Control Panel
+            </div>
+            <h2>
+                Welcome,
+                <span>{{ request.user.get_full_name|default:request.user.username }}</span>
+            </h2>
+            <p>
+                Complete management dashboard for hostel residents across all occupation categories,
+                room allocations, financial collections, complaints, and visitor logs.
+            </p>
+        </div>
+
+        <div class="welcome-profile">
+            <div class="profile-avatar">
+                <i class="bi bi-shield-check"></i>
+            </div>
+            <div class="profile-info">
+                <strong>{{ request.user.get_full_name|default:request.user.username }}</strong>
+                <span>{{ request.user.get_role_display|upper }}</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- CORE KPIS -->
+    <section class="summary-grid grid-admin">
+        <div class="summary-card">
+            <div class="summary-icon icon-indigo">
+                <i class="bi bi-people-fill"></i>
+            </div>
+            <div class="summary-content">
+                <span>Total Users</span>
+                <strong>{{ total_users }}</strong>
+                <small>Registered in system</small>
+            </div>
+        </div>
+
+        <div class="summary-card">
+            <div class="summary-icon icon-blue">
+                <i class="bi bi-door-open-fill"></i>
+            </div>
+            <div class="summary-content">
+                <span>Rooms & Beds</span>
+                <strong>{{ occupied_beds }} / {{ total_beds }}</strong>
+                <small>{{ occupancy_pct }}% Occupancy ({{ available_beds }} free)</small>
+            </div>
+        </div>
+
+        <div class="summary-card">
+            <div class="summary-icon icon-amber">
+                <i class="bi bi-wallet2"></i>
+            </div>
+            <div class="summary-content">
+                <span>Pending Fees</span>
+                <strong>₹{{ pending_fees }}</strong>
+                <small>Awaiting collection</small>
+            </div>
+        </div>
+
+        <div class="summary-card">
+            <div class="summary-icon icon-rose">
+                <i class="bi bi-chat-left-dots-fill"></i>
+            </div>
+            <div class="summary-content">
+                <span>Active Complaints</span>
+                <strong>{{ active_complaints }}</strong>
+                <small>{{ complaints_pending }} pending, {{ complaints_in_progress }} in progress</small>
+            </div>
+        </div>
+    </section>
+
+    <!-- OCCUPATION BREAKDOWN (SECTION 16 REQUIREMENT) -->
+    <section class="dashboard-card mb-4">
+        <div class="card-header-custom">
+            <div class="card-header-left">
+                <div class="header-icon">
+                    <i class="bi bi-diagram-3-fill"></i>
+                </div>
+                <div>
+                    <h3>Resident Breakdown by Occupation</h3>
+                    <p>Live distribution of residents across all registered categories</p>
+                </div>
+            </div>
+            <a href="{% url 'accounts:user_list' %}" class="btn btn-sm btn-outline-primary" style="font-size:11px; font-weight:600;">
+                <i class="bi bi-person-lines-fill me-1"></i> View All Users
+            </a>
+        </div>
+        <div class="card-body-custom">
+            <div class="occ-badge-grid">
+                <div class="occ-pill">
+                    <span><i class="bi bi-mortarboard me-2 text-primary"></i> Students</span>
+                    <strong>{{ students_count }}</strong>
+                </div>
+                <div class="occ-pill">
+                    <span><i class="bi bi-briefcase me-2 text-success"></i> Working Professionals</span>
+                    <strong>{{ working_prof_count }}</strong>
+                </div>
+                <div class="occ-pill">
+                    <span><i class="bi bi-building me-2 text-warning"></i> Government Employees</span>
+                    <strong>{{ gov_emp_count }}</strong>
+                </div>
+                <div class="occ-pill">
+                    <span><i class="bi bi-person-workspace me-2 text-info"></i> Private Employees</span>
+                    <strong>{{ priv_emp_count }}</strong>
+                </div>
+                <div class="occ-pill">
+                    <span><i class="bi bi-shop me-2 text-secondary"></i> Business / Self Employed</span>
+                    <strong>{{ business_count }}</strong>
+                </div>
+                <div class="occ-pill">
+                    <span><i class="bi bi-search me-2 text-danger"></i> Job Seekers</span>
+                    <strong>{{ job_seeker_count }}</strong>
+                </div>
+                <div class="occ-pill">
+                    <span><i class="bi bi-people me-2 text-muted"></i> Other Categories</span>
+                    <strong>{{ other_users_count }}</strong>
+                </div>
+                <div class="occ-pill" style="background:#eef2ff; border-color:#c7d2fe;">
+                    <span class="text-primary fw-bold"><i class="bi bi-check2-circle me-2"></i> Total Active Rooms</span>
+                    <strong class="text-primary">{{ total_rooms }}</strong>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ADMIN MANAGEMENT SHORTCUTS -->
+    <section class="dashboard-card mb-4">
+        <div class="card-header-custom">
+            <div class="card-header-left">
+                <div class="header-icon">
+                    <i class="bi bi-grid-fill"></i>
+                </div>
+                <div>
+                    <h3>Administrative Management</h3>
+                    <p>Direct navigation to manage operations, users, rooms, and finances</p>
+                </div>
+            </div>
+        </div>
+        <div class="card-body-custom">
+            <div class="quick-actions">
+                <a href="{% url 'accounts:user_list' %}" class="quick-action">
+                    <div class="quick-action-icon icon-indigo">
+                        <i class="bi bi-people"></i>
+                    </div>
+                    <div class="quick-action-text">
+                        <strong>User Management</strong>
+                        <span>Manage accounts & roles</span>
+                    </div>
+                </a>
+
+                <a href="{% url 'hostel:index' %}" class="quick-action">
+                    <div class="quick-action-icon icon-blue">
+                        <i class="bi bi-door-open"></i>
+                    </div>
+                    <div class="quick-action-text">
+                        <strong>Room Management</strong>
+                        <span>Rooms, beds, blocks</span>
+                    </div>
+                </a>
+
+                <a href="{% url 'allocations:list' %}" class="quick-action">
+                    <div class="quick-action-icon icon-teal">
+                        <i class="bi bi-box-arrow-in-right"></i>
+                    </div>
+                    <div class="quick-action-text">
+                        <strong>Room Allocations</strong>
+                        <span>Assign beds & check-outs</span>
+                    </div>
+                </a>
+
+                <a href="{% url 'fees:list' %}" class="quick-action">
+                    <div class="quick-action-icon icon-green">
+                        <i class="bi bi-credit-card"></i>
+                    </div>
+                    <div class="quick-action-text">
+                        <strong>Payment Management</strong>
+                        <span>Fee receipts & invoices</span>
+                    </div>
+                </a>
+
+                <a href="{% url 'complaints:list' %}" class="quick-action">
+                    <div class="quick-action-icon icon-amber">
+                        <i class="bi bi-chat-left-text"></i>
+                    </div>
+                    <div class="quick-action-text">
+                        <strong>Complaints Desk</strong>
+                        <span>{{ active_complaints }} open tickets</span>
+                    </div>
+                </a>
+
+                <a href="{% url 'visitors:list' %}" class="quick-action">
+                    <div class="quick-action-icon icon-purple">
+                        <i class="bi bi-person-vcard"></i>
+                    </div>
+                    <div class="quick-action-text">
+                        <strong>Visitor Management</strong>
+                        <span>{{ visitors_today }} entries today</span>
+                    </div>
+                </a>
+
+                <a href="{% url 'attendance:index' %}" class="quick-action">
+                    <div class="quick-action-icon icon-sky">
+                        <i class="bi bi-calendar2-check"></i>
+                    </div>
+                    <div class="quick-action-text">
+                        <strong>Attendance Logs</strong>
+                        <span>Daily register & metrics</span>
+                    </div>
+                </a>
+
+                <a href="{% url 'reports:index' %}" class="quick-action">
+                    <div class="quick-action-icon icon-rose">
+                        <i class="bi bi-bar-chart"></i>
+                    </div>
+                    <div class="quick-action-text">
+                        <strong>System Reports</strong>
+                        <span>Occupancy & financial audit</span>
+                    </div>
+                </a>
+
+                <a href="#" data-bs-toggle="modal" data-bs-target="#leaveModal" class="quick-action">
+                    <div class="quick-action-icon icon-teal">
+                        <i class="bi bi-calendar2-range-fill"></i>
+                    </div>
+                    <div class="quick-action-text">
+                        <strong>Leave Requests</strong>
+                        <span>Review resident passes</span>
+                    </div>
+                </a>
+
+                <a href="#" data-bs-toggle="modal" data-bs-target="#noticesModal" class="quick-action">
+                    <div class="quick-action-icon icon-amber">
+                        <i class="bi bi-bell-fill"></i>
+                    </div>
+                    <div class="quick-action-text">
+                        <strong>Hostel Notices</strong>
+                        <span>Circulars & bulletins</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- RECENT ACTIVITY & NOTICES -->
+    <section class="bottom-grid">
+        <!-- RECENT ALLOCATIONS -->
+        <div class="dashboard-card">
+            <div class="card-header-custom">
+                <div class="card-header-left">
+                    <div class="header-icon">
+                        <i class="bi bi-clock-history"></i>
+                    </div>
+                    <div>
+                        <h3>Recent Allocations</h3>
+                        <p>Latest bed assignments</p>
+                    </div>
+                </div>
+                <a href="{% url 'allocations:list' %}" class="btn btn-sm btn-link text-decoration-none" style="font-size:11px;">View All</a>
+            </div>
+            <div class="card-body-custom">
+                {% if recent_allocations %}
+                    {% for alloc in recent_allocations %}
+                        <div class="update-item">
+                            <div class="update-icon icon-blue">
+                                <i class="bi bi-door-open-fill"></i>
+                            </div>
+                            <div class="update-content">
+                                <strong>{{ alloc.student.full_name }} — Room {{ alloc.bed.room.room_number }} (Bed {{ alloc.bed.bed_number }})</strong>
+                                <span>Occupation: {{ alloc.student.occupation|default:"Student" }} • Allocated {{ alloc.allocated_date|date:"M d, Y" }}</span>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="room-empty">
+                        <i class="bi bi-folder-x"></i>
+                        No recent allocations recorded.
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- RECENT COMPLAINTS -->
+        <div class="dashboard-card">
+            <div class="card-header-custom">
+                <div class="card-header-left">
+                    <div class="header-icon icon-amber">
+                        <i class="bi bi-exclamation-triangle"></i>
+                    </div>
+                    <div>
+                        <h3>Recent Complaints</h3>
+                        <p>Resident maintenance and service requests</p>
+                    </div>
+                </div>
+                <a href="{% url 'complaints:list' %}" class="btn btn-sm btn-link text-decoration-none" style="font-size:11px;">View All</a>
+            </div>
+            <div class="card-body-custom">
+                {% if recent_complaints %}
+                    {% for c in recent_complaints %}
+                        <div class="update-item">
+                            <div class="update-icon {% if c.status == 'resolved' %}icon-green{% else %}icon-amber{% endif %}">
+                                <i class="bi bi-chat-left-dots-fill"></i>
+                            </div>
+                            <div class="update-content">
+                                <strong>{{ c.title }}</strong>
+                                <span>By {{ c.student.full_name }} • Status: <span class="badge {% if c.status == 'resolved' %}bg-success{% else %}bg-warning text-dark{% endif %}">{{ c.get_status_display }}</span></span>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="room-empty">
+                        <i class="bi bi-check-circle"></i>
+                        No pending complaints at this time.
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+
+</div>
+{% endblock %}

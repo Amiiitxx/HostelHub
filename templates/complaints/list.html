@@ -1,0 +1,1357 @@
+{% extends 'base.html' %}
+
+{% block title %}Complaints{% endblock %}
+{% block page_title %}Complaints{% endblock %}
+
+{% block extra_css %}
+<style>
+/* =========================================================
+   COMPLAINTS PAGE — PREMIUM LIGHT UI
+   ========================================================= */
+
+.complaints-page {
+    max-width: 1500px;
+    margin: 0 auto;
+    padding-bottom: 28px;
+}
+
+/* =========================
+   HERO
+   ========================= */
+.complaint-hero {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 28px;
+    padding: 30px 32px;
+    margin-bottom: 22px;
+    min-height: 142px;
+    border: 1px solid #e7e9ff;
+    border-radius: 26px;
+    background:
+        radial-gradient(circle at 76% 20%, rgba(124,92,255,.14), transparent 22%),
+        radial-gradient(circle at 92% 100%, rgba(99,102,241,.10), transparent 28%),
+        linear-gradient(135deg, #ffffff 0%, #f7f7ff 52%, #f1f3ff 100%);
+    color: #111827;
+    box-shadow: 0 14px 38px rgba(31,41,55,.07);
+}
+
+.complaint-hero::before,
+.complaint-hero::after {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.complaint-hero::before {
+    width: 250px;
+    height: 250px;
+    right: 70px;
+    top: -180px;
+    border: 1px solid rgba(99,102,241,.10);
+}
+
+.complaint-hero::after {
+    width: 170px;
+    height: 170px;
+    right: -55px;
+    bottom: -105px;
+    background: rgba(99,102,241,.05);
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+.hero-icon {
+    width: 64px;
+    height: 64px;
+    flex: 0 0 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 18px;
+    color: #ffffff;
+    font-size: 25px;
+    background: linear-gradient(135deg, #6d5dfc, #4f46e5);
+    box-shadow: 0 10px 22px rgba(79,70,229,.22);
+}
+
+.hero-title {
+    margin: 0 0 6px;
+    color: #111827 !important;
+    font-size: 30px;
+    font-weight: 850;
+    letter-spacing: -.8px;
+}
+
+.hero-subtitle {
+    margin: 0;
+    color: #64748b !important;
+    font-size: 13px;
+}
+
+.hero-right {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+.total-box {
+    min-width: 105px;
+    text-align: right;
+}
+
+.total-number {
+    display: block;
+    color: #111827;
+    font-size: 28px;
+    line-height: 1;
+    font-weight: 850;
+}
+
+.total-label {
+    display: block;
+    margin-top: 6px;
+    color: #94a3b8;
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .8px;
+}
+
+.new-complaint-btn {
+    border: 0 !important;
+    border-radius: 12px !important;
+    padding: 12px 18px !important;
+    font-weight: 750 !important;
+    background: linear-gradient(135deg, #5b4df5, #4938dc) !important;
+    box-shadow: 0 9px 20px rgba(79,70,229,.22);
+    transition: transform .18s ease, box-shadow .18s ease;
+}
+
+.new-complaint-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 13px 25px rgba(79,70,229,.28);
+}
+
+/* =========================
+   FILTER CARD
+   ========================= */
+.filter-card {
+    position: relative;
+    background: rgba(255,255,255,.94);
+    border: 1px solid #e7e9f0;
+    border-radius: 22px;
+    padding: 22px;
+    margin-bottom: 20px;
+    box-shadow: 0 8px 25px rgba(15,23,42,.045);
+}
+
+.filter-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+}
+
+.filter-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+    color: #111827;
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.filter-title i {
+    width: 31px;
+    height: 31px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9px;
+    color: #5b4df5;
+    background: #f0efff;
+}
+
+.clear-filter {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 7px 10px;
+    border-radius: 9px;
+    color: #64748b;
+    background: #f8fafc;
+    text-decoration: none;
+    font-size: 11px;
+    font-weight: 700;
+    transition: .18s ease;
+}
+
+.clear-filter:hover {
+    color: #4f46e5;
+    background: #eef2ff;
+}
+
+.form-label {
+    margin-bottom: 7px;
+    color: #64748b;
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .55px;
+}
+
+.form-control,
+.form-select {
+    min-height: 45px;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 12px !important;
+    color: #1e293b;
+    font-size: 13px;
+    background-color: #fff;
+    box-shadow: none !important;
+    transition: .18s ease;
+}
+
+.form-control::placeholder {
+    color: #a0aec0;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: #8b82ff !important;
+    box-shadow: 0 0 0 4px rgba(99,102,241,.09) !important;
+}
+
+.search-wrap {
+    position: relative;
+}
+
+.search-wrap i {
+    position: absolute;
+    left: 14px;
+    top: 14px;
+    color: #94a3b8;
+    pointer-events: none;
+}
+
+.search-wrap input {
+    padding-left: 40px;
+}
+
+.filter-btn {
+    min-height: 45px;
+    border: 0 !important;
+    border-radius: 12px !important;
+    font-weight: 750 !important;
+    background: linear-gradient(135deg, #5b4df5, #4938dc) !important;
+    box-shadow: 0 8px 18px rgba(79,70,229,.18);
+    transition: .18s ease;
+}
+
+.filter-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 11px 22px rgba(79,70,229,.24);
+}
+
+/* =========================
+   TABLE / RECORDS CARD
+   ========================= */
+.table-card {
+    overflow: hidden;
+    background: #fff;
+    border: 1px solid #e7e9f0;
+    border-radius: 22px;
+    box-shadow: 0 8px 25px rgba(15,23,42,.045);
+}
+
+.table-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    padding: 21px 23px;
+    border-bottom: 1px solid #edf0f4;
+}
+
+.table-title {
+    margin: 0;
+    color: #111827;
+    font-size: 17px;
+    font-weight: 820;
+}
+
+.table-subtitle {
+    margin: 5px 0 0;
+    color: #94a3b8;
+    font-size: 11px;
+}
+
+.result-badge {
+    padding: 7px 11px;
+    border: 1px solid #e5e7eb;
+    border-radius: 9px;
+    background: #f8fafc;
+    color: #64748b;
+    font-size: 11px;
+    font-weight: 750;
+}
+
+.table-responsive {
+    overflow-x: auto;
+}
+
+.complaint-table {
+    width: 100%;
+    min-width: 950px;
+    margin: 0;
+}
+
+.complaint-table thead th {
+    padding: 13px 20px;
+    background: #fafbff;
+    border-bottom: 1px solid #e5e7eb;
+    color: #64748b;
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .6px;
+    white-space: nowrap;
+}
+
+.complaint-table tbody td {
+    padding: 16px 20px;
+    border-bottom: 1px solid #f1f3f6;
+    vertical-align: middle;
+}
+
+.complaint-table tbody tr {
+    transition: background .16s ease;
+}
+
+.complaint-table tbody tr:hover {
+    background: #fafbff;
+}
+
+.complaint-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+/* =========================
+   COMPLAINT CELL
+   ========================= */
+.complaint-main {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    min-width: 270px;
+}
+
+.complaint-category-icon {
+    width: 42px;
+    height: 42px;
+    flex: 0 0 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    color: #5b4df5;
+    background: linear-gradient(135deg, #f1efff, #e9e7ff);
+    font-size: 17px;
+}
+
+.complaint-title {
+    margin-bottom: 4px;
+    color: #111827;
+    font-size: 13px;
+    font-weight: 750;
+}
+
+.complaint-description {
+    max-width: 330px;
+    color: #94a3b8;
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+/* =========================
+   STUDENT
+   ========================= */
+.student-cell {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 160px;
+}
+
+.student-avatar {
+    width: 36px;
+    height: 36px;
+    flex: 0 0 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    color: #4f46e5;
+    background: #eef2ff;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.student-name {
+    color: #374151;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.student-id {
+    margin-top: 2px;
+    color: #9ca3af;
+    font-size: 10px;
+}
+
+/* =========================
+   BADGES
+   ========================= */
+.custom-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 9px;
+    border-radius: 8px;
+    font-size: 10px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.category-badge { background: #f5f3ff; color: #6d28d9; }
+.priority-low { background: #ecfdf5; color: #047857; }
+.priority-medium { background: #eff6ff; color: #1d4ed8; }
+.priority-high { background: #fff7ed; color: #c2410c; }
+.priority-critical { background: #fef2f2; color: #dc2626; }
+.status-pending { background: #fff7ed; color: #c2410c; }
+.status-progress { background: #eff6ff; color: #1d4ed8; }
+.status-resolved { background: #ecfdf5; color: #047857; }
+
+/* =========================
+   ASSIGNED / ACTION
+   ========================= */
+.assigned {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #4b5563;
+    font-size: 11px;
+    font-weight: 650;
+    white-space: nowrap;
+}
+
+.assigned-avatar {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background: #f3f4f6;
+    color: #6b7280;
+}
+
+.not-assigned {
+    color: #9ca3af;
+    font-size: 11px;
+    font-style: italic;
+}
+
+.action-btn {
+    width: 36px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    background: #fff;
+    color: #64748b;
+    text-decoration: none;
+    transition: .18s ease;
+}
+
+.action-btn:hover {
+    border-color: #c7d2fe;
+    background: #eef2ff;
+    color: #4f46e5;
+    transform: translateY(-1px);
+}
+
+/* =========================
+   EMPTY STATE
+   ========================= */
+.empty-state {
+    margin: 20px;
+    padding: 62px 20px 66px;
+    text-align: center;
+    border: 1px dashed #dfe3f0;
+    border-radius: 18px;
+    background:
+        radial-gradient(circle at 50% 0%, rgba(99,102,241,.05), transparent 35%),
+        #fcfcff;
+}
+
+.empty-icon {
+    width: 76px;
+    height: 76px;
+    margin: 0 auto 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #e8e5ff;
+    border-radius: 22px;
+    background: linear-gradient(135deg, #f4f2ff, #eeecff);
+    color: #6d5dfc;
+    font-size: 30px;
+    box-shadow: 0 10px 25px rgba(99,102,241,.08);
+}
+
+.empty-title {
+    margin-bottom: 7px;
+    color: #111827;
+    font-size: 18px;
+    font-weight: 820;
+}
+
+.empty-text {
+    margin-bottom: 19px;
+    color: #94a3b8;
+    font-size: 13px;
+}
+
+.empty-state .btn {
+    padding: 9px 15px;
+    border-radius: 10px !important;
+    font-weight: 700;
+}
+
+/* =========================
+   PAGINATION
+   ========================= */
+.pagination-area {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    padding: 16px 20px;
+    border-top: 1px solid #eef0f3;
+}
+
+.pagination-info {
+    color: #94a3b8;
+    font-size: 11px;
+}
+
+.pagination {
+    gap: 4px;
+    margin: 0;
+}
+
+.page-link {
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #e5e7eb;
+    border-radius: 9px !important;
+    color: #64748b;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.page-link:hover {
+    background: #eef2ff;
+    color: #4f46e5;
+}
+
+.page-item.active .page-link {
+    background: #4f46e5;
+    border-color: #4f46e5;
+    color: #fff;
+}
+
+/* =========================
+   RESPONSIVE
+   ========================= */
+@media (max-width: 992px) {
+    .complaint-hero {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .hero-right {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .total-box {
+        text-align: left;
+    }
+}
+
+@media (max-width: 576px) {
+    .complaints-page {
+        padding-bottom: 18px;
+    }
+
+    .complaint-hero {
+        padding: 22px;
+        border-radius: 20px;
+    }
+
+    .hero-content {
+        align-items: flex-start;
+    }
+
+    .hero-icon {
+        width: 52px;
+        height: 52px;
+        flex-basis: 52px;
+        font-size: 21px;
+    }
+
+    .hero-title {
+        font-size: 24px;
+    }
+
+    .hero-right,
+    .new-complaint-btn {
+        width: 100%;
+    }
+
+    .hero-right {
+        align-items: center;
+    }
+
+    .filter-card {
+        padding: 17px;
+        border-radius: 18px;
+    }
+
+    .table-heading {
+        padding: 17px;
+    }
+
+    .empty-state {
+        margin: 14px;
+        padding: 50px 16px;
+    }
+
+    .pagination-area {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}
+</style>
+{% endblock %}
+
+
+{% block content %}
+<div class="complaints-page">
+
+    <!-- =========================
+         HEADER
+    ========================== -->
+    <div class="complaint-hero">
+
+        <div class="hero-content">
+
+            <div class="hero-icon">
+                <i class="bi bi-chat-square-text"></i>
+            </div>
+
+            <div>
+                <h1 class="hero-title">
+                    Complaints
+                </h1>
+
+                <p class="hero-subtitle">
+                    Manage hostel complaints and service requests
+                </p>
+            </div>
+
+        </div>
+
+
+        <div class="hero-right">
+
+            <div class="total-box">
+                <span class="total-number">
+                    {{ total }}
+                </span>
+
+                <span class="total-label">
+                    Total Complaints
+                </span>
+            </div>
+
+            <a href="{% url 'complaints:create' %}"
+               class="btn btn-primary new-complaint-btn">
+
+                <i class="bi bi-plus-lg me-2"></i>
+                New Complaint
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         FILTERS
+    ========================== -->
+    <div class="filter-card">
+
+        <div class="filter-top">
+
+            <h3 class="filter-title">
+                <i class="bi bi-sliders2"></i>
+                Filter Complaints
+            </h3>
+
+
+            {% if q or category_filter or priority_filter or status_filter %}
+
+                <a href="{% url 'complaints:list' %}"
+                   class="clear-filter">
+
+                    <i class="bi bi-x-circle me-1"></i>
+                    Clear filters
+
+                </a>
+
+            {% endif %}
+
+        </div>
+
+
+        <form method="get">
+
+            <div class="row g-3">
+
+                <!-- Search -->
+                <div class="col-lg-4 col-md-6">
+
+                    <label class="form-label">
+                        Search
+                    </label>
+
+                    <div class="search-wrap">
+
+                        <i class="bi bi-search"></i>
+
+                        <input
+                            type="text"
+                            name="q"
+                            value="{{ q }}"
+                            class="form-control"
+                            placeholder="Search complaint or student..."
+                            autocomplete="off"
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <!-- Category -->
+                <div class="col-lg-2 col-md-6">
+
+                    <label class="form-label">
+                        Category
+                    </label>
+
+                    <select name="category"
+                            class="form-select">
+
+                        <option value="">
+                            All Categories
+                        </option>
+
+                        {% for value, label in categories %}
+
+                            <option value="{{ value }}"
+                                {% if category_filter == value %}
+                                    selected
+                                {% endif %}>
+                                {{ label }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <!-- Priority -->
+                <div class="col-lg-2 col-md-6">
+
+                    <label class="form-label">
+                        Priority
+                    </label>
+
+                    <select name="priority"
+                            class="form-select">
+
+                        <option value="">
+                            All Priorities
+                        </option>
+
+                        {% for value, label in priorities %}
+
+                            <option value="{{ value }}"
+                                {% if priority_filter == value %}
+                                    selected
+                                {% endif %}>
+                                {{ label }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <!-- Status -->
+                <div class="col-lg-2 col-md-6">
+
+                    <label class="form-label">
+                        Status
+                    </label>
+
+                    <select name="status"
+                            class="form-select">
+
+                        <option value="">
+                            All Statuses
+                        </option>
+
+                        {% for value, label in statuses %}
+
+                            <option value="{{ value }}"
+                                {% if status_filter == value %}
+                                    selected
+                                {% endif %}>
+                                {{ label }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <!-- Submit -->
+                <div class="col-lg-2 col-md-12 d-flex align-items-end">
+
+                    <button type="submit"
+                            class="btn btn-primary filter-btn w-100">
+
+                        <i class="bi bi-search me-2"></i>
+                        Search
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+    <!-- =========================
+         TABLE
+    ========================== -->
+    <div class="table-card">
+
+        <div class="table-heading">
+
+            <div>
+                <h2 class="table-title">
+                    Complaint Records
+                </h2>
+
+                <p class="table-subtitle">
+                    Review and manage submitted complaints
+                </p>
+            </div>
+
+            <span class="result-badge">
+                {{ total }} result{{ total|pluralize }}
+            </span>
+
+        </div>
+
+
+        {% if complaints %}
+
+            <div class="table-responsive">
+
+                <table class="table complaint-table align-middle">
+
+                    <thead>
+
+                        <tr>
+                            <th>Complaint</th>
+                            <th>Student</th>
+                            <th>Category</th>
+                            <th>Priority</th>
+                            <th>Status</th>
+                            <th>Assigned To</th>
+                            <th class="text-end">Action</th>
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for complaint in complaints %}
+
+                            <tr>
+
+                                <!-- Complaint -->
+                                <td>
+
+                                    <div class="complaint-main">
+
+                                        <div class="complaint-category-icon">
+
+                                            {% if complaint.category == 'maintenance' %}
+                                                <i class="bi bi-tools"></i>
+
+                                            {% elif complaint.category == 'electrical' %}
+                                                <i class="bi bi-lightning-charge"></i>
+
+                                            {% elif complaint.category == 'plumbing' %}
+                                                <i class="bi bi-droplet"></i>
+
+                                            {% elif complaint.category == 'cleaning' %}
+                                                <i class="bi bi-stars"></i>
+
+                                            {% elif complaint.category == 'food' %}
+                                                <i class="bi bi-cup-hot"></i>
+
+                                            {% elif complaint.category == 'security' %}
+                                                <i class="bi bi-shield-check"></i>
+
+                                            {% else %}
+                                                <i class="bi bi-chat-square-text"></i>
+                                            {% endif %}
+
+                                        </div>
+
+
+                                        <div>
+
+                                            <div class="complaint-title">
+                                                {{ complaint.title }}
+                                            </div>
+
+                                            {% if complaint.description %}
+
+                                                <div class="complaint-description">
+                                                    {{ complaint.description|truncatechars:90 }}
+                                                </div>
+
+                                            {% endif %}
+
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- Student -->
+                                <td>
+
+                                    <div class="student-cell">
+
+                                        <div class="student-avatar">
+
+                                            {{ complaint.student.first_name|first|upper }}{{ complaint.student.last_name|first|upper }}
+
+                                        </div>
+
+                                        <div>
+
+                                            <div class="student-name">
+                                                {{ complaint.student.full_name }}
+                                            </div>
+
+                                            <div class="student-id">
+                                                {{ complaint.student.student_id }}
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- Category -->
+                                <td>
+
+                                    <span class="custom-badge category-badge">
+
+                                        <i class="bi bi-tag"></i>
+
+                                        {{ complaint.get_category_display }}
+
+                                    </span>
+
+                                </td>
+
+
+                                <!-- Priority -->
+                                <td>
+
+                                    {% if complaint.priority == 'low' %}
+
+                                        <span class="custom-badge priority-low">
+
+                                            <i class="bi bi-circle-fill"
+                                               style="font-size:6px;"></i>
+
+                                            {{ complaint.get_priority_display }}
+
+                                        </span>
+
+                                    {% elif complaint.priority == 'medium' %}
+
+                                        <span class="custom-badge priority-medium">
+
+                                            <i class="bi bi-circle-fill"
+                                               style="font-size:6px;"></i>
+
+                                            {{ complaint.get_priority_display }}
+
+                                        </span>
+
+                                    {% elif complaint.priority == 'high' %}
+
+                                        <span class="custom-badge priority-high">
+
+                                            <i class="bi bi-exclamation-circle-fill"></i>
+
+                                            {{ complaint.get_priority_display }}
+
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="custom-badge priority-critical">
+
+                                            <i class="bi bi-exclamation-triangle-fill"></i>
+
+                                            {{ complaint.get_priority_display }}
+
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+
+                                <!-- Status -->
+                                <td>
+
+                                    {% if complaint.status == 'pending' %}
+
+                                        <span class="custom-badge status-pending">
+
+                                            <i class="bi bi-hourglass-split"></i>
+
+                                            {{ complaint.get_status_display }}
+
+                                        </span>
+
+                                    {% elif complaint.status == 'in_progress' %}
+
+                                        <span class="custom-badge status-progress">
+
+                                            <i class="bi bi-arrow-repeat"></i>
+
+                                            {{ complaint.get_status_display }}
+
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="custom-badge status-resolved">
+
+                                            <i class="bi bi-check-circle"></i>
+
+                                            {{ complaint.get_status_display }}
+
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+
+                                <!-- Assigned -->
+                                <td>
+
+                                    {% if complaint.assigned_to %}
+
+                                        <div class="assigned">
+
+                                            <div class="assigned-avatar">
+                                                <i class="bi bi-person"></i>
+                                            </div>
+
+                                            <span>
+                                                {{ complaint.assigned_to.get_full_name|default:complaint.assigned_to.username }}
+                                            </span>
+
+                                        </div>
+
+                                    {% else %}
+
+                                        <span class="not-assigned">
+                                            Not assigned
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+
+                                <!-- Action -->
+                                <td>
+
+                                    <div class="d-flex justify-content-end">
+
+                                        <a href="{% url 'complaints:detail' complaint.pk %}"
+                                           class="action-btn"
+                                           title="View complaint">
+
+                                            <i class="bi bi-eye"></i>
+
+                                        </a>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+            <!-- =========================
+                 PAGINATION
+            ========================== -->
+            {% if complaints.has_other_pages %}
+
+                <div class="pagination-area">
+
+                    <div class="pagination-info">
+
+                        Showing page
+                        <strong>{{ complaints.number }}</strong>
+                        of
+                        <strong>{{ complaints.paginator.num_pages }}</strong>
+
+                    </div>
+
+
+                    <nav aria-label="Complaint pagination">
+
+                        <ul class="pagination">
+
+                            {% if complaints.has_previous %}
+
+                                <li class="page-item">
+
+                                    <a class="page-link"
+                                       href="?q={{ q|urlencode }}&category={{ category_filter|urlencode }}&priority={{ priority_filter|urlencode }}&status={{ status_filter|urlencode }}&page={{ complaints.previous_page_number }}">
+
+                                        <i class="bi bi-chevron-left"></i>
+
+                                    </a>
+
+                                </li>
+
+                            {% endif %}
+
+
+                            {% for num in complaints.paginator.page_range %}
+
+                                {% if num == complaints.number %}
+
+                                    <li class="page-item active">
+
+                                        <span class="page-link">
+                                            {{ num }}
+                                        </span>
+
+                                    </li>
+
+                                {% elif num > complaints.number|add:'-2' and num < complaints.number|add:'2' %}
+
+                                    <li class="page-item">
+
+                                        <a class="page-link"
+                                           href="?q={{ q|urlencode }}&category={{ category_filter|urlencode }}&priority={{ priority_filter|urlencode }}&status={{ status_filter|urlencode }}&page={{ num }}">
+
+                                            {{ num }}
+
+                                        </a>
+
+                                    </li>
+
+                                {% endif %}
+
+                            {% endfor %}
+
+
+                            {% if complaints.has_next %}
+
+                                <li class="page-item">
+
+                                    <a class="page-link"
+                                       href="?q={{ q|urlencode }}&category={{ category_filter|urlencode }}&priority={{ priority_filter|urlencode }}&status={{ status_filter|urlencode }}&page={{ complaints.next_page_number }}">
+
+                                        <i class="bi bi-chevron-right"></i>
+
+                                    </a>
+
+                                </li>
+
+                            {% endif %}
+
+                        </ul>
+
+                    </nav>
+
+                </div>
+
+            {% endif %}
+
+
+        {% else %}
+
+            <!-- Empty State -->
+            <div class="empty-state">
+
+                <div class="empty-icon">
+                    <i class="bi bi-chat-square-text"></i>
+                </div>
+
+                <div class="empty-title">
+                    No complaints found
+                </div>
+
+                <p class="empty-text">
+
+                    {% if q or category_filter or priority_filter or status_filter %}
+
+                        No complaints match your current filters.
+
+                    {% else %}
+
+                        There are currently no complaints to display.
+
+                    {% endif %}
+
+                </p>
+
+
+                {% if q or category_filter or priority_filter or status_filter %}
+
+                    <a href="{% url 'complaints:list' %}"
+                       class="btn btn-outline-secondary btn-sm"
+                       style="border-radius:10px;">
+
+                        <i class="bi bi-arrow-counterclockwise me-1"></i>
+                        Clear Filters
+
+                    </a>
+
+                {% else %}
+
+                    <a href="{% url 'complaints:create' %}"
+                       class="btn btn-primary btn-sm"
+                       style="border-radius:10px;">
+
+                        <i class="bi bi-plus-lg me-1"></i>
+                        Create Complaint
+
+                    </a>
+
+                {% endif %}
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+{% endblock %}
+
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+        const searchInput = document.querySelector('input[name="q"]');
+
+        document.addEventListener('keydown', function (event) {
+
+            if (
+                event.key === '/' &&
+                document.activeElement.tagName !== 'INPUT' &&
+                document.activeElement.tagName !== 'TEXTAREA' &&
+                document.activeElement.tagName !== 'SELECT'
+            ) {
+                event.preventDefault();
+
+                if (searchInput) {
+                    searchInput.focus();
+                }
+            }
+
+        });
+
+    });
+</script>
+{% endblock %}

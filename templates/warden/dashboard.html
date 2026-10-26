@@ -1,0 +1,1489 @@
+{% extends 'base.html' %}
+
+{% block title %}Warden Dashboard | STAYNEST{% endblock %}
+{% block page_title %}Hostel Supervisor Dashboard{% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item active">Warden Operations Panel</li>
+{% endblock %}
+
+
+{% block extra_css %}
+
+<style>
+
+/* =========================================================
+   STAYNEST WARDEN DASHBOARD
+========================================================= */
+
+:root {
+    --stay-green: #52C048;
+    --stay-green-dark: #3fa638;
+    --stay-green-soft: #eef9ec;
+    --stay-green-border: rgba(82,192,72,.18);
+
+    --stay-text: #172019;
+    --stay-muted: #718076;
+
+    --stay-border: #e4ebe4;
+    --stay-bg: #f7faf7;
+}
+
+
+/* =========================================================
+   DASHBOARD CONTAINER
+========================================================= */
+
+.dashboard-container {
+    max-width: 1250px;
+    margin: 0 auto;
+    padding: 5px 0 45px;
+}
+
+
+/* =========================================================
+   WARDEN HERO
+========================================================= */
+
+.warden-hero {
+
+    position: relative;
+    overflow: hidden;
+
+    min-height: 190px;
+
+    background:
+        radial-gradient(
+            circle at 92% 15%,
+            rgba(82,192,72,.18),
+            transparent 29%
+        ),
+        linear-gradient(
+            135deg,
+            #f7fcf7 0%,
+            #ffffff 55%,
+            #eef9ec 100%
+        );
+
+    border: 1px solid #e0e9e0;
+
+    border-radius: 24px;
+
+    padding: 30px 34px;
+
+    margin-bottom: 26px;
+
+    color: var(--stay-text);
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    box-shadow:
+        0 15px 38px rgba(35,65,40,.08);
+}
+
+
+/* Decorative circle */
+
+.warden-hero::before {
+
+    content: "";
+
+    position: absolute;
+
+    width: 220px;
+    height: 220px;
+
+    right: -75px;
+    top: -125px;
+
+    border-radius: 50%;
+
+    background: rgba(82,192,72,.08);
+
+    pointer-events: none;
+}
+
+
+.warden-hero::after {
+
+    content: "";
+
+    position: absolute;
+
+    width: 95px;
+    height: 95px;
+
+    right: 145px;
+    bottom: -58px;
+
+    border-radius: 50%;
+
+    background: rgba(82,192,72,.055);
+
+    pointer-events: none;
+}
+
+
+.warden-hero > div {
+
+    position: relative;
+
+    z-index: 2;
+}
+
+
+/* =========================================================
+   SUPERVISOR BADGE
+========================================================= */
+
+.warden-supervisor-badge {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    padding: 7px 12px;
+
+    margin-bottom: 10px;
+
+    border-radius: 999px;
+
+    background: var(--stay-green-soft);
+
+    border: 1px solid var(--stay-green-border);
+
+    color: #3c8537 !important;
+
+    font-size: 11px;
+
+    font-weight: 750;
+
+    letter-spacing: .2px;
+}
+
+
+.warden-supervisor-badge i {
+
+    color: var(--stay-green) !important;
+
+    font-size: 13px;
+}
+
+
+/* =========================================================
+   HERO TITLE
+========================================================= */
+
+.warden-hero h2 {
+
+    margin: 0 0 7px !important;
+
+    padding: 0 !important;
+
+    color: var(--stay-text) !important;
+
+    font-size: 29px !important;
+
+    line-height: 1.2 !important;
+
+    font-weight: 800 !important;
+
+    letter-spacing: -.6px !important;
+
+    text-shadow: none !important;
+}
+
+
+.warden-hero p {
+
+    margin: 0 !important;
+
+    padding: 0 !important;
+
+    color: var(--stay-muted) !important;
+
+    font-size: 13px !important;
+
+    line-height: 1.5 !important;
+}
+
+
+.warden-hero p strong {
+
+    color: #263d2a !important;
+
+    font-weight: 800;
+}
+
+
+/* =========================================================
+   EMPLOYEE ID
+========================================================= */
+
+.warden-employee-badge {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    padding: 10px 14px;
+
+    border-radius: 12px;
+
+    background: #ffffff;
+
+    border: 1px solid #dfe8df;
+
+    color: #344238 !important;
+
+    font-size: 11px;
+
+    font-weight: 750;
+
+    box-shadow:
+        0 6px 18px rgba(30,55,35,.06);
+}
+
+
+.warden-employee-badge i {
+
+    color: var(--stay-green) !important;
+
+    font-size: 14px;
+}
+
+
+.warden-employee-badge span {
+
+    color: #87938a;
+
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   STAT GRID
+========================================================= */
+
+.warden-stat-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            4,
+            minmax(0, 1fr)
+        );
+
+    gap: 17px;
+
+    margin-bottom: 26px;
+}
+
+
+/* =========================================================
+   STAT CARD
+========================================================= */
+
+.warden-stat-card {
+
+    position: relative;
+
+    overflow: hidden;
+
+    background: #ffffff;
+
+    border: 1px solid var(--stay-border);
+
+    border-radius: 18px;
+
+    padding: 20px;
+
+    box-shadow:
+        0 7px 22px rgba(30,55,35,.045);
+
+    transition:
+        transform .2s ease,
+        box-shadow .2s ease,
+        border-color .2s ease;
+}
+
+
+.warden-stat-card::after {
+
+    content: "";
+
+    position: absolute;
+
+    width: 70px;
+    height: 70px;
+
+    right: -30px;
+    top: -30px;
+
+    border-radius: 50%;
+
+    background: rgba(82,192,72,.055);
+}
+
+
+.warden-stat-card:hover {
+
+    transform: translateY(-2px);
+
+    border-color: rgba(82,192,72,.25);
+
+    box-shadow:
+        0 12px 28px rgba(30,55,35,.075);
+}
+
+
+/* Stat icon */
+
+.stat-icon {
+
+    width: 38px;
+    height: 38px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 11px;
+
+    background: var(--stay-green-soft);
+
+    color: var(--stay-green);
+
+    font-size: 17px;
+
+    margin-bottom: 13px;
+}
+
+
+/* Stat label */
+
+.warden-stat-label {
+
+    color: #7b887f !important;
+
+    font-size: 10px !important;
+
+    font-weight: 750 !important;
+
+    letter-spacing: .45px;
+
+    text-transform: uppercase;
+}
+
+
+/* Stat number */
+
+.warden-stat-number {
+
+    margin-top: 4px;
+
+    color: var(--stay-text) !important;
+
+    font-size: 28px !important;
+
+    line-height: 1.15;
+
+    font-weight: 800 !important;
+
+    letter-spacing: -.5px;
+}
+
+
+/* Stat footer */
+
+.warden-stat-footer {
+
+    margin-top: 7px;
+
+    color: #8b968f !important;
+
+    font-size: 10px !important;
+
+    line-height: 1.4;
+}
+
+
+.warden-stat-footer i {
+
+    color: var(--stay-green);
+
+}
+
+
+/* Occupancy */
+
+.occupancy-number {
+
+    color: var(--stay-green-dark) !important;
+}
+
+
+/* Progress */
+
+.warden-progress {
+
+    height: 6px !important;
+
+    margin-top: 11px;
+
+    overflow: hidden;
+
+    border-radius: 999px;
+
+    background: #edf3ed !important;
+}
+
+
+.warden-progress .progress-bar {
+
+    border-radius: 999px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #52C048,
+            #6bd35f
+        ) !important;
+}
+
+
+/* =========================================================
+   OPERATION CARDS
+========================================================= */
+
+.warden-operation-card {
+
+    background: #ffffff;
+
+    border: 1px solid var(--stay-border);
+
+    border-radius: 20px;
+
+    padding: 21px;
+
+    box-shadow:
+        0 8px 25px rgba(30,55,35,.045);
+
+    height: 100%;
+}
+
+
+/* Operation header */
+
+.operation-header {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 10px;
+
+    margin-bottom: 17px;
+}
+
+
+.operation-title {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+    color: var(--stay-text);
+
+    font-size: 14px;
+
+    font-weight: 800;
+}
+
+
+.operation-title-icon {
+
+    width: 34px;
+    height: 34px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 10px;
+
+    background: var(--stay-green-soft);
+
+    color: var(--stay-green);
+
+    font-size: 15px;
+}
+
+
+.operation-link {
+
+    color: #5e7862 !important;
+
+    font-size: 10px !important;
+
+    font-weight: 700;
+
+    text-decoration: none !important;
+
+    white-space: nowrap;
+
+    transition: .2s ease;
+}
+
+
+.operation-link:hover {
+
+    color: var(--stay-green-dark) !important;
+}
+
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.warden-table {
+
+    margin: 0 !important;
+
+    font-size: 11px !important;
+}
+
+
+.warden-table thead th {
+
+    padding:
+        10px
+        9px !important;
+
+    border-bottom:
+        1px solid
+        #e9eee9 !important;
+
+    background: #f8faf8 !important;
+
+    color: #7c897f !important;
+
+    font-size: 9px !important;
+
+    font-weight: 800 !important;
+
+    letter-spacing: .35px;
+
+    text-transform: uppercase;
+
+    white-space: nowrap;
+}
+
+
+.warden-table tbody td {
+
+    padding:
+        11px
+        9px !important;
+
+    border-bottom:
+        1px solid
+        #f0f3f0 !important;
+
+    color: #66736a !important;
+
+    vertical-align: middle;
+}
+
+
+.warden-table tbody tr:last-child td {
+
+    border-bottom: 0 !important;
+}
+
+
+.warden-table tbody tr {
+
+    transition: background .15s ease;
+}
+
+
+.warden-table tbody tr:hover {
+
+    background: #f9fcf9 !important;
+}
+
+
+.resident-name {
+
+    color: #26342b !important;
+
+    font-weight: 750 !important;
+}
+
+
+.visitor-name {
+
+    color: #26342b !important;
+
+    font-weight: 750 !important;
+}
+
+
+/* =========================================================
+   STATUS BADGES
+========================================================= */
+
+.priority-badge {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    padding: 5px 8px;
+
+    border-radius: 999px;
+
+    background: #fff7df;
+
+    color: #a16b00;
+
+    font-size: 9px;
+
+    font-weight: 750;
+}
+
+
+.status-badge {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    padding: 5px 8px;
+
+    border-radius: 999px;
+
+    background: #f1f5f2;
+
+    color: #627067;
+
+    font-size: 9px;
+
+    font-weight: 750;
+}
+
+
+/* Visitor checkout */
+
+.checkout-btn {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    min-height: 29px;
+
+    padding: 4px 9px;
+
+    border-radius: 8px;
+
+    border: 1px solid #d9e6da;
+
+    background: #f7fbf7;
+
+    color: #3d7440;
+
+    font-size: 9px;
+
+    font-weight: 750;
+
+    text-decoration: none;
+
+    transition: .2s ease;
+}
+
+
+.checkout-btn:hover {
+
+    background: var(--stay-green-soft);
+
+    border-color: rgba(82,192,72,.30);
+
+    color: #347a2f;
+}
+
+
+/* =========================================================
+   EMPTY STATE
+========================================================= */
+
+.warden-empty {
+
+    text-align: center;
+
+    padding: 25px 15px !important;
+
+    color: #909c94 !important;
+
+    font-size: 11px;
+}
+
+
+.warden-empty-icon {
+
+    width: 40px;
+    height: 40px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    margin: 0 auto 9px;
+
+    border-radius: 12px;
+
+    background: #f3f7f3;
+
+    color: #9aa69d;
+
+    font-size: 17px;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1100px) {
+
+    .warden-stat-grid {
+
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(0, 1fr)
+            );
+    }
+}
+
+
+@media (max-width: 768px) {
+
+    .dashboard-container {
+
+        padding:
+            5px
+            0
+            35px;
+    }
+
+
+    .warden-hero {
+
+        min-height: auto;
+
+        padding: 23px;
+
+        border-radius: 20px;
+
+        align-items: flex-start;
+    }
+
+
+    .warden-hero h2 {
+
+        font-size: 23px !important;
+    }
+
+
+    .warden-hero p {
+
+        font-size: 12px !important;
+    }
+
+
+    .warden-stat-grid {
+
+        grid-template-columns: 1fr 1fr;
+
+        gap: 12px;
+    }
+
+
+    .warden-stat-card {
+
+        padding: 16px;
+    }
+
+
+    .warden-stat-number {
+
+        font-size: 24px !important;
+    }
+}
+
+
+@media (max-width: 520px) {
+
+    .warden-stat-grid {
+
+        grid-template-columns: 1fr;
+    }
+
+
+    .warden-hero {
+
+        padding: 20px;
+    }
+
+
+    .warden-hero h2 {
+
+        font-size: 21px !important;
+    }
+
+
+    .warden-operation-card {
+
+        padding: 16px;
+    }
+
+
+    .operation-header {
+
+        align-items: flex-start;
+    }
+
+
+    .warden-table {
+
+        min-width: 620px;
+    }
+}
+
+</style>
+
+{% endblock %}
+
+
+{% block content %}
+
+<div class="dashboard-container">
+
+
+    <!-- =====================================================
+         WARDEN HERO
+    ====================================================== -->
+
+    <div class="warden-hero">
+
+
+        <div>
+
+            <!-- ROLE -->
+
+            <div class="warden-supervisor-badge">
+
+                <i class="bi bi-shield-check"></i>
+
+                Assigned Hostel Supervisor
+
+            </div>
+
+
+            <!-- WELCOME -->
+
+            <h2>
+
+                Welcome,
+                {{ request.user.get_full_name|default:request.user.username }}
+
+            </h2>
+
+
+            <!-- HOSTEL -->
+
+            <p>
+
+                <i
+                    class="bi bi-building me-1"
+                    style="color:#52C048;">
+                </i>
+
+                Supervising:
+
+                <strong>
+
+                    {{ assigned_hostel.name|default:"Unassigned Building" }}
+
+                </strong>
+
+
+                {% if warden_profile.assigned_block %}
+
+                    <span
+                        style="color:#a0aaa3; margin:0 4px;">
+                        •
+                    </span>
+
+                    Block:
+
+                    <strong>
+
+                        {{ warden_profile.assigned_block }}
+
+                    </strong>
+
+                {% endif %}
+
+            </p>
+
+        </div>
+
+
+        <!-- EMPLOYEE ID -->
+
+        <div class="d-none d-md-block">
+
+            <div class="warden-employee-badge">
+
+                <i class="bi bi-person-badge-fill"></i>
+
+                <span>
+                    Employee ID:
+                </span>
+
+                {{ warden_profile.employee_id|default:"WRD-STAFF" }}
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         STATS
+    ====================================================== -->
+
+    <div class="warden-stat-grid">
+
+
+        <!-- ROOMS -->
+
+        <div class="warden-stat-card">
+
+            <div class="stat-icon">
+
+                <i class="bi bi-door-open-fill"></i>
+
+            </div>
+
+
+            <div class="warden-stat-label">
+
+                Supervised Rooms
+
+            </div>
+
+
+            <div class="warden-stat-number">
+
+                {{ total_rooms }}
+
+            </div>
+
+
+            <div class="warden-stat-footer">
+
+                <i class="bi bi-building me-1"></i>
+
+                In {{ assigned_hostel.name }}
+
+            </div>
+
+        </div>
+
+
+
+        <!-- BED CAPACITY -->
+
+        <div class="warden-stat-card">
+
+            <div class="stat-icon">
+
+                <i class="bi bi-grid-3x3-gap-fill"></i>
+
+            </div>
+
+
+            <div class="warden-stat-label">
+
+                Total Bed Capacity
+
+            </div>
+
+
+            <div class="warden-stat-number">
+
+                {{ total_beds }}
+
+            </div>
+
+
+            <div class="warden-stat-footer">
+
+                <i class="bi bi-person-check me-1"></i>
+
+                {{ occupied_beds }} occupied
+
+                <span style="margin:0 3px;">
+                    •
+                </span>
+
+                {{ available_beds }} free
+
+            </div>
+
+        </div>
+
+
+
+        <!-- OCCUPANCY -->
+
+        <div class="warden-stat-card">
+
+            <div class="stat-icon">
+
+                <i class="bi bi-pie-chart-fill"></i>
+
+            </div>
+
+
+            <div class="warden-stat-label">
+
+                Occupancy Rate
+
+            </div>
+
+
+            <div class="warden-stat-number occupancy-number">
+
+                {{ occupancy_pct }}%
+
+            </div>
+
+
+            <div class="progress warden-progress">
+
+                <div
+                    class="progress-bar"
+                    role="progressbar"
+                    style="width: {{ occupancy_pct }}%;"
+                    aria-valuenow="{{ occupancy_pct }}"
+                    aria-valuemin="0"
+                    aria-valuemax="100">
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- RESIDENTS -->
+
+        <div class="warden-stat-card">
+
+            <div class="stat-icon">
+
+                <i class="bi bi-people-fill"></i>
+
+            </div>
+
+
+            <div class="warden-stat-label">
+
+                Hostel Residents
+
+            </div>
+
+
+            <div class="warden-stat-number">
+
+                {{ residents_count }}
+
+            </div>
+
+
+            <div class="warden-stat-footer">
+
+                <i class="bi bi-person-check me-1"></i>
+
+                Allocated to this block
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         OPERATIONS
+    ====================================================== -->
+
+    <div class="row g-4">
+
+
+        <!-- =================================================
+             MAINTENANCE
+        ================================================== -->
+
+        <div class="col-lg-6">
+
+
+            <div class="warden-operation-card">
+
+
+                <div class="operation-header">
+
+                    <div class="operation-title">
+
+                        <div class="operation-title-icon">
+
+                            <i class="bi bi-tools"></i>
+
+                        </div>
+
+                        Maintenance Tickets
+
+                    </div>
+
+
+                    <a
+                        href="{% url 'complaints:list' %}"
+                        class="operation-link">
+
+                        All Tickets
+                        <i class="bi bi-arrow-right"></i>
+
+                    </a>
+
+                </div>
+
+
+
+                <div class="table-responsive">
+
+
+                    <table
+                        class="table warden-table align-middle mb-0">
+
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Resident
+                                </th>
+
+                                <th>
+                                    Issue
+                                </th>
+
+                                <th>
+                                    Priority
+                                </th>
+
+                                <th>
+                                    Status
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+
+                            {% for c in complaints %}
+
+                            <tr>
+
+
+                                <td>
+
+                                    <span class="resident-name">
+
+                                        {{ c.student.full_name }}
+
+                                    </span>
+
+                                </td>
+
+
+                                <td>
+
+                                    {{ c.title|truncatechars:24 }}
+
+                                </td>
+
+
+                                <td>
+
+                                    <span class="priority-badge">
+
+                                        {{ c.get_priority_display }}
+
+                                    </span>
+
+                                </td>
+
+
+                                <td>
+
+                                    <span class="status-badge">
+
+                                        {{ c.get_status_display }}
+
+                                    </span>
+
+                                </td>
+
+
+                            </tr>
+
+
+                            {% empty %}
+
+
+                            <tr>
+
+                                <td
+                                    colspan="4"
+                                    class="warden-empty">
+
+                                    <div class="warden-empty-icon">
+
+                                        <i class="bi bi-check2-circle"></i>
+
+                                    </div>
+
+                                    No maintenance complaints
+                                    in this building.
+
+                                </td>
+
+                            </tr>
+
+
+                            {% endfor %}
+
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             ACTIVE VISITORS
+        ================================================== -->
+
+        <div class="col-lg-6">
+
+
+            <div class="warden-operation-card">
+
+
+                <div class="operation-header">
+
+                    <div class="operation-title">
+
+                        <div class="operation-title-icon">
+
+                            <i class="bi bi-person-check-fill"></i>
+
+                        </div>
+
+                        Current Guests Checked-in
+
+                    </div>
+
+
+                    <a
+                        href="{% url 'visitors:list' %}"
+                        class="operation-link">
+
+                        Gate Register
+                        <i class="bi bi-arrow-right"></i>
+
+                    </a>
+
+                </div>
+
+
+
+                <div class="table-responsive">
+
+
+                    <table
+                        class="table warden-table align-middle mb-0">
+
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Visitor
+                                </th>
+
+                                <th>
+                                    Host Resident
+                                </th>
+
+                                <th>
+                                    Time In
+                                </th>
+
+                                <th>
+                                    Action
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+
+                            {% for v in active_visitors %}
+
+                            <tr>
+
+
+                                <td>
+
+                                    <span class="visitor-name">
+
+                                        {{ v.visitor_name }}
+
+                                    </span>
+
+                                </td>
+
+
+                                <td>
+
+                                    {{ v.student.full_name }}
+
+                                </td>
+
+
+                                <td>
+
+                                    <span
+                                        style="font-weight:700;color:#536057;">
+
+                                        {{ v.check_in|date:"H:i A" }}
+
+                                    </span>
+
+                                </td>
+
+
+                                <td>
+
+                                    <a
+                                        href="{% url 'visitors:checkout' v.id %}"
+                                        class="checkout-btn">
+
+                                        <i class="bi bi-box-arrow-right me-1"></i>
+
+                                        Checkout
+
+                                    </a>
+
+                                </td>
+
+
+                            </tr>
+
+
+                            {% empty %}
+
+
+                            <tr>
+
+                                <td
+                                    colspan="4"
+                                    class="warden-empty">
+
+                                    <div class="warden-empty-icon">
+
+                                        <i class="bi bi-person-check"></i>
+
+                                    </div>
+
+                                    No outside visitors
+                                    inside this hostel.
+
+                                </td>
+
+                            </tr>
+
+
+                            {% endfor %}
+
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+</div>
+
+{% endblock %}

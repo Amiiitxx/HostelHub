@@ -1,0 +1,1712 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{% with occupation=request.user.student_profile.occupation %}
+{% if occupation == "Student" %}Student Dashboard
+{% elif occupation == "Working Professional" %}Working Professional Dashboard
+{% elif occupation == "Government Employee" %}Government Employee Dashboard
+{% elif occupation == "Private Employee" %}Private Employee Dashboard
+{% elif occupation == "Business / Self Employed" %}Business Dashboard
+{% elif occupation == "Job Seeker" %}Job Seeker Dashboard
+{% else %}User Dashboard{% endif %}
+{% endwith %}
+{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item active">Dashboard</li>
+{% endblock %}
+
+
+{% block extra_css %}
+
+<style>
+
+    /* =========================================================
+       STUDENT DASHBOARD
+    ========================================================= */
+
+    .student-dashboard {
+        max-width: 1450px;
+        margin: 0 auto;
+    }
+
+
+    /* =========================================================
+       WELCOME HERO
+    ========================================================= */
+
+    .welcome-card {
+        position: relative;
+        overflow: hidden;
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 25px;
+
+        padding: 27px 30px;
+        margin-bottom: 18px;
+
+        border-radius: 18px;
+
+        background:
+            linear-gradient(
+                135deg,
+                #111827 0%,
+                #1e3a8a 58%,
+                #2563eb 100%
+            );
+
+        box-shadow:
+            0 14px 35px rgba(15, 23, 42, .13);
+    }
+
+
+    .welcome-card::before {
+        content: "";
+
+        position: absolute;
+
+        width: 230px;
+        height: 230px;
+
+        right: 90px;
+        top: -145px;
+
+        border-radius: 50%;
+
+        background: rgba(255,255,255,.07);
+    }
+
+
+    .welcome-card::after {
+        content: "";
+
+        position: absolute;
+
+        width: 170px;
+        height: 170px;
+
+        right: -50px;
+        bottom: -95px;
+
+        border-radius: 50%;
+
+        background: rgba(255,255,255,.05);
+    }
+
+
+    .welcome-content {
+        position: relative;
+        z-index: 2;
+    }
+
+
+    .welcome-small {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+
+        padding: 5px 9px;
+
+        margin-bottom: 10px;
+
+        border-radius: 999px;
+
+        background: rgba(255,255,255,.09);
+        border: 1px solid rgba(255,255,255,.11);
+
+        color: #c7d2fe;
+
+        font-size: 9px;
+        font-weight: 700;
+
+        text-transform: uppercase;
+        letter-spacing: .5px;
+    }
+
+
+    .welcome-content h2 {
+        margin: 0;
+
+        color: #ffffff;
+
+        font-size: 26px;
+        font-weight: 800;
+
+        letter-spacing: -.7px;
+    }
+
+
+    .welcome-content h2 span {
+        color: #a5b4fc;
+    }
+
+
+    .welcome-content p {
+        margin: 7px 0 0;
+
+        color: #cbd5e1;
+
+        font-size: 11px;
+        line-height: 1.6;
+    }
+
+
+    .welcome-profile {
+        position: relative;
+        z-index: 2;
+
+        display: flex;
+        align-items: center;
+        gap: 12px;
+
+        min-width: 210px;
+
+        padding: 12px 15px;
+
+        border-radius: 13px;
+
+        background: rgba(255,255,255,.09);
+        border: 1px solid rgba(255,255,255,.11);
+    }
+
+
+    .profile-avatar {
+        width: 45px;
+        height: 45px;
+
+        flex-shrink: 0;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 50%;
+
+        background: #ffffff;
+        color: #1d4ed8;
+
+        font-size: 17px;
+        font-weight: 800;
+    }
+
+
+    .profile-info {
+        min-width: 0;
+    }
+
+
+    .profile-info strong {
+        display: block;
+
+        color: #ffffff;
+
+        font-size: 12px;
+        font-weight: 750;
+
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+
+    .profile-info span {
+        display: block;
+
+        margin-top: 3px;
+
+        color: #cbd5e1;
+
+        font-size: 9px;
+    }
+
+
+    /* =========================================================
+       SUMMARY CARDS
+    ========================================================= */
+
+    .summary-grid {
+        display: grid;
+
+        grid-template-columns:
+            repeat(4, minmax(0, 1fr));
+
+        gap: 14px;
+
+        margin-bottom: 18px;
+    }
+
+
+    .summary-card {
+        display: flex;
+        align-items: center;
+
+        gap: 12px;
+
+        min-height: 94px;
+
+        padding: 15px;
+
+        background: #ffffff;
+
+        border: 1px solid var(--color-border);
+
+        border-radius: 14px;
+
+        box-shadow: var(--shadow-xs);
+
+        transition:
+            transform .2s ease,
+            box-shadow .2s ease,
+            border-color .2s ease;
+    }
+
+
+    .summary-card:hover {
+        transform: translateY(-2px);
+
+        border-color: #c7d2fe;
+
+        box-shadow: var(--shadow-md);
+    }
+
+
+    .summary-icon {
+        width: 43px;
+        height: 43px;
+
+        flex-shrink: 0;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 11px;
+
+        font-size: 17px;
+    }
+
+
+    .summary-card:nth-child(1) .summary-icon {
+        background: #eef2ff;
+        color: #4f46e5;
+    }
+
+
+    .summary-card:nth-child(2) .summary-icon {
+        background: #ecfdf5;
+        color: #059669;
+    }
+
+
+    .summary-card:nth-child(3) .summary-icon {
+        background: #fff7ed;
+        color: #ea580c;
+    }
+
+
+    .summary-card:nth-child(4) .summary-icon {
+        background: #f0f9ff;
+        color: #0284c7;
+    }
+
+
+    .summary-content {
+        min-width: 0;
+    }
+
+
+    .summary-content span {
+        display: block;
+
+        color: var(--color-text-muted);
+
+        font-size: 9px;
+        font-weight: 600;
+    }
+
+
+    .summary-content strong {
+        display: block;
+
+        margin-top: 4px;
+
+        color: var(--color-text-primary);
+
+        font-size: 17px;
+        font-weight: 800;
+    }
+
+
+    .summary-content small {
+        display: block;
+
+        margin-top: 2px;
+
+        color: #94a3b8;
+
+        font-size: 8px;
+    }
+
+
+    /* =========================================================
+       MAIN GRID
+    ========================================================= */
+
+    .dashboard-grid {
+        display: grid;
+
+        grid-template-columns: 1.35fr .65fr;
+
+        gap: 16px;
+
+        margin-bottom: 16px;
+    }
+
+
+    .dashboard-card {
+        background: #ffffff;
+
+        border: 1px solid var(--color-border);
+
+        border-radius: 15px;
+
+        overflow: hidden;
+
+        box-shadow: var(--shadow-xs);
+    }
+
+
+    .card-header-custom {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        padding: 15px 17px;
+
+        border-bottom: 1px solid var(--color-border-light);
+    }
+
+
+    .card-header-left {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+    }
+
+
+    .header-icon {
+        width: 31px;
+        height: 31px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 8px;
+
+        background: var(--color-primary-light);
+        color: var(--color-primary);
+
+        font-size: 13px;
+    }
+
+
+    .card-header-custom h3 {
+        margin: 0;
+
+        color: var(--color-text-primary);
+
+        font-size: 12px;
+        font-weight: 750;
+    }
+
+
+    .card-header-custom p {
+        margin: 2px 0 0;
+
+        color: var(--color-text-muted);
+
+        font-size: 8px;
+    }
+
+
+    .card-body-custom {
+        padding: 17px;
+    }
+
+
+    /* =========================================================
+       ROOM CARD
+    ========================================================= */
+
+    .room-box {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        gap: 15px;
+
+        padding: 16px;
+
+        border-radius: 12px;
+
+        background: #f8fafc;
+
+        border: 1px solid #eef2f7;
+    }
+
+
+    .room-main {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+
+    .room-icon {
+        width: 45px;
+        height: 45px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 11px;
+
+        background: #eef2ff;
+        color: #4f46e5;
+
+        font-size: 18px;
+    }
+
+
+    .room-details strong {
+        display: block;
+
+        color: var(--color-text-primary);
+
+        font-size: 15px;
+        font-weight: 800;
+    }
+
+
+    .room-details span {
+        display: block;
+
+        margin-top: 3px;
+
+        color: var(--color-text-muted);
+
+        font-size: 9px;
+    }
+
+
+    .room-status {
+        padding: 5px 9px;
+
+        border-radius: 999px;
+
+        background: #ecfdf5;
+        color: #059669;
+
+        font-size: 8px;
+        font-weight: 700;
+    }
+
+
+    .room-empty {
+        text-align: center;
+
+        padding: 22px 10px;
+
+        color: var(--color-text-muted);
+
+        font-size: 10px;
+    }
+
+
+    .room-empty i {
+        display: block;
+
+        margin-bottom: 7px;
+
+        font-size: 24px;
+
+        color: #cbd5e1;
+    }
+
+
+    /* =========================================================
+       PERSONAL INFORMATION
+    ========================================================= */
+
+    .personal-list {
+        display: grid;
+
+        grid-template-columns: 1fr 1fr;
+
+        gap: 10px;
+    }
+
+
+    .personal-item {
+        padding: 11px;
+
+        border-radius: 10px;
+
+        background: #f8fafc;
+
+        border: 1px solid #eef2f7;
+    }
+
+
+    .personal-item label {
+        display: block;
+
+        margin-bottom: 4px;
+
+        color: #94a3b8;
+
+        font-size: 8px;
+        font-weight: 600;
+
+        text-transform: uppercase;
+    }
+
+
+    .personal-item strong {
+        display: block;
+
+        color: var(--color-text-primary);
+
+        font-size: 10px;
+        font-weight: 700;
+
+        word-break: break-word;
+    }
+
+
+    /* =========================================================
+       ATTENDANCE
+    ========================================================= */
+
+    .attendance-box {
+        display: flex;
+        align-items: center;
+
+        gap: 17px;
+    }
+
+
+    .attendance-circle {
+        width: 88px;
+        height: 88px;
+
+        flex-shrink: 0;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        position: relative;
+
+        border-radius: 50%;
+
+        background:
+            conic-gradient(
+                #2563eb 0deg,
+                #2563eb var(--attendance-angle),
+                #e2e8f0 var(--attendance-angle),
+                #e2e8f0 360deg
+            );
+    }
+
+
+    .attendance-circle::before {
+        content: "";
+
+        position: absolute;
+
+        width: 67px;
+        height: 67px;
+
+        border-radius: 50%;
+
+        background: #ffffff;
+    }
+
+
+    .attendance-value {
+        position: relative;
+        z-index: 1;
+
+        color: #1e3a8a;
+
+        font-size: 16px;
+        font-weight: 800;
+    }
+
+
+    .attendance-info h4 {
+        margin: 0;
+
+        color: var(--color-text-primary);
+
+        font-size: 12px;
+        font-weight: 750;
+    }
+
+
+    .attendance-info p {
+        margin: 5px 0 0;
+
+        color: var(--color-text-muted);
+
+        font-size: 9px;
+        line-height: 1.5;
+    }
+
+
+    /* =========================================================
+       FEES
+    ========================================================= */
+
+    .fee-box {
+        padding: 15px;
+
+        border-radius: 11px;
+
+        background: #fff7ed;
+
+        border: 1px solid #fed7aa;
+    }
+
+
+    .fee-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        gap: 10px;
+    }
+
+
+    .fee-label {
+        color: #9a3412;
+
+        font-size: 9px;
+        font-weight: 650;
+    }
+
+
+    .fee-amount {
+        margin-top: 5px;
+
+        color: #c2410c;
+
+        font-size: 21px;
+        font-weight: 800;
+    }
+
+
+    .fee-status {
+        padding: 5px 8px;
+
+        border-radius: 999px;
+
+        background: #ffedd5;
+        color: #c2410c;
+
+        font-size: 8px;
+        font-weight: 700;
+    }
+
+
+    .fee-action {
+        margin-top: 11px;
+    }
+
+
+    /* =========================================================
+       QUICK ACTIONS
+    ========================================================= */
+
+    .quick-actions {
+        display: grid;
+
+        grid-template-columns:
+            repeat(4, minmax(0, 1fr));
+
+        gap: 11px;
+    }
+
+
+    .quick-action {
+        display: flex;
+        align-items: center;
+
+        gap: 9px;
+
+        padding: 12px;
+
+        text-decoration: none;
+
+        border: 1px solid var(--color-border);
+
+        border-radius: 11px;
+
+        background: #ffffff;
+
+        transition:
+            transform .2s ease,
+            box-shadow .2s ease,
+            border-color .2s ease;
+    }
+
+
+    .quick-action:hover {
+        transform: translateY(-2px);
+
+        border-color: #c7d2fe;
+
+        box-shadow: var(--shadow-sm);
+    }
+
+
+    .quick-action-icon {
+        width: 34px;
+        height: 34px;
+
+        flex-shrink: 0;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 9px;
+
+        background: #eef2ff;
+        color: #4f46e5;
+
+        font-size: 13px;
+    }
+
+
+    .quick-action:nth-child(2) .quick-action-icon {
+        background: #ecfdf5;
+        color: #059669;
+    }
+
+
+    .quick-action:nth-child(3) .quick-action-icon {
+        background: #fff7ed;
+        color: #ea580c;
+    }
+
+
+    .quick-action:nth-child(4) .quick-action-icon {
+        background: #f0f9ff;
+        color: #0284c7;
+    }
+
+
+    .quick-action-text {
+        min-width: 0;
+    }
+
+
+    .quick-action-text strong {
+        display: block;
+
+        color: var(--color-text-primary);
+
+        font-size: 9px;
+        font-weight: 750;
+    }
+
+
+    .quick-action-text span {
+        display: block;
+
+        margin-top: 2px;
+
+        color: var(--color-text-muted);
+
+        font-size: 7px;
+    }
+
+
+    /* =========================================================
+       RECENT + UPCOMING
+    ========================================================= */
+
+    .bottom-grid {
+        display: grid;
+
+        grid-template-columns: 1fr 1fr;
+
+        gap: 16px;
+    }
+
+
+    .update-item {
+        display: flex;
+
+        gap: 10px;
+
+        padding: 11px 0;
+
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+
+    .update-item:last-child {
+        border-bottom: none;
+    }
+
+
+    .update-icon {
+        width: 31px;
+        height: 31px;
+
+        flex-shrink: 0;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 8px;
+
+        background: #eef2ff;
+        color: #4f46e5;
+
+        font-size: 11px;
+    }
+
+
+    .update-content {
+        min-width: 0;
+    }
+
+
+    .update-content strong {
+        display: block;
+
+        color: var(--color-text-primary);
+
+        font-size: 9px;
+        font-weight: 700;
+    }
+
+
+    .update-content span {
+        display: block;
+
+        margin-top: 3px;
+
+        color: var(--color-text-muted);
+
+        font-size: 8px;
+        line-height: 1.5;
+    }
+
+
+    .empty-message {
+        padding: 18px 5px;
+
+        text-align: center;
+
+        color: #94a3b8;
+
+        font-size: 9px;
+    }
+
+
+    /* =========================================================
+       RESPONSIVE
+    ========================================================= */
+
+    @media (max-width: 1100px) {
+
+        .summary-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .dashboard-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .quick-actions {
+            grid-template-columns: 1fr 1fr;
+        }
+
+    }
+
+
+    @media (max-width: 800px) {
+
+        .welcome-card {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .welcome-profile {
+            width: 100%;
+        }
+
+        .bottom-grid {
+            grid-template-columns: 1fr;
+        }
+
+    }
+
+
+    @media (max-width: 600px) {
+
+        .summary-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .personal-list {
+            grid-template-columns: 1fr;
+        }
+
+        .quick-actions {
+            grid-template-columns: 1fr;
+        }
+
+        .room-box {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+    }
+
+</style>
+
+{% endblock %}
+
+
+
+{% block content %}
+
+<div class="student-dashboard">
+
+    {% with profile=request.user.student_profile %}
+    {% with occupation=profile.occupation %}
+
+    <!-- WELCOME -->
+    <section class="welcome-card">
+        <div class="welcome-content">
+
+            <div class="welcome-small">
+                <i class="bi bi-stars"></i>
+
+                {% if occupation == "Student" %}
+                    Student Dashboard
+                {% elif occupation == "Working Professional" %}
+                    Working Professional Dashboard
+                {% elif occupation == "Government Employee" %}
+                    Government Employee Dashboard
+                {% elif occupation == "Private Employee" %}
+                    Private Employee Dashboard
+                {% elif occupation == "Business / Self Employed" %}
+                    Business Dashboard
+                {% elif occupation == "Job Seeker" %}
+                    Job Seeker Dashboard
+                {% else %}
+                    User Dashboard
+                {% endif %}
+            </div>
+
+            <h2>
+                Welcome,
+                <span>
+                    {{ profile.first_name|default:request.user.first_name|default:request.user.username }}
+                </span>
+            </h2>
+
+            <p>
+                {% if occupation == "Student" %}
+                    Manage your hostel room, attendance, fees and complaints from one place.
+                {% elif occupation == "Working Professional" %}
+                    Manage your hostel accommodation, payments, complaints and daily information.
+                {% elif occupation == "Government Employee" %}
+                    Manage your hostel accommodation, payments, complaints and important updates.
+                {% elif occupation == "Private Employee" %}
+                    Manage your hostel accommodation, payments, complaints and important updates.
+                {% elif occupation == "Business / Self Employed" %}
+                    Manage your hostel accommodation, payments, complaints and important updates.
+                {% elif occupation == "Job Seeker" %}
+                    Manage your hostel accommodation, payments, complaints and important updates.
+                {% else %}
+                    Manage your hostel information, payments and complaints from one place.
+                {% endif %}
+            </p>
+
+        </div>
+
+        <div class="welcome-profile">
+            <div class="profile-avatar">
+                {{ profile.first_name|default:request.user.username|first|upper }}
+            </div>
+
+            <div class="profile-info">
+                <strong>
+                    {{ profile.full_name|default:request.user.get_full_name|default:request.user.username }}
+                </strong>
+                <span>
+                    {{ occupation|default:"Other"|upper }}
+                </span>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- SUMMARY CARDS -->
+    <section class="summary-grid">
+
+        <!-- ROOM -->
+        <div class="summary-card">
+            <div class="summary-icon">
+                <i class="bi bi-door-open"></i>
+            </div>
+
+            <div class="summary-content">
+                <span>My Room</span>
+
+                {% with allocation=profile.get_current_allocation %}
+                    {% if allocation %}
+                        <strong>
+                            {{ allocation.room.room_number|default:"Allocated" }}
+                        </strong>
+                        <small>Current allocation</small>
+                    {% else %}
+                        <strong>—</strong>
+                        <small>Not allocated</small>
+                    {% endif %}
+                {% endwith %}
+            </div>
+        </div>
+
+
+        <!-- ATTENDANCE -->
+        {% if occupation == "Student" %}
+        <div class="summary-card">
+            <div class="summary-icon">
+                <i class="bi bi-calendar-check"></i>
+            </div>
+
+            <div class="summary-content">
+                <span>Attendance</span>
+                <strong>{{ profile.get_attendance_percentage }}%</strong>
+                <small>Overall attendance</small>
+            </div>
+        </div>
+        {% else %}
+        <div class="summary-card">
+            <div class="summary-icon">
+                <i class="bi bi-calendar-check"></i>
+            </div>
+
+            <div class="summary-content">
+                <span>Occupation</span>
+                <strong style="font-size:12px;">
+                    {{ occupation|default:"Other" }}
+                </strong>
+                <small>Registered occupation</small>
+            </div>
+        </div>
+        {% endif %}
+
+
+        <!-- FEES -->
+        <div class="summary-card">
+            <div class="summary-icon">
+                <i class="bi bi-wallet2"></i>
+            </div>
+
+            <div class="summary-content">
+                <span>Fees Due</span>
+                <strong>
+                    ₹{{ profile.get_pending_fees_total|default:"0" }}
+                </strong>
+                <small>Pending / overdue</small>
+            </div>
+        </div>
+
+
+        <!-- ID -->
+        <div class="summary-card">
+            <div class="summary-icon">
+                <i class="bi bi-person-badge"></i>
+            </div>
+
+            <div class="summary-content">
+                <span>Student ID</span>
+                <strong>
+                    {{ profile.student_id|default:"—" }}
+                </strong>
+                <small>Registered ID</small>
+            </div>
+        </div>
+
+    </section>
+
+
+    <!-- MAIN INFORMATION -->
+    <section class="dashboard-grid">
+
+        <!-- HOSTEL + PERSONAL -->
+        <div class="dashboard-card">
+
+            <div class="card-header-custom">
+                <div class="card-header-left">
+                    <div class="header-icon">
+                        <i class="bi bi-house-door-fill"></i>
+                    </div>
+
+                    <div>
+                        <h3>My Hostel Information</h3>
+                        <p>Your current accommodation details</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-body-custom">
+
+                {% with allocation=profile.get_current_allocation %}
+
+                    {% if allocation %}
+                        <div class="room-box">
+
+                            <div class="room-main">
+                                <div class="room-icon">
+                                    <i class="bi bi-door-open-fill"></i>
+                                </div>
+
+                                <div class="room-details">
+                                    <strong>
+                                        Room {{ allocation.room.room_number|default:"Allocated" }}
+                                    </strong>
+
+                                    <span>
+                                        {{ allocation.room.floor|default:"" }}
+                                        {% if allocation.room.floor %}
+                                            • Floor
+                                        {% endif %}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="room-status">
+                                Active
+                            </div>
+
+                        </div>
+
+                    {% else %}
+
+                        <div class="room-empty">
+                            <i class="bi bi-house-x"></i>
+                            No room has been allocated yet.
+                        </div>
+
+                    {% endif %}
+
+                {% endwith %}
+
+
+                <div style="height:14px;"></div>
+
+                <div class="personal-list">
+
+                    <div class="personal-item">
+                        <label>Full Name</label>
+                        <strong>{{ profile.full_name|default:"—" }}</strong>
+                    </div>
+
+                    <div class="personal-item">
+                        <label>Occupation</label>
+                        <strong>{{ occupation|default:"Other"|upper }}</strong>
+                    </div>
+
+                    <div class="personal-item">
+                        <label>Phone</label>
+                        <strong>{{ profile.phone|default:"—" }}</strong>
+                    </div>
+
+                    <div class="personal-item">
+                        <label>Email</label>
+                        <strong>
+                            {{ profile.email|default:request.user.email|default:"—" }}
+                        </strong>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- OCCUPATION-SPECIFIC INFORMATION -->
+        <div class="dashboard-card">
+
+            <div class="card-header-custom">
+                <div class="card-header-left">
+
+                    <div class="header-icon">
+                        {% if occupation == "Student" %}
+                            <i class="bi bi-mortarboard-fill"></i>
+                        {% elif occupation == "Job Seeker" %}
+                            <i class="bi bi-search"></i>
+                        {% elif occupation == "Business / Self Employed" %}
+                            <i class="bi bi-briefcase-fill"></i>
+                        {% else %}
+                            <i class="bi bi-person-workspace"></i>
+                        {% endif %}
+                    </div>
+
+                    <div>
+                        {% if occupation == "Student" %}
+                            <h3>Student Information</h3>
+                            <p>Your academic and hostel information</p>
+                        {% elif occupation == "Working Professional" %}
+                            <h3>Professional Information</h3>
+                            <p>Your hostel information as a working professional</p>
+                        {% elif occupation == "Government Employee" %}
+                            <h3>Professional Information</h3>
+                            <p>Your hostel information as a government employee</p>
+                        {% elif occupation == "Private Employee" %}
+                            <h3>Professional Information</h3>
+                            <p>Your hostel information as a private employee</p>
+                        {% elif occupation == "Business / Self Employed" %}
+                            <h3>Business Information</h3>
+                            <p>Your hostel information as a business professional</p>
+                        {% elif occupation == "Job Seeker" %}
+                            <h3>Job Seeker Information</h3>
+                            <p>Your hostel and personal information</p>
+                        {% else %}
+                            <h3>Personal Information</h3>
+                            <p>Your hostel and personal information</p>
+                        {% endif %}
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="card-body-custom">
+
+                {% if occupation == "Student" %}
+
+                    {% with attendance=profile.get_attendance_percentage %}
+                    <div class="attendance-box">
+
+                        <div class="attendance-circle"
+                             style="--attendance-angle: {{ attendance|default:0 }}%;">
+
+                            <div class="attendance-value">
+                                {{ attendance|default:0 }}%
+                            </div>
+
+                        </div>
+
+                        <div class="attendance-info">
+                            <h4>Overall Attendance</h4>
+
+                            <p>
+                                Keep your attendance regular to maintain a good record.
+                            </p>
+
+                            <a href="{% url 'attendance:index' %}"
+                               class="btn btn-sm btn-primary"
+                               style="margin-top:8px; font-size:9px;">
+                                View Attendance
+                                <i class="bi bi-arrow-right ms-1"></i>
+                            </a>
+                        </div>
+
+                    </div>
+                    {% endwith %}
+
+                {% elif occupation == "Working Professional" %}
+
+                    <div class="room-empty">
+                        <i class="bi bi-person-workspace"></i>
+                        Your professional hostel dashboard is ready.
+                    </div>
+
+                {% elif occupation == "Government Employee" %}
+
+                    <div class="room-empty">
+                        <i class="bi bi-building"></i>
+                        Your government employee hostel dashboard is ready.
+                    </div>
+
+                {% elif occupation == "Private Employee" %}
+
+                    <div class="room-empty">
+                        <i class="bi bi-briefcase"></i>
+                        Your private employee hostel dashboard is ready.
+                    </div>
+
+                {% elif occupation == "Business / Self Employed" %}
+
+                    <div class="room-empty">
+                        <i class="bi bi-briefcase-fill"></i>
+                        Your business hostel dashboard is ready.
+                    </div>
+
+                {% elif occupation == "Job Seeker" %}
+
+                    <div class="room-empty">
+                        <i class="bi bi-search"></i>
+                        Your job seeker hostel dashboard is ready.
+                    </div>
+
+                {% else %}
+
+                    <div class="room-empty">
+                        <i class="bi bi-person-circle"></i>
+                        Your personal hostel dashboard is ready.
+                    </div>
+
+                {% endif %}
+
+            </div>
+        </div>
+
+    </section>
+
+
+    <!-- FEES + QUICK ACTIONS -->
+    <section class="dashboard-grid">
+
+        <!-- FEES -->
+        <div class="dashboard-card">
+
+            <div class="card-header-custom">
+                <div class="card-header-left">
+
+                    <div class="header-icon"
+                         style="background:#fff7ed;color:#ea580c;">
+                        <i class="bi bi-credit-card"></i>
+                    </div>
+
+                    <div>
+                        <h3>Fees Due</h3>
+                        <p>Current pending hostel fees</p>
+                    </div>
+
+                </div>
+
+                <a href="{% url 'fees:list' %}"
+                   class="btn btn-sm btn-light"
+                   style="font-size:8px;">
+                    View All
+                </a>
+            </div>
+
+            <div class="card-body-custom">
+
+                <div class="fee-box">
+
+                    <div class="fee-top">
+
+                        <div>
+                            <div class="fee-label">Total Pending</div>
+
+                            <div class="fee-amount">
+                                ₹{{ profile.get_pending_fees_total|default:"0" }}
+                            </div>
+                        </div>
+
+                        {% if profile.get_pending_fees_total %}
+                            <div class="fee-status">DUE</div>
+                        {% else %}
+                            <div class="fee-status"
+                                 style="background:#dcfce7;color:#15803d;">
+                                CLEAR
+                            </div>
+                        {% endif %}
+
+                    </div>
+
+                    <div class="fee-action">
+                        <a href="{% url 'fees:list' %}"
+                           class="btn btn-sm btn-primary"
+                           style="font-size:9px;">
+                            <i class="bi bi-wallet2 me-1"></i>
+                            View Fee Details
+                        </a>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- QUICK ACTIONS -->
+        <div class="dashboard-card">
+
+            <div class="card-header-custom">
+
+                <div class="card-header-left">
+
+                    <div class="header-icon">
+                        <i class="bi bi-lightning-charge-fill"></i>
+                    </div>
+
+                    <div>
+                        <h3>Quick Actions</h3>
+                        <p>
+                            {% if occupation == "Student" %}
+                                Student options
+                            {% else %}
+                                Frequently used options
+                            {% endif %}
+                        </p>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="card-body-custom">
+
+                <div class="quick-actions">
+
+                    <a href="{% url 'accounts:profile' %}"
+                       class="quick-action">
+                        <div class="quick-action-icon">
+                            <i class="bi bi-person"></i>
+                        </div>
+
+                        <div class="quick-action-text">
+                            <strong>My Profile</strong>
+                            <span>View profile</span>
+                        </div>
+                    </a>
+
+
+                    {% if occupation == "Student" %}
+                    <a href="{% url 'attendance:index' %}"
+                       class="quick-action">
+
+                        <div class="quick-action-icon">
+                            <i class="bi bi-calendar-check"></i>
+                        </div>
+
+                        <div class="quick-action-text">
+                            <strong>Attendance</strong>
+                            <span>Check record</span>
+                        </div>
+
+                    </a>
+                    {% endif %}
+
+
+                    <a href="{% url 'fees:list' %}"
+                       class="quick-action">
+
+                        <div class="quick-action-icon">
+                            <i class="bi bi-wallet2"></i>
+                        </div>
+
+                        <div class="quick-action-text">
+                            <strong>Fees</strong>
+                            <span>View payments</span>
+                        </div>
+
+                    </a>
+
+
+                    <a href="{% url 'complaints:list' %}"
+                       class="quick-action">
+
+                        <div class="quick-action-icon">
+                            <i class="bi bi-chat-left-text"></i>
+                        </div>
+
+                        <div class="quick-action-text">
+                            <strong>Complaint</strong>
+                            <span>Raise complaint</span>
+                        </div>
+
+                    </a>
+
+                </div>
+
+            </div>
+        </div>
+
+    </section>
+
+
+    <!-- RECENT UPDATES + UPCOMING -->
+    <section class="bottom-grid">
+
+        <!-- RECENT UPDATES -->
+        <div class="dashboard-card">
+
+            <div class="card-header-custom">
+
+                <div class="card-header-left">
+
+                    <div class="header-icon">
+                        <i class="bi bi-bell"></i>
+                    </div>
+
+                    <div>
+                        <h3>Recent Updates</h3>
+                        <p>Important hostel information</p>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="card-body-custom">
+
+                <div class="update-item">
+                    <div class="update-icon">
+                        <i class="bi bi-info-circle"></i>
+                    </div>
+
+                    <div class="update-content">
+                        <strong>Hostel Management</strong>
+                        <span>
+                            Keep your profile and contact information up to date.
+                        </span>
+                    </div>
+                </div>
+
+
+                <div class="update-item">
+                    <div class="update-icon">
+                        <i class="bi bi-house"></i>
+                    </div>
+
+                    <div class="update-content">
+                        <strong>Room Information</strong>
+                        <span>
+                            Check your current room allocation from the dashboard.
+                        </span>
+                    </div>
+                </div>
+
+
+                <div class="update-item">
+                    <div class="update-icon">
+                        <i class="bi bi-credit-card"></i>
+                    </div>
+
+                    <div class="update-content">
+                        <strong>Fee Reminder</strong>
+                        <span>
+                            Check your pending fees regularly to avoid overdue payments.
+                        </span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- UPCOMING -->
+        <div class="dashboard-card">
+
+            <div class="card-header-custom">
+
+                <div class="card-header-left">
+
+                    <div class="header-icon">
+                        <i class="bi bi-calendar-event"></i>
+                    </div>
+
+                    <div>
+                        <h3>Upcoming</h3>
+                        <p>Things that may need your attention</p>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="card-body-custom">
+
+                {% if occupation == "Student" %}
+
+                    <div class="update-item">
+                        <div class="update-icon">
+                            <i class="bi bi-calendar-check"></i>
+                        </div>
+
+                        <div class="update-content">
+                            <strong>Attendance</strong>
+                            <span>
+                                Maintain regular attendance and keep your attendance percentage healthy.
+                            </span>
+                        </div>
+                    </div>
+
+                {% else %}
+
+                    <div class="update-item">
+                        <div class="update-icon">
+                            <i class="bi bi-house"></i>
+                        </div>
+
+                        <div class="update-content">
+                            <strong>Accommodation</strong>
+                            <span>
+                                Check your current room allocation and hostel information.
+                            </span>
+                        </div>
+                    </div>
+
+                {% endif %}
+
+
+                <div class="update-item">
+                    <div class="update-icon">
+                        <i class="bi bi-wallet2"></i>
+                    </div>
+
+                    <div class="update-content">
+                        <strong>Fee Payment</strong>
+                        <span>
+                            Review your fee status and complete any pending payment if required.
+                        </span>
+                    </div>
+                </div>
+
+
+                <div class="update-item">
+                    <div class="update-icon">
+                        <i class="bi bi-chat-left-text"></i>
+                    </div>
+
+                    <div class="update-content">
+                        <strong>Complaints</strong>
+                        <span>
+                            Track your submitted complaints and their current status.
+                        </span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </section>
+
+    {% endwith %}
+    {% endwith %}
+
+</div>
+
+{% endblock %}

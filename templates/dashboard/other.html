@@ -1,0 +1,472 @@
+{% extends 'base.html' %}
+
+{% block title %}Resident Dashboard{% endblock %}
+{% block page_title %}Resident Portal{% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item active">Dashboard</li>
+{% endblock %}
+
+{% block extra_css %}
+{% include 'dashboard/_dashboard_styles.html' %}
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+
+    <!-- WELCOME HERO -->
+    <section class="welcome-card">
+        <div class="welcome-content">
+            <div class="welcome-small">
+                <i class="bi bi-person-fill"></i>
+                Resident Portal
+            </div>
+            <h2>
+                Welcome,
+                <span>{{ profile.first_name|default:request.user.first_name|default:request.user.username }}</span>
+            </h2>
+            <p>
+                Hostel residential dashboard. Track your room and bed allocation, review monthly fee invoices,
+                raise maintenance complaints, and stay updated on hostel notices.
+            </p>
+        </div>
+
+        <div class="welcome-profile">
+            <div class="profile-avatar">
+                {{ profile.first_name|default:request.user.first_name|default:request.user.username|first|upper }}
+            </div>
+            <div class="profile-info">
+                <strong>{{ profile.full_name|default:request.user.get_full_name|default:request.user.username }}</strong>
+                <div class="profile-occ-label" style="font-size: 10px; color: rgba(255,255,255,0.75); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px;">Occupation:</div>
+                <span class="badge-occ" style="font-weight: 700; color: #fff;">{{ profile.occupation|default:request.user.occupation|default:"Other"|upper }}</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- CORE SUMMARY KPIS -->
+    <section class="summary-grid">
+        <!-- ROOM & BED -->
+        <div class="summary-card">
+            <div class="summary-icon icon-blue">
+                <i class="bi bi-door-open-fill"></i>
+            </div>
+            <div class="summary-content">
+                <span>My Room</span>
+                {% if allocation %}
+                    <strong>Room {{ room.room_number }}</strong>
+                    <small>Bed #{{ bed.bed_number|default:"1" }} • {{ building_name }}</small>
+                {% else %}
+                    <strong>—</strong>
+                    <small>Room pending</small>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- OCCUPATION / CATEGORY -->
+        <div class="summary-card">
+            <div class="summary-icon icon-indigo">
+                <i class="bi bi-tag-fill"></i>
+            </div>
+            <div class="summary-content">
+                <span>Category</span>
+                <strong style="font-size:16px;">{{ profile.occupation|default:request.user.occupation|default:"General Resident" }}</strong>
+                <small>Registered Occupation</small>
+            </div>
+        </div>
+
+        <!-- FEES DUE -->
+        <div class="summary-card">
+            <div class="summary-icon icon-amber">
+                <i class="bi bi-wallet2"></i>
+            </div>
+            <div class="summary-content">
+                <span>Fees Due</span>
+                <strong>₹{{ pending_fees }}</strong>
+                <small>{% if pending_fees > 0 %}Payment Pending{% else %}All Dues Settled{% endif %}</small>
+            </div>
+        </div>
+
+        <!-- RESIDENT ID -->
+        <div class="summary-card">
+            <div class="summary-icon icon-teal">
+                <i class="bi bi-person-badge-fill"></i>
+            </div>
+            <div class="summary-content">
+                <span>Resident ID</span>
+                <strong>{{ profile.student_id|default:"RES-ID" }}</strong>
+                <small>Hostel ID Number</small>
+            </div>
+        </div>
+    </section>
+
+    <!-- MAIN TWO-COLUMN SECTION -->
+    <section class="dashboard-grid">
+        <!-- HOSTEL & ROOM INFORMATION -->
+        <div class="dashboard-card">
+            <div class="card-header-custom">
+                <div class="card-header-left">
+                    <div class="header-icon">
+                        <i class="bi bi-house-door-fill"></i>
+                    </div>
+                    <div>
+                        <h3>Hostel Accommodation Information</h3>
+                        <p>Your current residential details</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body-custom">
+                {% if allocation %}
+                    <div class="room-box">
+                        <div class="room-main">
+                            <div class="room-icon">
+                                <i class="bi bi-door-open"></i>
+                            </div>
+                            <div class="room-details">
+                                <strong>Room {{ room.room_number }} (Bed {{ bed.bed_number|default:"A" }})</strong>
+                                <span>Hostel Block: {{ building_name }} • Floor: {{ room.floor.floor_number|default:"1" }}</span>
+                            </div>
+                        </div>
+                        <span class="badge-status badge-active">Active Resident</span>
+                    </div>
+                {% else %}
+                    <div class="room-empty">
+                        <i class="bi bi-house-slash"></i>
+                        No room has been allocated yet. Please check with the hostel office.
+                    </div>
+                {% endif %}
+
+                <div class="personal-list mt-3">
+                    <div class="personal-item">
+                        <label>Full Name</label>
+                        <strong>{{ profile.full_name|default:request.user.username }}</strong>
+                    </div>
+                    <div class="personal-item">
+                        <label>Occupation / Category</label>
+                        <strong>{{ profile.occupation|default:request.user.occupation|default:"General Resident" }}</strong>
+                    </div>
+                    <div class="personal-item">
+                        <label>Hostel / Block</label>
+                        <strong>{{ building_name }}</strong>
+                    </div>
+                    <div class="personal-item">
+                        <label>Contact Phone</label>
+                        <strong>{{ profile.phone|default:request.user.phone|default:"—" }}</strong>
+                    </div>
+                    <div class="personal-item">
+                        <label>Email Address</label>
+                        <strong>{{ profile.email|default:request.user.email|default:"—" }}</strong>
+                    </div>
+                    <div class="personal-item">
+                        <label>Payment Status</label>
+                        {% if pending_fees > 0 %}
+                            <strong class="text-danger">₹{{ pending_fees }} Due</strong>
+                        {% else %}
+                            <strong class="text-success">Cleared</strong>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RESIDENT PROFILE CARD -->
+        <div class="dashboard-card">
+            <div class="card-header-custom">
+                <div class="card-header-left">
+                    <div class="header-icon icon-indigo">
+                        <i class="bi bi-person-lines-fill"></i>
+                    </div>
+                    <div>
+                        <h3>Resident Profile</h3>
+                        <p>Personal & contact information</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body-custom">
+                <div class="personal-list">
+                    <div class="personal-item">
+                        <label>Username</label>
+                        <strong>{{ request.user.username }}</strong>
+                    </div>
+                    <div class="personal-item">
+                        <label>Primary Phone</label>
+                        <strong>{{ profile.phone|default:request.user.phone|default:"—" }}</strong>
+                    </div>
+                    <div class="personal-item">
+                        <label>Primary Email</label>
+                        <strong>{{ profile.email|default:request.user.email|default:"—" }}</strong>
+                    </div>
+                    <div class="personal-item">
+                        <label>Member Since</label>
+                        <strong>{{ request.user.date_joined|date:"M Y" }}</strong>
+                    </div>
+                </div>
+
+                <div class="mt-4 p-3 bg-light rounded-3 border">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <small class="text-muted text-uppercase fw-bold" style="font-size:10px;">Verification</small>
+                            <div class="fw-bold text-success" style="font-size:13px;"><i class="bi bi-patch-check-fill me-1"></i> Active Member</div>
+                        </div>
+                        <a href="{% url 'accounts:profile' %}" class="btn btn-sm btn-outline-primary" style="font-size:11px;">
+                            Edit Profile
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FEES & QUICK ACTIONS -->
+    <section class="dashboard-grid">
+        <!-- FEES DUE CARD -->
+        <div class="dashboard-card">
+            <div class="card-header-custom">
+                <div class="card-header-left">
+                    <div class="header-icon icon-amber">
+                        <i class="bi bi-credit-card-fill"></i>
+                    </div>
+                    <div>
+                        <h3>Hostel Fees Due</h3>
+                        <p>Accommodation dues and maintenance invoices</p>
+                    </div>
+                </div>
+                <a href="{% url 'fees:list' %}" class="btn btn-sm btn-outline-secondary" style="font-size:11px;">View All</a>
+            </div>
+            <div class="card-body-custom">
+                <div class="fee-box">
+                    <div class="fee-top">
+                        <div>
+                            <div class="fee-label">Total Pending Fees</div>
+                            <div class="fee-amount">₹{{ pending_fees }}</div>
+                        </div>
+                        {% if pending_fees > 0 %}
+                            <span class="badge-status badge-pending">PAYMENT DUE</span>
+                        {% else %}
+                            <span class="badge-status badge-active">FEES CLEARED</span>
+                        {% endif %}
+                    </div>
+                    <div class="fee-action">
+                        <a href="{% url 'fees:list' %}" class="btn btn-sm btn-primary" style="font-size:11px;">
+                            <i class="bi bi-credit-card me-1"></i> View Invoices & Settle Dues
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- QUICK ACTIONS CARD -->
+        <div class="dashboard-card">
+            <div class="card-header-custom">
+                <div class="card-header-left">
+                    <div class="header-icon icon-purple">
+                        <i class="bi bi-lightning-charge-fill"></i>
+                    </div>
+                    <div>
+                        <h3>Resident Services</h3>
+                        <p>Quick access options</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body-custom">
+                <div class="quick-actions">
+                    <a href="{% url 'accounts:profile' %}" class="quick-action">
+                        <div class="quick-action-icon icon-blue">
+                            <i class="bi bi-person"></i>
+                        </div>
+                        <div class="quick-action-text">
+                            <strong>My Profile</strong>
+                            <span>Personal bio</span>
+                        </div>
+                    </a>
+
+                    <a href="{% url 'fees:list' %}" class="quick-action">
+                        <div class="quick-action-icon icon-green">
+                            <i class="bi bi-wallet2"></i>
+                        </div>
+                        <div class="quick-action-text">
+                            <strong>Fees & Dues</strong>
+                            <span>View receipts</span>
+                        </div>
+                    </a>
+
+                    <a href="{% url 'complaints:list' %}" class="quick-action">
+                        <div class="quick-action-icon icon-rose">
+                            <i class="bi bi-chat-left-text"></i>
+                        </div>
+                        <div class="quick-action-text">
+                            <strong>Complaints</strong>
+                            <span>Report issue</span>
+                        </div>
+                    </a>
+
+                    <a href="{% url 'visitors:list' %}" class="quick-action">
+                        <div class="quick-action-icon icon-teal">
+                            <i class="bi bi-person-vcard"></i>
+                        </div>
+                        <div class="quick-action-text">
+                            <strong>Visitors</strong>
+                            <span>Guest pass log</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- COMPLAINTS & VISITORS (SECTION 9 REQUIREMENTS) -->
+    <section class="dashboard-grid">
+        <!-- COMPLAINTS -->
+        <div class="dashboard-card">
+            <div class="card-header-custom">
+                <div class="card-header-left">
+                    <div class="header-icon icon-rose">
+                        <i class="bi bi-chat-left-text-fill"></i>
+                    </div>
+                    <div>
+                        <h3>My Complaints & Requests</h3>
+                        <p>Facility maintenance and service complaints</p>
+                    </div>
+                </div>
+                <a href="{% url 'complaints:list' %}" class="btn btn-sm btn-outline-secondary" style="font-size:11px;">View All</a>
+            </div>
+            <div class="card-body-custom">
+                {% if complaints %}
+                    {% for c in complaints %}
+                        <div class="update-item">
+                            <div class="update-icon {% if c.status == 'resolved' %}icon-green{% else %}icon-rose{% endif %}">
+                                <i class="bi bi-tools"></i>
+                            </div>
+                            <div class="update-content">
+                                <strong>{{ c.title }}</strong>
+                                <span>{{ c.description|truncatechars:70 }}</span>
+                                <div class="update-date">
+                                    {{ c.created_at|date:"M d, Y" }} • 
+                                    <span class="badge {% if c.status == 'resolved' %}bg-success{% elif c.status == 'in_progress' %}bg-info text-dark{% else %}bg-warning text-dark{% endif %}">
+                                        {{ c.get_status_display }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="room-empty">
+                        <i class="bi bi-check-circle"></i>
+                        No active complaints registered.
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- VISITORS -->
+        <div class="dashboard-card">
+            <div class="card-header-custom">
+                <div class="card-header-left">
+                    <div class="header-icon icon-teal">
+                        <i class="bi bi-person-vcard-fill"></i>
+                    </div>
+                    <div>
+                        <h3>My Visitors & Guests</h3>
+                        <p>Visitor registration log</p>
+                    </div>
+                </div>
+                <a href="{% url 'visitors:list' %}" class="btn btn-sm btn-outline-secondary" style="font-size:11px;">View All</a>
+            </div>
+            <div class="card-body-custom">
+                {% if visitors %}
+                    {% for v in visitors %}
+                        <div class="update-item">
+                            <div class="update-icon icon-teal">
+                                <i class="bi bi-person-badge"></i>
+                            </div>
+                            <div class="update-content">
+                                <strong>{{ v.visitor_name }} ({{ v.relation|default:"Guest" }})</strong>
+                                <span>In: {{ v.check_in|date:"M d, h:i A" }} {% if v.check_out %}• Out: {{ v.check_out|date:"M d, h:i A" }}{% endif %}</span>
+                                <div class="update-date">
+                                    Status: 
+                                    {% if v.check_out %}
+                                        <span class="badge bg-secondary">Checked Out</span>
+                                    {% else %}
+                                        <span class="badge bg-success">Inside Hostel</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="room-empty">
+                        <i class="bi bi-person-x"></i>
+                        No visitor logs recorded.
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+
+    <!-- NOTICES & LEAVE REQUESTS -->
+    <section class="bottom-grid">
+        <!-- NOTICES -->
+        <div class="dashboard-card">
+            <div class="card-header-custom">
+                <div class="card-header-left">
+                    <div class="header-icon icon-amber">
+                        <i class="bi bi-bell-fill"></i>
+                    </div>
+                    <div>
+                        <h3>Hostel Notices</h3>
+                        <p>Important announcements and hostel circulars</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body-custom">
+                {% for n in notices %}
+                    <div class="update-item">
+                        <div class="update-icon icon-blue">
+                            <i class="bi bi-info-circle-fill"></i>
+                        </div>
+                        <div class="update-content">
+                            <strong>{{ n.title }}</strong>
+                            <span>{{ n.content }}</span>
+                            <div class="update-date">{{ n.date }} • {{ n.category }}</div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- LEAVE REQUESTS -->
+        <div class="dashboard-card">
+            <div class="card-header-custom">
+                <div class="card-header-left">
+                    <div class="header-icon icon-teal">
+                        <i class="bi bi-calendar2-range-fill"></i>
+                    </div>
+                    <div>
+                        <h3>Leave & Outstation Passes</h3>
+                        <p>Absence notification & gate pass</p>
+                    </div>
+                </div>
+                <button class="btn btn-sm btn-outline-primary" style="font-size:11px;" onclick="alert('Leave notice logged.');">
+                    <i class="bi bi-plus-lg me-1"></i> Apply Leave
+                </button>
+            </div>
+            <div class="card-body-custom">
+                {% for lr in leave_requests %}
+                    <div class="update-item">
+                        <div class="update-icon icon-teal">
+                            <i class="bi bi-file-earmark-check"></i>
+                        </div>
+                        <div class="update-content">
+                            <strong>{{ lr.leave_type }}</strong>
+                            <span>{{ lr.start_date }} to {{ lr.end_date }}</span>
+                            <div class="update-date">
+                                Status: <span class="badge {% if lr.status == 'Approved' %}bg-success{% else %}bg-warning text-dark{% endif %}">{{ lr.status }}</span>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+</div>
+{% endblock %}

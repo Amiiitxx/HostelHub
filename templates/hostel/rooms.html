@@ -1,0 +1,764 @@
+{% extends 'base.html' %}
+
+{% block title %}Rooms | Hostel Management{% endblock %}
+{% block page_title %}Rooms{% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item">
+    <a href="{% url 'hostel:index' %}">Hostel</a>
+</li>
+<li class="breadcrumb-item active">Rooms</li>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .rooms-page {
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    /* =========================
+       HERO
+    ========================= */
+    .rooms-hero {
+        position: relative;
+        overflow: hidden;
+        background:
+            radial-gradient(circle at 90% 10%, rgba(99,102,241,.14), transparent 30%),
+            radial-gradient(circle at 5% 95%, rgba(59,130,246,.08), transparent 28%),
+            #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 24px;
+        padding: 28px;
+        margin-bottom: 20px;
+        box-shadow: 0 12px 35px rgba(15,23,42,.06);
+    }
+
+    .rooms-hero::after {
+        content: "";
+        position: absolute;
+        width: 230px;
+        height: 230px;
+        right: -100px;
+        bottom: -130px;
+        border-radius: 50%;
+        background: rgba(99,102,241,.055);
+    }
+
+    .rooms-hero-inner {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 25px;
+    }
+
+    .rooms-hero-main {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .rooms-hero-icon {
+        width: 58px;
+        height: 58px;
+        flex: 0 0 58px;
+        border-radius: 17px;
+        background: #eef2ff;
+        color: #4f46e5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 25px;
+    }
+
+    .rooms-title {
+        margin: 0 0 5px;
+        color: #111827;
+        font-size: 27px;
+        font-weight: 850;
+        letter-spacing: -.6px;
+    }
+
+    .rooms-subtitle {
+        margin: 0;
+        color: #64748b;
+        font-size: 12px;
+    }
+
+    /* =========================
+       FILTER CARD
+    ========================= */
+    .filter-card {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 18px;
+        padding: 17px;
+        margin-bottom: 20px;
+        box-shadow: 0 7px 25px rgba(15,23,42,.045);
+    }
+
+    .filter-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr auto;
+        gap: 12px;
+        align-items: end;
+    }
+
+    .filter-label {
+        display: block;
+        margin-bottom: 6px;
+        color: #64748b;
+        font-size: 10px;
+        font-weight: 750;
+        text-transform: uppercase;
+        letter-spacing: .4px;
+    }
+
+    .filter-select {
+        width: 100%;
+        min-height: 42px;
+        border: 1px solid #e2e8f0;
+        border-radius: 11px;
+        padding: 8px 12px;
+        background: #fff;
+        color: #334155;
+        font-size: 12px;
+        outline: none;
+        transition: .2s ease;
+    }
+
+    .filter-select:focus {
+        border-color: #818cf8;
+        box-shadow: 0 0 0 3px rgba(99,102,241,.10);
+    }
+
+    .filter-btn {
+        min-height: 42px;
+        border: 0;
+        border-radius: 11px;
+        padding: 9px 17px;
+        background: #4f46e5;
+        color: #fff;
+        font-size: 12px;
+        font-weight: 750;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+    }
+
+    .filter-btn:hover {
+        background: #4338ca;
+        color: #fff;
+    }
+
+    /* =========================
+       ROOM GRID
+    ========================= */
+    .rooms-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+        gap: 16px;
+    }
+
+    .room-card {
+        position: relative;
+        overflow: hidden;
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 18px;
+        padding: 17px;
+        box-shadow: 0 7px 25px rgba(15,23,42,.045);
+        transition: .22s ease;
+    }
+
+    .room-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 32px rgba(15,23,42,.09);
+        border-color: #c7d2fe;
+    }
+
+    .room-card-top {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 10px;
+    }
+
+    .room-card-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 13px;
+        background: #eef2ff;
+        color: #4f46e5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+    }
+
+    .room-number {
+        margin-top: 13px;
+        color: #111827;
+        font-size: 17px;
+        font-weight: 850;
+    }
+
+    .room-location {
+        margin-top: 4px;
+        color: #64748b;
+        font-size: 10px;
+        line-height: 1.5;
+    }
+
+    .room-type {
+        margin-top: 11px;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 5px 9px;
+        border-radius: 999px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        color: #64748b;
+        font-size: 9px;
+        font-weight: 750;
+    }
+
+    /* =========================
+       STATUS
+    ========================= */
+    .room-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 6px 9px;
+        border-radius: 999px;
+        font-size: 9px;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .status-available {
+        color: #047857;
+        background: #ecfdf5;
+    }
+
+    .status-full {
+        color: #b91c1c;
+        background: #fef2f2;
+    }
+
+    .status-maintenance {
+        color: #c2410c;
+        background: #fff7ed;
+    }
+
+    .status-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: currentColor;
+    }
+
+    /* =========================
+       ROOM STATS
+    ========================= */
+    .room-stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 7px;
+        margin-top: 15px;
+    }
+
+    .room-stat {
+        padding: 9px 7px;
+        border-radius: 10px;
+        background: #f8fafc;
+        border: 1px solid #eef2f7;
+        text-align: center;
+    }
+
+    .room-stat-value {
+        display: block;
+        color: #111827;
+        font-size: 13px;
+        font-weight: 800;
+    }
+
+    .room-stat-label {
+        display: block;
+        margin-top: 2px;
+        color: #94a3b8;
+        font-size: 8px;
+        text-transform: uppercase;
+        font-weight: 700;
+    }
+
+    /* =========================
+       PROGRESS
+    ========================= */
+    .occupancy-row {
+        margin-top: 14px;
+    }
+
+    .occupancy-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 6px;
+        color: #64748b;
+        font-size: 9px;
+        font-weight: 700;
+    }
+
+    .occupancy-head strong {
+        color: #334155;
+    }
+
+    .progress-track {
+        height: 7px;
+        border-radius: 999px;
+        overflow: hidden;
+        background: #e2e8f0;
+    }
+
+    .progress-fill {
+        height: 100%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, #4f46e5, #7c3aed);
+    }
+
+    /* =========================
+       ACTION
+    ========================= */
+    .room-action {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        margin-top: 15px;
+        padding-top: 13px;
+        border-top: 1px solid #eef2f7;
+    }
+
+    .room-capacity {
+        color: #64748b;
+        font-size: 9px;
+    }
+
+    .view-room-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        padding: 7px 11px;
+        border-radius: 9px;
+        background: #eef2ff;
+        color: #4f46e5;
+        text-decoration: none;
+        font-size: 9px;
+        font-weight: 750;
+        transition: .2s ease;
+    }
+
+    .view-room-btn:hover {
+        background: #4f46e5;
+        color: #fff;
+    }
+
+    /* =========================
+       EMPTY
+    ========================= */
+    .empty-card {
+        grid-column: 1 / -1;
+        padding: 55px 20px;
+        text-align: center;
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 18px;
+    }
+
+    .empty-icon {
+        width: 58px;
+        height: 58px;
+        margin: 0 auto 12px;
+        border-radius: 16px;
+        background: #f1f5f9;
+        color: #64748b;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 23px;
+    }
+
+    .empty-card strong {
+        display: block;
+        color: #475569;
+        font-size: 14px;
+        margin-bottom: 4px;
+    }
+
+    .empty-card span {
+        color: #94a3b8;
+        font-size: 11px;
+    }
+
+    /* =========================
+       RESPONSIVE
+    ========================= */
+    @media (max-width: 900px) {
+        .filter-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .filter-grid > div:last-child {
+            grid-column: 1 / -1;
+        }
+    }
+
+    @media (max-width: 700px) {
+        .rooms-hero-inner {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .rooms-hero {
+            padding: 22px;
+        }
+
+        .rooms-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 520px) {
+        .filter-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .filter-grid > div:last-child {
+            grid-column: auto;
+        }
+
+        .rooms-title {
+            font-size: 23px;
+        }
+    }
+</style>
+{% endblock %}
+
+
+{% block content %}
+<div class="rooms-page">
+
+    <!-- HERO -->
+    <div class="rooms-hero">
+
+        <div class="rooms-hero-inner">
+
+            <div class="rooms-hero-main">
+
+                <div class="rooms-hero-icon">
+                    <i class="bi bi-door-open-fill"></i>
+                </div>
+
+                <div>
+                    <h1 class="rooms-title">Rooms</h1>
+
+                    <p class="rooms-subtitle">
+                        Browse hostel rooms, occupancy and bed availability
+                    </p>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- FILTER -->
+    <div class="filter-card">
+
+        <form method="get">
+
+            <div class="filter-grid">
+
+                <!-- BUILDING -->
+                <div>
+
+                    <label class="filter-label">
+                        Building
+                    </label>
+
+                    <select
+                        name="building"
+                        class="filter-select"
+                    >
+
+                        <option value="">
+                            All Buildings
+                        </option>
+
+                        {% for building in buildings %}
+
+                            <option
+                                value="{{ building.id }}"
+                                {% if selected_building == building.id|stringformat:"s" %}
+                                    selected
+                                {% endif %}
+                            >
+                                {{ building.name }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <!-- FLOOR -->
+                <div>
+
+                    <label class="filter-label">
+                        Floor
+                    </label>
+
+                    <select
+                        name="floor"
+                        class="filter-select"
+                    >
+
+                        <option value="">
+                            All Floors
+                        </option>
+
+                        {% for floor in floors %}
+
+                            <option
+                                value="{{ floor.id }}"
+                                {% if selected_floor == floor.id|stringformat:"s" %}
+                                    selected
+                                {% endif %}
+                            >
+                                {{ floor.name }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <!-- BUTTON -->
+                <div>
+
+                    <button
+                        type="submit"
+                        class="filter-btn"
+                    >
+                        <i class="bi bi-funnel-fill"></i>
+                        Apply Filters
+                    </button>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+    <!-- ROOM GRID -->
+    <div class="rooms-grid">
+
+        {% for room in rooms %}
+
+            <div class="room-card">
+
+                <!-- TOP -->
+                <div class="room-card-top">
+
+                    <div class="room-card-icon">
+                        <i class="bi bi-door-open"></i>
+                    </div>
+
+
+                    {% if room.status == 'maintenance' %}
+
+                        <span class="room-status status-maintenance">
+                            <span class="status-dot"></span>
+                            Maintenance
+                        </span>
+
+                    {% elif room.is_full %}
+
+                        <span class="room-status status-full">
+                            <span class="status-dot"></span>
+                            Fully Occupied
+                        </span>
+
+                    {% else %}
+
+                        <span class="room-status status-available">
+                            <span class="status-dot"></span>
+                            Available
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- ROOM INFO -->
+                <div class="room-number">
+                    Room {{ room.room_number }}
+                </div>
+
+                <div class="room-location">
+                    <i class="bi bi-buildings me-1"></i>
+                    {{ room.floor.building.name }}
+
+                    <span class="mx-1">/</span>
+
+                    {{ room.floor.name }}
+                </div>
+
+
+                <!-- ROOM TYPE -->
+                <div class="room-type">
+                    <i class="bi bi-house"></i>
+                    {{ room.get_room_type_display }}
+                </div>
+
+
+                <!-- STATS -->
+                <div class="room-stats">
+
+                    <div class="room-stat">
+
+                        <span class="room-stat-value">
+                            {{ room.capacity }}
+                        </span>
+
+                        <span class="room-stat-label">
+                            Capacity
+                        </span>
+
+                    </div>
+
+
+                    <div class="room-stat">
+
+                        <span class="room-stat-value">
+                            {{ room.occupied_beds }}
+                        </span>
+
+                        <span class="room-stat-label">
+                            Occupied
+                        </span>
+
+                    </div>
+
+
+                    <div class="room-stat">
+
+                        <span class="room-stat-value">
+                            {{ room.available_beds }}
+                        </span>
+
+                        <span class="room-stat-label">
+                            Available
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- OCCUPANCY -->
+                <div class="occupancy-row">
+
+                    <div class="occupancy-head">
+
+                        <span>
+                            Occupancy
+                        </span>
+
+                        <strong>
+                            {{ room.occupancy_percent }}%
+                        </strong>
+
+                    </div>
+
+
+                    <div class="progress-track">
+
+                        <div
+                            class="progress-fill"
+                            style="
+                                width:
+                                {% if room.occupancy_percent > 100 %}
+                                    100
+                                {% else %}
+                                    {{ room.occupancy_percent }}
+                                {% endif %}%;
+                            "
+                        ></div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ACTION -->
+                <div class="room-action">
+
+                    <span class="room-capacity">
+                        <i class="bi bi-people me-1"></i>
+                        {{ room.capacity }} beds
+                    </span>
+
+
+                    <a
+                        href="{% url 'hostel:room_detail' room.pk %}"
+                        class="view-room-btn"
+                    >
+                        View Room
+                        <i class="bi bi-arrow-right"></i>
+                    </a>
+
+                </div>
+
+            </div>
+
+        {% empty %}
+
+            <div class="empty-card">
+
+                <div class="empty-icon">
+                    <i class="bi bi-door-closed"></i>
+                </div>
+
+                <strong>
+                    No rooms found
+                </strong>
+
+                <span>
+                    No rooms match the selected building or floor.
+                </span>
+
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+{% endblock %}

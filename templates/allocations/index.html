@@ -1,0 +1,839 @@
+{% extends 'base.html' %}
+
+{% block title %}Allocations{% endblock %}
+{% block page_title %}Allocations{% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item active">Allocations</li>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .allocation-page {
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    /* HERO */
+    .allocation-hero {
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(135deg, #111827 0%, #1e293b 55%, #312e81 100%);
+        border-radius: 24px;
+        padding: 34px;
+        color: #fff;
+        margin-bottom: 24px;
+        box-shadow: 0 18px 45px rgba(15, 23, 42, .18);
+    }
+
+    .allocation-hero::before {
+        content: "";
+        position: absolute;
+        width: 260px;
+        height: 260px;
+        border-radius: 50%;
+        background: rgba(99, 102, 241, .16);
+        top: -130px;
+        right: -70px;
+    }
+
+    .allocation-hero::after {
+        content: "";
+        position: absolute;
+        width: 180px;
+        height: 180px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, .04);
+        bottom: -100px;
+        left: 35%;
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 24px;
+    }
+
+    .hero-left {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+    }
+
+    .hero-icon {
+        width: 68px;
+        height: 68px;
+        border-radius: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255,255,255,.12);
+        border: 1px solid rgba(255,255,255,.14);
+        font-size: 30px;
+        backdrop-filter: blur(8px);
+    }
+
+    .hero-title {
+        margin: 0 0 7px;
+        font-size: 29px;
+        font-weight: 800;
+        letter-spacing: -.6px;
+    }
+
+    .hero-subtitle {
+        margin: 0;
+        color: rgba(255,255,255,.72);
+        font-size: 14px;
+        max-width: 620px;
+        line-height: 1.6;
+    }
+
+    .hero-actions {
+        display: flex;
+        gap: 10px;
+        flex-shrink: 0;
+    }
+
+    .hero-btn {
+        height: 44px;
+        padding: 0 17px;
+        border-radius: 12px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 700;
+        transition: .2s ease;
+    }
+
+    .hero-btn-primary {
+        background: #fff;
+        color: #312e81;
+    }
+
+    .hero-btn-primary:hover {
+        color: #312e81;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(0,0,0,.18);
+    }
+
+    .hero-btn-outline {
+        color: #fff;
+        border: 1px solid rgba(255,255,255,.2);
+        background: rgba(255,255,255,.06);
+    }
+
+    .hero-btn-outline:hover {
+        color: #fff;
+        background: rgba(255,255,255,.12);
+    }
+
+    /* SECTION */
+    .section-heading {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin: 28px 0 14px;
+    }
+
+    .section-heading h3 {
+        margin: 0;
+        font-size: 17px;
+        font-weight: 800;
+        color: #111827;
+    }
+
+    .section-heading span {
+        color: #64748b;
+        font-size: 12px;
+    }
+
+    /* QUICK ACTIONS */
+    .action-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+    }
+
+    .action-card {
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 21px;
+        border: 1px solid #e5e7eb;
+        border-radius: 18px;
+        background: #fff;
+        text-decoration: none;
+        color: inherit;
+        transition: all .22s ease;
+        box-shadow: 0 5px 18px rgba(15,23,42,.035);
+    }
+
+    .action-card:hover {
+        color: inherit;
+        transform: translateY(-4px);
+        border-color: #c7d2fe;
+        box-shadow: 0 14px 30px rgba(15,23,42,.09);
+    }
+
+    .action-icon {
+        width: 52px;
+        height: 52px;
+        min-width: 52px;
+        border-radius: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+    }
+
+    .action-icon.indigo {
+        background: #eef2ff;
+        color: #4f46e5;
+    }
+
+    .action-icon.blue {
+        background: #eff6ff;
+        color: #2563eb;
+    }
+
+    .action-icon.green {
+        background: #ecfdf5;
+        color: #059669;
+    }
+
+    .action-card-content {
+        flex: 1;
+    }
+
+    .action-card-content h4 {
+        margin: 0 0 5px;
+        font-size: 14px;
+        font-weight: 750;
+        color: #111827;
+    }
+
+    .action-card-content p {
+        margin: 0;
+        color: #64748b;
+        font-size: 12px;
+        line-height: 1.45;
+    }
+
+    .action-arrow {
+        color: #94a3b8;
+        font-size: 17px;
+        transition: .2s;
+    }
+
+    .action-card:hover .action-arrow {
+        color: #4f46e5;
+        transform: translateX(3px);
+    }
+
+    /* WORKFLOW */
+    .workflow-card {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 20px;
+        padding: 25px;
+        box-shadow: 0 5px 18px rgba(15,23,42,.035);
+    }
+
+    .workflow {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+    }
+
+    .workflow-step {
+        position: relative;
+        text-align: center;
+        padding: 8px 12px;
+    }
+
+    .workflow-step:not(:last-child)::after {
+        content: "";
+        position: absolute;
+        top: 24px;
+        left: calc(50% + 32px);
+        width: calc(100% - 20px);
+        height: 1px;
+        background: #e2e8f0;
+    }
+
+    .step-number {
+        width: 48px;
+        height: 48px;
+        margin: 0 auto 11px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #eef2ff;
+        color: #4f46e5;
+        font-size: 16px;
+        font-weight: 800;
+        position: relative;
+        z-index: 2;
+        border: 5px solid #fff;
+        box-shadow: 0 0 0 1px #e0e7ff;
+    }
+
+    .workflow-step h5 {
+        margin: 0 0 5px;
+        font-size: 13px;
+        font-weight: 750;
+        color: #1e293b;
+    }
+
+    .workflow-step p {
+        margin: 0;
+        color: #64748b;
+        font-size: 11px;
+        line-height: 1.45;
+    }
+
+    /* INFO GRID */
+    .info-grid {
+        display: grid;
+        grid-template-columns: 1.15fr .85fr;
+        gap: 16px;
+        margin-top: 16px;
+    }
+
+    .info-card {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 20px;
+        padding: 23px;
+        box-shadow: 0 5px 18px rgba(15,23,42,.035);
+    }
+
+    .info-card-header {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        margin-bottom: 18px;
+    }
+
+    .info-card-header-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 11px;
+        background: #f1f5f9;
+        color: #475569;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .info-card-header h4 {
+        margin: 0;
+        font-size: 14px;
+        font-weight: 800;
+        color: #111827;
+    }
+
+    .info-list {
+        display: grid;
+        gap: 13px;
+    }
+
+    .info-item {
+        display: flex;
+        gap: 11px;
+        align-items: flex-start;
+    }
+
+    .info-item i {
+        color: #4f46e5;
+        margin-top: 2px;
+    }
+
+    .info-item strong {
+        display: block;
+        color: #1e293b;
+        font-size: 12px;
+        margin-bottom: 2px;
+    }
+
+    .info-item span {
+        color: #64748b;
+        font-size: 11px;
+        line-height: 1.45;
+    }
+
+    /* CTA */
+    .bottom-cta {
+        margin-top: 16px;
+        padding: 22px 24px;
+        border-radius: 18px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+    }
+
+    .bottom-cta h4 {
+        margin: 0 0 5px;
+        font-size: 15px;
+        font-weight: 800;
+        color: #111827;
+    }
+
+    .bottom-cta p {
+        margin: 0;
+        font-size: 12px;
+        color: #64748b;
+    }
+
+    .cta-btn {
+        white-space: nowrap;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 11px 17px;
+        border-radius: 11px;
+        background: #4f46e5;
+        color: #fff;
+        text-decoration: none;
+        font-size: 12px;
+        font-weight: 700;
+        transition: .2s;
+    }
+
+    .cta-btn:hover {
+        background: #4338ca;
+        color: #fff;
+        transform: translateY(-2px);
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 1000px) {
+        .action-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .info-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 760px) {
+        .allocation-hero {
+            padding: 25px;
+        }
+
+        .hero-content {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .hero-actions {
+            width: 100%;
+        }
+
+        .hero-btn {
+            flex: 1;
+            justify-content: center;
+        }
+
+        .action-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .workflow {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .workflow-step:not(:last-child)::after {
+            display: none;
+        }
+
+        .bottom-cta {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .hero-left {
+            align-items: flex-start;
+        }
+
+        .hero-icon {
+            width: 52px;
+            height: 52px;
+            min-width: 52px;
+            font-size: 22px;
+        }
+
+        .hero-title {
+            font-size: 23px;
+        }
+
+        .hero-actions {
+            flex-direction: column;
+        }
+
+        .workflow {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+
+{% block content %}
+
+<div class="allocation-page">
+
+    <!-- =====================================================
+         HERO
+    ====================================================== -->
+    <section class="allocation-hero">
+
+        <div class="hero-content">
+
+            <div class="hero-left">
+
+                <div class="hero-icon">
+                    <i class="bi bi-arrow-left-right"></i>
+                </div>
+
+                <div>
+                    <h1 class="hero-title">
+                        Allocation Management
+                    </h1>
+
+                    <p class="hero-subtitle">
+                        Assign students to rooms and beds, track occupancy,
+                        and manage active hostel allocations from one place.
+                    </p>
+                </div>
+
+            </div>
+
+            <div class="hero-actions">
+
+                <a href="{% url 'allocations:list' %}"
+                   class="hero-btn hero-btn-outline">
+                    <i class="bi bi-list-ul"></i>
+                    View Allocations
+                </a>
+
+                {% if request.user.can_manage_hostel %}
+                <a href="{% url 'allocations:create' %}"
+                   class="hero-btn hero-btn-primary">
+                    <i class="bi bi-plus-lg"></i>
+                    New Allocation
+                </a>
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         QUICK ACTIONS
+    ====================================================== -->
+    <div class="section-heading">
+        <div>
+            <h3>Quick Actions</h3>
+        </div>
+
+        <span>
+            Manage hostel room assignments
+        </span>
+    </div>
+
+    <div class="action-grid">
+
+        <a href="{% url 'allocations:list' %}"
+           class="action-card">
+
+            <div class="action-icon indigo">
+                <i class="bi bi-list-check"></i>
+            </div>
+
+            <div class="action-card-content">
+                <h4>All Allocations</h4>
+                <p>
+                    View and manage existing student room assignments.
+                </p>
+            </div>
+
+            <i class="bi bi-chevron-right action-arrow"></i>
+
+        </a>
+
+
+        {% if request.user.can_manage_hostel %}
+        <a href="{% url 'allocations:create' %}"
+           class="action-card">
+
+            <div class="action-icon blue">
+                <i class="bi bi-person-plus-fill"></i>
+            </div>
+
+            <div class="action-card-content">
+                <h4>Allocate Student</h4>
+                <p>
+                    Assign a student to an available hostel bed.
+                </p>
+            </div>
+
+            <i class="bi bi-chevron-right action-arrow"></i>
+
+        </a>
+        {% endif %}
+
+
+        <a href="{% url 'hostel:index' %}"
+           class="action-card">
+
+            <div class="action-icon green">
+                <i class="bi bi-door-open-fill"></i>
+            </div>
+
+            <div class="action-card-content">
+                <h4>Rooms & Beds</h4>
+                <p>
+                    Check buildings, rooms, beds and their availability.
+                </p>
+            </div>
+
+            <i class="bi bi-chevron-right action-arrow"></i>
+
+        </a>
+
+    </div>
+
+
+    <!-- =====================================================
+         ALLOCATION WORKFLOW
+    ====================================================== -->
+    <div class="section-heading">
+        <h3>Allocation Workflow</h3>
+        <span>Simple four-step process</span>
+    </div>
+
+    <div class="workflow-card">
+
+        <div class="workflow">
+
+            <div class="workflow-step">
+
+                <div class="step-number">01</div>
+
+                <h5>Select Student</h5>
+
+                <p>
+                    Choose the student who needs hostel accommodation.
+                </p>
+
+            </div>
+
+
+            <div class="workflow-step">
+
+                <div class="step-number">02</div>
+
+                <h5>Choose Location</h5>
+
+                <p>
+                    Select the required building, floor and room.
+                </p>
+
+            </div>
+
+
+            <div class="workflow-step">
+
+                <div class="step-number">03</div>
+
+                <h5>Select Bed</h5>
+
+                <p>
+                    Pick an available bed from the selected room.
+                </p>
+
+            </div>
+
+
+            <div class="workflow-step">
+
+                <div class="step-number">04</div>
+
+                <h5>Confirm</h5>
+
+                <p>
+                    Save the allocation and update occupancy automatically.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         INFORMATION
+    ====================================================== -->
+    <div class="info-grid">
+
+        <div class="info-card">
+
+            <div class="info-card-header">
+
+                <div class="info-card-header-icon">
+                    <i class="bi bi-lightning-charge-fill"></i>
+                </div>
+
+                <h4>What you can manage</h4>
+
+            </div>
+
+            <div class="info-list">
+
+                <div class="info-item">
+                    <i class="bi bi-check-circle-fill"></i>
+
+                    <div>
+                        <strong>Student Room Assignment</strong>
+                        <span>
+                            Connect students with their allocated hostel
+                            room and bed.
+                        </span>
+                    </div>
+                </div>
+
+
+                <div class="info-item">
+                    <i class="bi bi-check-circle-fill"></i>
+
+                    <div>
+                        <strong>Bed Availability</strong>
+                        <span>
+                            Quickly identify available and occupied beds
+                            before creating an allocation.
+                        </span>
+                    </div>
+                </div>
+
+
+                <div class="info-item">
+                    <i class="bi bi-check-circle-fill"></i>
+
+                    <div>
+                        <strong>Active Allocations</strong>
+                        <span>
+                            Track current assignments and manage student
+                            vacating when required.
+                        </span>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="info-card">
+
+            <div class="info-card-header">
+
+                <div class="info-card-header-icon">
+                    <i class="bi bi-shield-check"></i>
+                </div>
+
+                <h4>Allocation Guidelines</h4>
+
+            </div>
+
+            <div class="info-list">
+
+                <div class="info-item">
+                    <i class="bi bi-person-check-fill"></i>
+
+                    <div>
+                        <strong>Verify Student</strong>
+                        <span>
+                            Make sure the correct student is selected before
+                            confirming an allocation.
+                        </span>
+                    </div>
+                </div>
+
+
+                <div class="info-item">
+                    <i class="bi bi-door-closed-fill"></i>
+
+                    <div>
+                        <strong>Check Bed Status</strong>
+                        <span>
+                            Only assign students to beds that are available.
+                        </span>
+                    </div>
+                </div>
+
+
+                <div class="info-item">
+                    <i class="bi bi-arrow-repeat"></i>
+
+                    <div>
+                        <strong>Keep Records Updated</strong>
+                        <span>
+                            Vacate completed allocations when students leave
+                            their assigned bed.
+                        </span>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         BOTTOM CTA
+    ====================================================== -->
+    {% if request.user.can_manage_hostel %}
+    <div class="bottom-cta">
+
+        <div>
+            <h4>Ready to assign a student?</h4>
+
+            <p>
+                Start a new allocation and select an available hostel bed.
+            </p>
+        </div>
+
+        <a href="{% url 'allocations:create' %}"
+           class="cta-btn">
+
+            <i class="bi bi-plus-circle-fill"></i>
+            Create Allocation
+
+        </a>
+
+    </div>
+    {% endif %}
+
+</div>
+
+{% endblock %}
